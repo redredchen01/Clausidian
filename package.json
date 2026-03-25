@@ -1,6 +1,6 @@
 {
   "name": "session-wrap-skill",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Universal AI agent memory persistence — auto-save project context at session end. Works with Claude Code, Codex, Gemini CLI, Cursor, Windsurf, Cline, Roo Code, Copilot, Amp, OpenClaw, OpenHands, Amazon Q, and more.",
   "keywords": [
     "ai-agent",

@@ -1,6 +1,6 @@
 ---
 name: session-wrap
-version: 3.0.0
+version: 3.1.0
 description: |
   Universal session wrap-up: automatically persist project context to memory files for seamless resume.
   Works with ANY AI agent — Claude Code, Codex, Gemini CLI, Cursor, Windsurf, Cline, Roo Code,
@@ -35,6 +35,100 @@ Capture project state at session end so the next session resumes with full conte
 | 한국어 | 마무리, 오늘은 여기까지, 저장해줘 |
 
 Also trigger proactively when: major milestone reached, user signals finality, or context window is filling up.
+
+---
+
+## Context Window Guardian
+
+**This is a continuous monitoring behavior, not a one-time step.** Throughout the entire session, actively track context window usage and take action at defined thresholds.
+
+### How to Estimate Context Usage
+
+You don't have a precise token counter, but you can estimate based on observable signals:
+
+| Signal | Estimation method |
+|--------|------------------|
+| **Conversation turns** | Count user messages + your responses. Average turn ≈ 500-2000 tokens. |
+| **Tool call accumulation** | Each file read ≈ 1000-5000 tokens. Each large grep/glob result ≈ 500-3000 tokens. |
+| **Code blocks generated** | Each code block ≈ 200-1000 tokens. |
+| **Session duration** | Long sessions (30+ turns, 60+ tool calls) are likely past 50%. |
+| **System compaction hints** | If you see `[compacted]` markers or system messages about compression, you're near the limit. |
+| **Repeated context** | If you're re-reading files you already read earlier, context may have been pruned — you're deep. |
+
+**Rough formula**: `estimated_usage = (user_turns × 800) + (tool_results × 1500) + (your_responses × 600)`
+
+For reference, common context windows:
+- Claude Code (Opus): ~200K tokens (1M with extended)
+- Cursor: ~128K tokens
+- Codex: ~128K tokens
+- Gemini CLI: ~1M tokens
+- Most others: ~64K-200K tokens
+
+### Threshold Actions
+
+| Context % | Action | What to do |
+|-----------|--------|------------|
+| **< 40%** | 🟢 Normal | Continue working. No action needed. |
+| **40-50%** | 🟡 Awareness | Start mentally noting what's important this session. No action yet. |
+| **~50%** | 🟠 **Checkpoint Save** | **Proactively execute a lightweight memory save.** Don't wait for user to say "收工". Announce: "上下文已過半，先存個記憶檢查點。" Then run Steps 1-8 (lightweight mode — skip maintenance, just save current state). |
+| **50-70%** | 🟠 Active management | After checkpoint, continue working but be concise. Avoid re-reading files already in context. Prefer targeted reads over full-file reads. |
+| **~75%** | 🔴 **Full Save + Alert** | Execute full session-wrap (including maintenance). Alert user: "上下文快滿了，建議開新對話繼續。記憶已保存。" |
+| **> 80%** | 🔴 Critical | If still in session, every response should be minimal. Prioritize saving any unsaved work to memory before context is auto-compacted. |
+
+### Checkpoint Save (Lightweight Mode)
+
+When triggered at ~50%, do a fast save without full maintenance:
+
+1. **Skip** memory compression, deduplication, staleness check (Step 5)
+2. **Do** gather state (Step 2) → analyze (Step 3) → write (Step 4) → update index (Step 6)
+3. **Mark** the checkpoint in memory with timestamp: `> Checkpoint: 2026-03-25 14:30 (mid-session save)`
+4. **Continue working** — this is NOT a session end, just a safety save
+
+### Full Save at ~75%
+
+When triggered at ~75%, do the complete session-wrap:
+
+1. Execute **all steps** (1-8) including maintenance
+2. Summarize what's left to do (if any incomplete tasks)
+3. Suggest user start a new session: "記憶已完整保存，建議開新對話繼續未完成的工作。"
+4. If user continues, keep responses minimal and focused
+
+### Context-Aware Behavior Throughout Session
+
+Beyond threshold saves, adopt these habits as context grows:
+
+**Early session (< 30%)**:
+- Read files freely, explore broadly
+- Detailed explanations are fine
+
+**Mid session (30-60%)**:
+- Prefer targeted reads (specific line ranges) over full files
+- Consolidate tool calls — do multiple checks in one call
+- Keep responses concise
+
+**Late session (60%+)**:
+- Only read what's absolutely necessary
+- Reference previous reads by memory, don't re-read
+- Short, action-oriented responses
+- Proactively save any important findings to memory
+
+### Platform-Specific Context Signals
+
+| Platform | How to detect you're running out |
+|----------|----------------------------------|
+| **Claude Code** | System sends `<compacted>` message with conversation summary. If you see this, you've already been compressed — save immediately. |
+| **Cursor** | Chat may slow down or truncate earlier messages. No explicit signal. |
+| **Codex** | May start dropping early tool results from context. |
+| **Gemini CLI** | Has 1M context — less urgent but still track for very long sessions. |
+| **Cline/Roo** | VS Code may show token count in status bar. |
+
+### What to Save at Each Threshold
+
+| Threshold | Save scope |
+|-----------|-----------|
+| **50% checkpoint** | Current task progress, key decisions made, files modified, any gotchas discovered so far |
+| **75% full save** | Everything from checkpoint + lessons learned + what's left to do + handoff notes for next session |
+| **80%+ emergency** | Bare minimum: what was the goal, what's done, what's not done, any critical context that would be lost |
 
 ---
 
@@ -268,3 +362,6 @@ Report with summary table:
 | Memory file > 50 lines | Compress: summarize, keep last 3 history entries |
 | Expired memory | Mark [STALE] in index, don't auto-delete |
 | Duplicate memories | Merge into more specific file, delete generic one |
+| Context auto-compacted | System compressed history — immediately save all important context to memory before more is lost |
+| User ignores 75% alert | Continue working but save on every significant milestone. Don't nag repeatedly. |
+| Very long session (100+ turns) | Likely past 50% on most platforms. Trigger checkpoint if not already done. |
