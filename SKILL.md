@@ -1,10 +1,10 @@
 ---
 name: session-wrap
-version: 2.1.0
+version: 2.1.1
 description: |
   Universal session wrap-up: automatically persist project context to memory files for seamless resume.
-  Works with ANY AI coding agent — Claude Code, Codex, Gemini CLI, Cursor, Windsurf, Cline, Roo Code,
-  Aider, Continue.dev, Copilot, Amp, Devin, bolt.new, and any future agent framework.
+  Works with ANY AI agent — Claude Code, Codex, Gemini CLI, Cursor, Windsurf, Cline, Roo Code,
+  Aider, Continue.dev, Copilot, Amp, OpenClaw, Devin, bolt.new, and any future agent framework.
   Use when: user says "收工", "wrap up", "結束", "整理記憶", "resume準備", "保存上下文",
   "下次繼續", "先到這", "今天先這樣", "done for now", "save context", "end session",
   "今日はここまで", or any session-ending intent in any language.
@@ -19,7 +19,7 @@ allowed-tools:
 
 # Session Wrap — Universal Agent Memory Persistence
 
-Capture project state at session end so the next session resumes with full context. Works with **any AI coding agent** that can read files.
+Capture project state at session end so the next session resumes with full context. Works with **any AI agent** that can read files — coding agents, personal assistants, multi-channel bots.
 
 **Problem**: AI agents lose all context between sessions. Users waste time re-explaining context.
 **Solution**: Structured memory files that any agent auto-loads on next session start.
@@ -53,6 +53,7 @@ Detect which agent you are and choose the correct persistence mechanism.
 | **Continue.dev** | Has `.continue/` dir | `.ai-memory/` | `.continuerules` or `.continue/rules/` |
 | **GitHub Copilot** | Has `.github/copilot-instructions.md` | `.ai-memory/` | `.github/copilot-instructions.md` |
 | **Amp** | Has `AGENT.md` (Sourcegraph style) | `.ai-memory/` | `AGENT.md` (3 layers) |
+| **OpenClaw** | Has `~/.openclaw/` dir or `openclaw.json` | `~/.openclaw/workspace/memory/` or `<workspace>/memory/` | `AGENTS.md` + `SOUL.md` in workspace |
 | **Devin** | Cloud environment | Write `.ai-memory/` in repo (Devin syncs from repo) | Cloud Knowledge base |
 | **bolt.new** | WebContainer environment | Write `.ai-memory/` in project | UI System Prompt |
 | **Unknown** | None of above detected | `.ai-memory/` in project root | — |
@@ -112,7 +113,7 @@ name: {{descriptive name}}
 description: {{one-line summary for relevance judgment}}
 type: {{project|feedback|user|reference}}
 updated: {{YYYY-MM-DD}}
-platform: {{claude-code|codex|gemini|cursor|windsurf|cline|roo|universal}}
+platform: {{claude-code|codex|gemini|cursor|windsurf|cline|roo|openclaw|universal}}
 ---
 
 {{content}}
@@ -157,6 +158,7 @@ Check if the agent's instructions file exists and already has a memory-loading d
 | Aider | `.aider.conf.yml` | Add `read:` entries pointing to `.ai-memory/` files |
 | Cursor | `.cursor/rules/memory.mdc` | Create rule that reads `.cursor/memory/` on session start |
 | Continue | `.continuerules` | Same pattern as AGENTS.md |
+| OpenClaw | `~/.openclaw/workspace/AGENTS.md` | `# Memory\nOn start, read memory/*.md in workspace for prior session context.` |
 
 **Do NOT modify** these files if running inside Claude Code (it has native memory) or Windsurf (has native Memories DB).
 
