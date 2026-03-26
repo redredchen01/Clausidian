@@ -1,6 +1,6 @@
 ---
 name: session-wrap
-version: 3.1.0
+version: 3.5.0
 description: |
   Universal session wrap-up: automatically persist project context to memory files for seamless resume.
   Works with ANY AI agent — Claude Code, Codex, Gemini CLI, Cursor, Windsurf, Cline, Roo Code,
