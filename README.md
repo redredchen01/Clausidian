@@ -44,6 +44,18 @@ Start here based on your needs:
 | **[AGENT-WORKFLOW.md](AGENT-WORKFLOW.md)** | 6 workflow patterns + best practices |
 | **[INTEGRATIONS.md](INTEGRATIONS.md)** | Claude Code, Cursor, Windsurf setup |
 | **[PRODUCTION-SETUP.md](PRODUCTION-SETUP.md)** | Deploy backend to Railway/Docker/VPS |
+| **[VISUALIZATION-GUIDE.md](VISUALIZATION-GUIDE.md)** | Visualize tasks, decisions, memory, timeline |
+
+### Real-World Workflow Guides
+
+See how session-wrap works in practice across different team structures:
+
+| Scenario | Guide | Team Size | Key Features |
+|----------|-------|-----------|--------------|
+| **Async Open Source** | [OPENSOURCE-COLLABORATION.md](OPENSOURCE-COLLABORATION.md) | 4+ distributed | Self-onboarding, decision logging, task coordination |
+| **Early-Stage Startup** | [STARTUP-TEAM-WORKFLOW.md](STARTUP-TEAM-WORKFLOW.md) | 3-5 people | Daily standups, async code review, shared decisions |
+| **Enterprise Multi-Team** | [ENTERPRISE-ADOPTION.md](ENTERPRISE-ADOPTION.md) | 50+ people | Cross-team coordination, knowledge sharing, incident learning |
+| **Solo Developer** | [SOLO-DEVELOPER.md](SOLO-DEVELOPER.md) | 1 person | Context switching, project management, client billing |
 
 ### Quick Path to Success
 
@@ -51,6 +63,7 @@ Start here based on your needs:
 2. **First session:** Follow Example 1, save your first session wrap
 3. **Multi-agent:** When ready, follow [AGENT-WORKFLOW.md](AGENT-WORKFLOW.md) Pattern 2
 4. **Team setup:** See [INTEGRATIONS.md](INTEGRATIONS.md) for your editor
+5. **Real-world:** Find your scenario in the workflow guides above
 
 ## Installation
 
