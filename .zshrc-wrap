@@ -8,7 +8,16 @@ export YD_MEMORY="/Users/dex/.claude/projects/-Users-dex-YD-2026/memory"
 export YD_OBSIDIAN="$YD_WORKSPACE/obsidian"
 
 # Session Wrap — Save context at session end
-alias wrap='bash "$YD_WORKSPACE/session-wrap.sh"'
+function wrap() {
+  case "${1:-}" in
+    login|logout|status|history|help)
+      bash "$YD_WORKSPACE/wrap-cli.sh" "$@"
+      ;;
+    *)
+      bash "$YD_WORKSPACE/session-wrap.sh" "$@"
+      ;;
+  esac
+}
 alias wrap-summary='wrap "$(date +%Y-%m-%d) — Session summary"'
 
 # Auto-sync

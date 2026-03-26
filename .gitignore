@@ -18,17 +18,10 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Project-specific (keep only session-wrap files)
-/dexapi/
-/test-ydapi/
-/watermark\ 0324/
+# Local (not tracked)
 /Archived/
-/0323/
-/0325/
 /.claude/
 /obsidian/
-WORKSPACE.md
-CLAUDE.md
 .zshrc-workspace
 login-agents.sh
 .session-wrap-trigger.json

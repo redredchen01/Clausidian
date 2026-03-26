@@ -8,10 +8,24 @@ set -e
 WORKSPACE="/Users/dex/YD 2026"
 MEMORY_DIR="/Users/dex/.claude/projects/-Users-dex-YD-2026/memory"
 OBSIDIAN_DIR="$WORKSPACE/obsidian"
+SESSION_WRAP_TOKEN_FILE="$HOME/.session-wrap/token"
+SESSION_WRAP_API_URL="${SESSION_WRAP_API_URL:-http://localhost:3000}"
 
 TIMESTAMP=$(date +%Y-%m-%d\ %H:%M:%S)
 DATE=$(date +%Y%m%d)
 SUMMARY="${1:-Auto-wrap at session end}"
+
+# Detect agent type from environment or user-agent
+detect_agent_type() {
+  if [ -n "$CLAUDE_CODE_TOKEN" ]; then echo "claude-code"; return; fi
+  if [ -n "$CURSOR_TOKEN" ]; then echo "cursor"; return; fi
+  if [ -n "$WINDSURF_TOKEN" ]; then echo "windsurf"; return; fi
+  if [ -n "$CLINE_TOKEN" ]; then echo "cline"; return; fi
+  if [ -n "$AIDER_TOKEN" ]; then echo "aider"; return; fi
+  echo "unknown"
+}
+
+AGENT_TYPE=$(detect_agent_type)
 
 echo "🔄 Session Wrap — $TIMESTAMP"
 echo ""
@@ -74,7 +88,49 @@ git -C "$OBSIDIAN_DIR" commit -m "session-wrap: checkpoint at $TIMESTAMP" 2>/dev
 echo ""
 echo "✅ Session wrap complete!"
 echo ""
+
+# 5. Optional: Sync to cloud if logged in
+echo ""
+echo "☁️  Checking cloud sync..."
+if [ -f "$SESSION_WRAP_TOKEN_FILE" ] && [ -n "$(cat "$SESSION_WRAP_TOKEN_FILE" 2>/dev/null)" ]; then
+  echo "Found stored token. Syncing to cloud..."
+
+  JWT_TOKEN=$(cat "$SESSION_WRAP_TOKEN_FILE")
+
+  # Calculate metrics for wrap
+  MEMORY_SIZE=$(du -sb "$MEMORY_DIR" | cut -f1)
+  OBSIDIAN_COUNT=$(find "$OBSIDIAN_DIR" -type f -name "*.md" 2>/dev/null | wc -l)
+
+  # Try to sync wrap to backend
+  SYNC_RESPONSE=$(curl -s -X POST "$SESSION_WRAP_API_URL/api/wraps" \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer $JWT_TOKEN" \
+    -H "x-claude-token: $(eval echo \$${AGENT_TYPE^^}_TOKEN)" \
+    -d "{
+      \"workspaceName\": \"YD 2026\",
+      \"summary\": \"$SUMMARY\",
+      \"memorySize\": $MEMORY_SIZE,
+      \"obsidianFilesCount\": $OBSIDIAN_COUNT,
+      \"metadata\": {
+        \"agentType\": \"$AGENT_TYPE\",
+        \"timestamp\": \"$TIMESTAMP\"
+      }
+    }" 2>/dev/null)
+
+  if echo "$SYNC_RESPONSE" | grep -q '"success"'; then
+    echo "✅ Cloud sync successful"
+  else
+    echo "⚠️  Cloud sync failed (backend may be offline)"
+    echo "   Wrap saved locally at: $WRAP_FILE"
+  fi
+else
+  echo "⚠️  Not logged in. Wrap saved locally only."
+  echo "   To enable cloud sync, run: wrap login"
+fi
+
+echo ""
 echo "Next session checklist:"
 echo "  1. Review: cat $WRAP_FILE"
 echo "  2. Load: source ~/.zshrc-workspace"
 echo "  3. Status: cat $MEMORY_DIR/MEMORY.md"
+echo "  4. Login: wrap login (for cloud sync)"
