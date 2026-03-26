@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { DashboardState } from './types'
-import { apiClient } from './api'
+import { apiClient, WsMessage } from './api'
 import TaskBoard from './components/TaskBoard'
 import DecisionTimeline from './components/DecisionTimeline'
 import MemoryStats from './components/MemoryStats'
@@ -21,6 +21,53 @@ function App() {
   })
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'overview' | 'tasks' | 'decisions' | 'memory'>('overview')
+  const [wsConnected, setWsConnected] = useState(false)
+
+  // Handle WebSocket messages (real-time updates)
+  const handleWsMessage = useCallback((message: WsMessage) => {
+    console.log('📨 Received WebSocket message:', message.type)
+
+    setState((prevState) => {
+      const newState = { ...prevState }
+
+      // Handle task updates
+      if (message.type === 'TaskCreated' || message.type === 'TaskUpdated') {
+        const updatedTask = message.data
+        newState.tasks = newState.tasks.map((t) => (t.id === updatedTask.id ? updatedTask : t))
+        if (message.type === 'TaskCreated' && !newState.tasks.find((t) => t.id === updatedTask.id)) {
+          newState.tasks.push(updatedTask)
+        }
+      }
+
+      // Handle task deletion
+      if (message.type === 'TaskDeleted') {
+        newState.tasks = newState.tasks.filter((t) => t.id !== message.data.id)
+      }
+
+      // Handle decision updates
+      if (message.type === 'DecisionLogged') {
+        newState.decisions.unshift(message.data)
+      }
+
+      // Handle sync status updates
+      if (message.type === 'SyncStatus') {
+        newState.sync = message.data
+      }
+
+      // Handle activity events (future)
+      if (message.type === 'ActivityEvent') {
+        console.log('Activity:', message.data)
+      }
+
+      // Update last sync time
+      newState.sync = {
+        ...newState.sync,
+        last_sync: new Date().toISOString(),
+      }
+
+      return newState
+    })
+  }, [])
 
   useEffect(() => {
     const loadState = async () => {
@@ -38,15 +85,31 @@ function App() {
     // Load initial state
     loadState()
 
-    // Subscribe to updates every 5 seconds
-    const unsubscribe = apiClient.subscribeToUpdates((newState) => {
-      setState(newState)
-    }, 5000)
+    // Subscribe to WebSocket messages
+    const unsubscribeWs = apiClient.subscribeToWebSocket((message) => {
+      setWsConnected(true)
+      handleWsMessage(message)
+    })
+
+    // Fallback to polling if WebSocket unavailable
+    let pollInterval: NodeJS.Timeout | null = null
+
+    // Try WebSocket first, but fallback to polling after 3 seconds
+    const pollFallback = setTimeout(() => {
+      console.log('WebSocket not responding, falling back to polling...')
+      setWsConnected(false)
+
+      pollInterval = apiClient.subscribeToUpdates((newState) => {
+        setState(newState)
+      }, 5000)
+    }, 3000)
 
     return () => {
-      clearInterval(unsubscribe)
+      clearTimeout(pollFallback)
+      if (pollInterval) clearInterval(pollInterval)
+      unsubscribeWs()
     }
-  }, [])
+  }, [handleWsMessage])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -60,7 +123,7 @@ function App() {
             </div>
             <div className="text-right">
               <p className="text-sm text-gray-600">
-                {state.sync.status === 'synced' ? '✅ Connected' : '⚠️ ' + state.sync.status}
+                {wsConnected ? '🟢 WebSocket' : state.sync.status === 'synced' ? '✅ Polling' : '⚠️ ' + state.sync.status}
               </p>
               <p className="text-xs text-gray-500 mt-1">Last sync: {new Date(state.sync.last_sync).toLocaleTimeString()}</p>
             </div>
