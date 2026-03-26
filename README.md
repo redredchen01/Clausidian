@@ -84,7 +84,23 @@ See **[MIGRATION.md](MIGRATION.md)** for step-by-step upgrade guide.
 npm install -g session-wrap-skill
 ```
 
-### Manual
+### Manual with Setup Script
+
+```bash
+git clone https://github.com/redredchen01/session-wrap-skill.git
+cd session-wrap-skill
+bash scripts/setup.sh
+```
+
+This runs a guided setup that:
+- ✅ Creates memory directories
+- ✅ Initializes knowledge base
+- ✅ Verifies all prerequisites
+- ✅ Shows next steps
+
+**Time: ~2 minutes**
+
+### Manual (Advanced)
 
 ```bash
 git clone https://github.com/redredchen01/session-wrap-skill.git
@@ -277,9 +293,23 @@ export SESSION_WRAP_API_URL="http://localhost:3000"  # Optional: cloud sync
 
 ## Backend (Optional)
 
-For cloud synchronization and dashboard, see [session-wrap-backend](https://www.npmjs.com/package/session-wrap-backend).
+For cloud synchronization and team dashboards, deploy session-wrap-backend:
 
-Deploy to Railway: `DEPLOY_RAILWAY.md`
+### Quick Deploy to Railway
+
+```bash
+bash scripts/deploy-railway.sh
+```
+
+This automates:
+- Railway project initialization
+- Environment variable setup
+- Database configuration
+- Deployment instructions
+
+See **[PRODUCTION-SETUP.md](PRODUCTION-SETUP.md)** for full deployment guide.
+
+**Note:** Backend enables cloud sync and web dashboards for distributed teams. Fully optional — CLI tools work perfectly without it.
 
 ## Files
 
