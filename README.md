@@ -45,6 +45,7 @@ Start here based on your needs:
 | **[INTEGRATIONS.md](INTEGRATIONS.md)** | Claude Code, Cursor, Windsurf setup |
 | **[PRODUCTION-SETUP.md](PRODUCTION-SETUP.md)** | Deploy backend to Railway/Docker/VPS |
 | **[VISUALIZATION-GUIDE.md](VISUALIZATION-GUIDE.md)** | Visualize tasks, decisions, memory, timeline |
+| **[FAQ-TROUBLESHOOTING.md](FAQ-TROUBLESHOOTING.md)** | Common issues & solutions |
 
 ### Real-World Workflow Guides
 
