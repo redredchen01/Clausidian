@@ -5,6 +5,8 @@ import TaskBoard from './components/TaskBoard'
 import DecisionTimeline from './components/DecisionTimeline'
 import MemoryStats from './components/MemoryStats'
 import SyncStatus from './components/SyncStatus'
+import CreateTaskModal from './components/CreateTaskModal'
+import { Plus } from 'lucide-react'
 import './App.css'
 
 function App() {
@@ -22,6 +24,37 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'overview' | 'tasks' | 'decisions' | 'memory'>('overview')
   const [wsConnected, setWsConnected] = useState(false)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+
+  const handleCreateTask = useCallback(async (taskData: any) => {
+    try {
+      await apiClient.createTask(taskData)
+      // Task will appear via WebSocket update
+    } catch (error) {
+      console.error('Failed to create task:', error)
+      throw error
+    }
+  }, [])
+
+  const handleUpdateTask = useCallback(async (id: string, updates: any) => {
+    try {
+      await apiClient.updateTask(id, updates)
+      // Update will appear via WebSocket update
+    } catch (error) {
+      console.error('Failed to update task:', error)
+      throw error
+    }
+  }, [])
+
+  const handleDeleteTask = useCallback(async (id: string) => {
+    try {
+      await apiClient.deleteTask(id)
+      // Delete will appear via WebSocket update
+    } catch (error) {
+      console.error('Failed to delete task:', error)
+      throw error
+    }
+  }, [])
 
   // Handle WebSocket messages (real-time updates)
   const handleWsMessage = useCallback((message: WsMessage) => {
@@ -121,11 +154,21 @@ function App() {
               <h1 className="text-3xl font-bold text-gray-900">Session Wrap Dashboard</h1>
               <p className="text-sm text-gray-600 mt-1">Multi-agent project coordination & memory management</p>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-600">
-                {wsConnected ? '🟢 WebSocket' : state.sync.status === 'synced' ? '✅ Polling' : '⚠️ ' + state.sync.status}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">Last sync: {new Date(state.sync.last_sync).toLocaleTimeString()}</p>
+            <div className="flex items-center gap-4">
+              {activeTab === 'tasks' && (
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+                >
+                  <Plus className="w-4 h-4" /> New Task
+                </button>
+              )}
+              <div className="text-right">
+                <p className="text-sm text-gray-600">
+                  {wsConnected ? '🟢 WebSocket' : state.sync.status === 'synced' ? '✅ Polling' : '⚠️ ' + state.sync.status}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">Last sync: {new Date(state.sync.last_sync).toLocaleTimeString()}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -196,7 +239,13 @@ function App() {
             )}
 
             {/* Tasks Tab */}
-            {activeTab === 'tasks' && <TaskBoard tasks={state.tasks} />}
+            {activeTab === 'tasks' && (
+              <TaskBoard
+                tasks={state.tasks}
+                onUpdateTask={handleUpdateTask}
+                onDeleteTask={handleDeleteTask}
+              />
+            )}
 
             {/* Decisions Tab */}
             {activeTab === 'decisions' && <DecisionTimeline decisions={state.decisions} />}
@@ -210,9 +259,18 @@ function App() {
       {/* Footer */}
       <footer className="bg-white border-t border-gray-200 mt-12">
         <div className="max-w-7xl mx-auto px-6 py-6 text-center text-sm text-gray-600">
-          <p>Session Wrap v3.4.0 • Real-time multi-agent coordination dashboard</p>
+          <p>Session Wrap v3.7.0 • Real-time multi-agent coordination dashboard</p>
         </div>
       </footer>
+
+      {/* Create Task Modal */}
+      <CreateTaskModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSubmit={handleCreateTask}
+        agents={state.sync.active_agents}
+        isLoading={loading}
+      />
     </div>
   )
 }
