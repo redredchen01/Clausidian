@@ -39,7 +39,6 @@ __pycache__/
 /Archived/
 /.claude/
 /obsidian/
-.zshrc-workspace
 .zshrc-wrap
 scripts/login-agents.sh
 .session-wrap-trigger.json

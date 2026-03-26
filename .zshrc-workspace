@@ -1,0 +1,41 @@
+# YD 2026 Workspace Shortcuts
+# Source this from ~/.zshrc with: source ~/YD\ 2026/.zshrc-workspace
+
+export WORKSPACE_ROOT="$HOME/YD 2026"
+
+# 快速進入項目
+alias p1="cd '$WORKSPACE_ROOT/projects/production/dexapi'"
+alias p2="cd '$WORKSPACE_ROOT/projects/production/test-ydapi'"
+alias p3="cd '$WORKSPACE_ROOT/projects/production/watermark-0324'"
+alias pw="cd '$WORKSPACE_ROOT'"
+alias pj="cd '$WORKSPACE_ROOT/projects'"
+
+# 知識庫
+alias kb="code '$WORKSPACE_ROOT/.obsidian-vault'"
+alias mem="cat '$HOME/.claude/projects/-Users-dex-YD-2026/memory/MEMORY.md'"
+
+# 快速命令（根據實際情況調整）
+alias dev1="p1 && npm run dev"
+alias test1="p1 && npm test"
+alias dev2="p2 && npm run dev"
+alias test2="p2 && npm test"
+
+# 查看項目狀態
+yd-status() {
+  echo "📊 YD 2026 Workspace Status"
+  echo "================================"
+  for dir in projects/production/dexapi projects/production/test-ydapi projects/production/watermark-0324; do
+    cd "$WORKSPACE_ROOT/$dir" 2>/dev/null || continue
+    project=$(basename "$dir")
+    echo "✓ $project: $(git log -1 --format='%h %s' 2>/dev/null || echo 'no git')"
+  done
+  echo "================================"
+  cd "$WORKSPACE_ROOT"
+}
+
+# 同步知識庫和 Memory
+yd-sync() {
+  echo "🔄 Syncing workspace..."
+  # 添加你的同步邏輯
+  echo "✅ Sync complete"
+}
