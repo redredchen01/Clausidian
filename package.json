@@ -3,6 +3,12 @@
   "version": "3.4.0",
   "description": "Universal session wrap-up: automatically persist project context to memory files for seamless resume",
   "main": "scripts/session-wrap.sh",
+  "files": [
+    "scripts/",
+    "*.md",
+    ".zshrc-wrap",
+    "LICENSE"
+  ],
   "scripts": {
     "wrap": "bash scripts/session-wrap.sh",
     "sync": "bash scripts/obsidian-sync.sh"
