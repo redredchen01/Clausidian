@@ -9,21 +9,24 @@
 ## 目錄結構
 ```
 YD 2026/
-├── dexapi/              # P1 - YDAPI 核心
-├── test-ydapi/          # P2 - YDAPI 測試環境
-├── watermark-0324/      # P3 - APEX 去水印工具
-├── obsidian/            # 知識庫
-├── docs/                # 項目文檔
-├── scripts/             # 自動化腳本
-└── Archived/            # 歸檔項目
+├── projects/
+│   ├── production/       # P1/P2/P3 主項目
+│   ├── tools/            # 開發工具（session-wrap-backend）
+│   └── experimental/     # 試驗項目（sub2api-deploy）
+├── obsidian/             # 知識庫
+├── docs/                 # 項目文檔
+├── scripts/              # 自動化腳本
+└── Archived/             # 歸檔項目
 ```
 
 ## Projects
 | P | 項目 | 位置 |
 |---|------|------|
-| **1** | YDAPI (主) | `dexapi/` |
-| **2** | YDAPI (測試) | `test-ydapi/` |
-| **3** | APEX 工具 | `watermark-0324/` |
+| **1** | YDAPI (主) | `projects/production/dexapi/` |
+| **2** | YDAPI (測試) | `projects/production/test-ydapi/` |
+| **3** | APEX 工具 | `projects/production/watermark-0324/` |
+
+**詳細信息:** 見 [PROJECTS.md](PROJECTS.md)
 
 ---
 

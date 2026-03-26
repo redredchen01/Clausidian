@@ -4,35 +4,35 @@
 
 ### 🔴 P1：dexapi（YDAPI 主項目）
 ```
-位置: dexapi/
+位置: projects/production/dexapi/
 開發語言: JavaScript/Node.js
 狀態: 🟢 Active
 最後更新: 2026-03-25
 Commits: 20
 
 快速進入:
-  cd dexapi
+  cd projects/production/dexapi
   npm run dev          # 假設有此指令
   npm test
 ```
 
 ### 🟡 P2：test-ydapi（YDAPI 測試環境）
 ```
-位置: test-ydapi/
-開發語言: JavaScript/Node.js  
+位置: projects/production/test-ydapi/
+開發語言: JavaScript/Node.js
 狀態: 🟢 Active
 最後更新: 2026-03-25
 Commits: 18
 規模: 3264 files, 137M
 
 快速進入:
-  cd test-ydapi
+  cd projects/production/test-ydapi
   npm run test         # 假設有此指令
 ```
 
-### 🟠 P3：watermark 0324（APEX 工具）
+### 🟠 P3：watermark-0324（APEX 工具）
 ```
-位置: watermark 0324/
+位置: projects/production/watermark-0324/
 開發語言: 多語言（APEX 自治系統）
 狀態: 🟢 Maintained
 最後更新: 2026-03-25
@@ -40,7 +40,7 @@ Commits: 25
 特點: 含完整 SDD context + dev/specs
 
 快速進入:
-  cd watermark\ 0324
+  cd projects/production/watermark-0324
   # 查看 CLAUDE.md 了解特定指令
 ```
 
