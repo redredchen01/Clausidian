@@ -2,9 +2,18 @@ import axios, { AxiosInstance } from 'axios'
 import type { Task, Decision, MemoryStat, SyncStatus, DashboardState } from './types'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+const WS_URL = API_URL.replace(/^http/, 'ws') + '/ws'
+
+export interface WsMessage {
+  type: 'TaskCreated' | 'TaskUpdated' | 'TaskDeleted' | 'DecisionLogged' | 'CommentAdded' | 'ActivityEvent' | 'SyncStatus'
+  data: any
+  timestamp: string
+  agent: string
+}
 
 class APIClient {
   private client: AxiosInstance
+  private wsCallbacks: Array<(message: WsMessage) => void> = []
 
   constructor() {
     this.client = axios.create({
@@ -27,14 +36,36 @@ class APIClient {
     }
   }
 
+  async createTask(task: Omit<Task, 'created_at' | 'completed_at'>): Promise<Task | null> {
+    try {
+      const res = await this.client.post('/tasks', task)
+      return res.data.task || null
+    } catch (error) {
+      console.error('Failed to create task:', error)
+      return null
+    }
+  }
+
   async updateTask(id: string, updates: Partial<Task>): Promise<void> {
-    await this.client.patch(`/tasks/${id}`, updates)
+    try {
+      await this.client.patch(`/tasks/${id}`, updates)
+    } catch (error) {
+      console.error('Failed to update task:', error)
+    }
+  }
+
+  async deleteTask(id: string): Promise<void> {
+    try {
+      await this.client.delete(`/tasks/${id}`)
+    } catch (error) {
+      console.error('Failed to delete task:', error)
+    }
   }
 
   // Decisions
-  async getDecisions(): Promise<Decision[]> {
+  async getDecisions(filters?: { q?: string; agent?: string; start_date?: string; end_date?: string }): Promise<Decision[]> {
     try {
-      const res = await this.client.get('/decisions')
+      const res = await this.client.get('/decisions', { params: filters })
       return res.data.decisions || []
     } catch {
       console.error('Failed to fetch decisions')
@@ -76,7 +107,65 @@ class APIClient {
     return { tasks, decisions, memory, sync }
   }
 
-  // Subscribe to real-time updates (polling fallback)
+  // Subscribe to WebSocket updates
+  subscribeToWebSocket(callback: (message: WsMessage) => void): () => void {
+    this.wsCallbacks.push(callback)
+
+    // Return unsubscribe function
+    return () => {
+      this.wsCallbacks = this.wsCallbacks.filter(cb => cb !== callback)
+    }
+  }
+
+  // Emit WebSocket messages to all subscribers
+  private emitWsMessage(message: WsMessage) {
+    this.wsCallbacks.forEach(callback => {
+      try {
+        callback(message)
+      } catch (error) {
+        console.error('Error in WebSocket callback:', error)
+      }
+    })
+  }
+
+  // Initialize WebSocket connection
+  initWebSocket(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        const ws = new WebSocket(WS_URL)
+
+        ws.onopen = () => {
+          console.log('✓ WebSocket connected')
+          resolve()
+        }
+
+        ws.onmessage = (event) => {
+          try {
+            const message: WsMessage = JSON.parse(event.data)
+            this.emitWsMessage(message)
+          } catch (error) {
+            console.error('Failed to parse WebSocket message:', error)
+          }
+        }
+
+        ws.onerror = (error) => {
+          console.error('WebSocket error:', error)
+          reject(new Error('WebSocket connection failed'))
+        }
+
+        ws.onclose = () => {
+          console.log('WebSocket disconnected, falling back to polling')
+          // Attempt reconnect
+          setTimeout(() => this.initWebSocket(), 5000)
+        }
+      } catch (error) {
+        console.error('Failed to establish WebSocket:', error)
+        reject(error)
+      }
+    })
+  }
+
+  // Legacy polling fallback (for when WebSocket is unavailable)
   subscribeToUpdates(callback: (state: DashboardState) => void, interval = 5000) {
     const poll = async () => {
       const state = await this.getDashboardState()
@@ -89,3 +178,8 @@ class APIClient {
 }
 
 export const apiClient = new APIClient()
+
+// Try to connect WebSocket on init, but don't block if it fails
+apiClient.initWebSocket().catch(() => {
+  console.warn('WebSocket unavailable, polling will be used as fallback')
+})
