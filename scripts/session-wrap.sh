@@ -69,8 +69,8 @@ echo "✅ Wrap file: $WRAP_FILE"
 # 2. Sync Obsidian content to Memory
 echo ""
 echo "🔗 Syncing Obsidian → Memory..."
-if [ -f "$WORKSPACE/obsidian-sync.sh" ]; then
-    bash "$WORKSPACE/obsidian-sync.sh" 2>/dev/null || true
+if [ -f "$WORKSPACE/scripts/obsidian-sync.sh" ]; then
+    bash "$WORKSPACE/scripts/obsidian-sync.sh" 2>/dev/null || true
 fi
 
 # 3. Update MEMORY.md last sync timestamp

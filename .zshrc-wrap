@@ -11,18 +11,27 @@ export YD_OBSIDIAN="$YD_WORKSPACE/obsidian"
 function wrap() {
   case "${1:-}" in
     login|logout|status|history|help)
-      bash "$YD_WORKSPACE/wrap-cli.sh" "$@"
+      bash "$YD_WORKSPACE/scripts/wrap-cli.sh" "$@"
       ;;
     *)
-      bash "$YD_WORKSPACE/session-wrap.sh" "$@"
+      bash "$YD_WORKSPACE/scripts/session-wrap.sh" "$@"
       ;;
   esac
 }
 alias wrap-summary='wrap "$(date +%Y-%m-%d) — Session summary"'
 
 # Auto-sync
-alias sync-kb='bash "$YD_WORKSPACE/obsidian-sync.sh"'
+alias sync-kb='bash "$YD_WORKSPACE/scripts/obsidian-sync.sh"'
 alias sync-all='wrap && sync-kb'
+
+# Agent tools (v3.4.0)
+alias agent-context='bash "$YD_WORKSPACE/scripts/agent-context.sh"'
+alias agent-share='bash "$YD_WORKSPACE/scripts/agent-share.sh"'
+alias agent-decision='bash "$YD_WORKSPACE/scripts/agent-decision.sh"'
+alias agent-checkpoint='bash "$YD_WORKSPACE/scripts/agent-checkpoint.sh"'
+alias agent-knowledge='bash "$YD_WORKSPACE/scripts/agent-knowledge.sh"'
+alias agent-optimize='bash "$YD_WORKSPACE/scripts/agent-optimize.sh"'
+alias agent-tasks='bash "$YD_WORKSPACE/scripts/agent-tasks.sh"'
 
 # Memory shortcuts
 alias mem='cat "$YD_MEMORY/MEMORY.md" | head -50'
@@ -56,5 +65,11 @@ function yd-end-session() {
     echo "   2. Push: cd $YD_WORKSPACE && git push"
 }
 
-echo "✅ YD 2026 wrap aliases loaded"
+echo "✅ YD 2026 wrap aliases loaded (v3.4.0 agent-native)"
+echo ""
+echo "Session management:"
 echo "   wrap, sync-kb, mem, kb, yd-start-session, yd-end-session"
+echo ""
+echo "Agent tools:"
+echo "   agent-context, agent-share, agent-decision, agent-checkpoint"
+echo "   agent-knowledge, agent-optimize, agent-tasks"

@@ -1,6 +1,6 @@
 {
   "name": "session-wrap-skill",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "Universal session wrap-up: automatically persist project context to memory files for seamless resume",
   "main": "scripts/session-wrap.sh",
   "scripts": {
@@ -12,6 +12,13 @@
   "license": "MIT",
   "bin": {
     "session-wrap": "scripts/session-wrap.sh",
-    "obsidian-sync": "scripts/obsidian-sync.sh"
+    "obsidian-sync": "scripts/obsidian-sync.sh",
+    "agent-context": "scripts/agent-context.sh",
+    "agent-share": "scripts/agent-share.sh",
+    "agent-decision": "scripts/agent-decision.sh",
+    "agent-checkpoint": "scripts/agent-checkpoint.sh",
+    "agent-knowledge": "scripts/agent-knowledge.sh",
+    "agent-optimize": "scripts/agent-optimize.sh",
+    "agent-tasks": "scripts/agent-tasks.sh"
   }
 }
