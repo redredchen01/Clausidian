@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.env.local
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Project-specific (keep only session-wrap files)
+/dexapi/
+/test-ydapi/
+/watermark\ 0324/
+/Archived/
+/0323/
+/0325/
+/.claude/
+/obsidian/
+WORKSPACE.md
+CLAUDE.md
+.zshrc-workspace
+login-agents.sh
+.session-wrap-trigger.json
