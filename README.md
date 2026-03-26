@@ -33,6 +33,25 @@ Transform from manual session saving → **agent infrastructure** for multi-agen
 - ⚙️ **Auto-optimize** — Keep memory lean for context windows
 - 🔐 **Git-backed** — Checkpoints with full rollback support
 
+## 📚 Documentation
+
+Start here based on your needs:
+
+| Guide | Purpose |
+|-------|---------|
+| **[README.md](README.md)** (you are here) | Feature overview & quick reference |
+| **[QUICKSTART-EXAMPLES.md](QUICKSTART-EXAMPLES.md)** | 3 real-world copy-paste examples |
+| **[AGENT-WORKFLOW.md](AGENT-WORKFLOW.md)** | 6 workflow patterns + best practices |
+| **[INTEGRATIONS.md](INTEGRATIONS.md)** | Claude Code, Cursor, Windsurf setup |
+| **[PRODUCTION-SETUP.md](PRODUCTION-SETUP.md)** | Deploy backend to Railway/Docker/VPS |
+
+### Quick Path to Success
+
+1. **First 5 min:** Read [QUICKSTART-EXAMPLES.md](QUICKSTART-EXAMPLES.md) → Copy Example 1
+2. **First session:** Follow Example 1, save your first session wrap
+3. **Multi-agent:** When ready, follow [AGENT-WORKFLOW.md](AGENT-WORKFLOW.md) Pattern 2
+4. **Team setup:** See [INTEGRATIONS.md](INTEGRATIONS.md) for your editor
+
 ## Installation
 
 ### npm (Recommended)
