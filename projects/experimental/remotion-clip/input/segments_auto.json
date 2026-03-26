@@ -1,0 +1,42 @@
+{
+  "source": "source.mp4",
+  "outputDurationSec": 62.0,
+  "segments": [
+    {
+      "startSec": 55.0,
+      "endSec": 65.0,
+      "label": "Motion",
+      "reason": "composite=0.66 dominant=motion_estimate"
+    },
+    {
+      "startSec": 83.0,
+      "endSec": 93.0,
+      "label": "Audio Peak",
+      "reason": "composite=0.70 dominant=audio_rms"
+    },
+    {
+      "startSec": 193.0,
+      "endSec": 203.0,
+      "label": "Audio Peak",
+      "reason": "composite=0.61 dominant=audio_rms"
+    },
+    {
+      "startSec": 237.0,
+      "endSec": 247.0,
+      "label": "Audio Peak",
+      "reason": "composite=0.53 dominant=audio_rms"
+    },
+    {
+      "startSec": 326.0,
+      "endSec": 336.0,
+      "label": "Audio Peak",
+      "reason": "composite=0.69 dominant=audio_rms"
+    },
+    {
+      "startSec": 351.0,
+      "endSec": 361.0,
+      "label": "Audio Peak",
+      "reason": "composite=0.70 dominant=audio_rms"
+    }
+  ]
+}

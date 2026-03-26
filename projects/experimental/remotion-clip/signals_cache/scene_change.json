@@ -1,0 +1,2201 @@
+{
+  "signal_id": "scene_change",
+  "source": "/Users/dex/Downloads/_待分拣/视频待分拣/【3D】 マッチングアプリで知り合った女がサキュバスだった話_clean.mp4",
+  "version": "1.0.0",
+  "duration_sec": 396.969002,
+  "params": {
+    "window_sec": 2.0,
+    "threshold": 0.3
+  },
+  "windows": [
+    {
+      "start_sec": 0.0,
+      "end_sec": 2.0,
+      "score": 1.0,
+      "raw_value": 0.907985,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.908
+      }
+    },
+    {
+      "start_sec": 2.0,
+      "end_sec": 4.0,
+      "score": 0.038737850711748664,
+      "raw_value": 0.035183,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0352
+      }
+    },
+    {
+      "start_sec": 4.0,
+      "end_sec": 6.0,
+      "score": 0.003284231394036179,
+      "raw_value": 0.002992,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.003
+      }
+    },
+    {
+      "start_sec": 6.0,
+      "end_sec": 8.0,
+      "score": 0.008798700404746826,
+      "raw_value": 0.007999,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.008
+      }
+    },
+    {
+      "start_sec": 8.0,
+      "end_sec": 10.0,
+      "score": 0.005740246152151766,
+      "raw_value": 0.005222,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0052
+      }
+    },
+    {
+      "start_sec": 10.0,
+      "end_sec": 12.0,
+      "score": 0.00562900960929541,
+      "raw_value": 0.005121,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0051
+      }
+    },
+    {
+      "start_sec": 12.0,
+      "end_sec": 14.0,
+      "score": 0.007394476720174013,
+      "raw_value": 0.006724,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0067
+      }
+    },
+    {
+      "start_sec": 14.0,
+      "end_sec": 16.0,
+      "score": 0.011976100663564524,
+      "raw_value": 0.010884,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0109
+      }
+    },
+    {
+      "start_sec": 16.0,
+      "end_sec": 18.0,
+      "score": 0.015766953935956386,
+      "raw_value": 0.014326,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0143
+      }
+    },
+    {
+      "start_sec": 18.0,
+      "end_sec": 20.0,
+      "score": 0.00568738126049726,
+      "raw_value": 0.005174,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0052
+      }
+    },
+    {
+      "start_sec": 20.0,
+      "end_sec": 22.0,
+      "score": 0.005293097276907403,
+      "raw_value": 0.004816,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0048
+      }
+    },
+    {
+      "start_sec": 22.0,
+      "end_sec": 24.0,
+      "score": 0.012045485833861063,
+      "raw_value": 0.010947,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0109
+      }
+    },
+    {
+      "start_sec": 24.0,
+      "end_sec": 26.0,
+      "score": 0.00627440182824417,
+      "raw_value": 0.005707,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0057
+      }
+    },
+    {
+      "start_sec": 26.0,
+      "end_sec": 28.0,
+      "score": 0.02100938902502822,
+      "raw_value": 0.019086,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0191
+      }
+    },
+    {
+      "start_sec": 28.0,
+      "end_sec": 30.0,
+      "score": 0.015083014400176216,
+      "raw_value": 0.013705,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0137
+      }
+    },
+    {
+      "start_sec": 30.0,
+      "end_sec": 32.0,
+      "score": 0.004271042704920289,
+      "raw_value": 0.003888,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0039
+      }
+    },
+    {
+      "start_sec": 32.0,
+      "end_sec": 34.0,
+      "score": 0.011524546380682288,
+      "raw_value": 0.010474,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0105
+      }
+    },
+    {
+      "start_sec": 34.0,
+      "end_sec": 36.0,
+      "score": 0.0038602384426883996,
+      "raw_value": 0.003515,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0035
+      }
+    },
+    {
+      "start_sec": 36.0,
+      "end_sec": 38.0,
+      "score": 0.026446763402076044,
+      "raw_value": 0.024023,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.024
+      }
+    },
+    {
+      "start_sec": 38.0,
+      "end_sec": 40.0,
+      "score": 0.011372559817175582,
+      "raw_value": 0.010336,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0103
+      }
+    },
+    {
+      "start_sec": 40.0,
+      "end_sec": 42.0,
+      "score": 0.015806602604697264,
+      "raw_value": 0.014362,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0144
+      }
+    },
+    {
+      "start_sec": 42.0,
+      "end_sec": 44.0,
+      "score": 0.007687436328092733,
+      "raw_value": 0.00699,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.007
+      }
+    },
+    {
+      "start_sec": 44.0,
+      "end_sec": 46.0,
+      "score": 0.018512624246262287,
+      "raw_value": 0.016819,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0168
+      }
+    },
+    {
+      "start_sec": 46.0,
+      "end_sec": 48.0,
+      "score": 0.009308626338830915,
+      "raw_value": 0.008462,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0085
+      }
+    },
+    {
+      "start_sec": 48.0,
+      "end_sec": 50.0,
+      "score": 0.004473691456262563,
+      "raw_value": 0.004072,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0041
+      }
+    },
+    {
+      "start_sec": 50.0,
+      "end_sec": 52.0,
+      "score": 0.004764448360362344,
+      "raw_value": 0.004336,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0043
+      }
+    },
+    {
+      "start_sec": 52.0,
+      "end_sec": 54.0,
+      "score": 0.015904622924639993,
+      "raw_value": 0.014451,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0145
+      }
+    },
+    {
+      "start_sec": 54.0,
+      "end_sec": 56.0,
+      "score": 0.08121038574850628,
+      "raw_value": 0.073747,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0737
+      }
+    },
+    {
+      "start_sec": 56.0,
+      "end_sec": 58.0,
+      "score": 0.06892039979074314,
+      "raw_value": 0.062588,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0626
+      }
+    },
+    {
+      "start_sec": 58.0,
+      "end_sec": 60.0,
+      "score": 0.00691869269528346,
+      "raw_value": 0.006292,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0063
+      }
+    },
+    {
+      "start_sec": 60.0,
+      "end_sec": 62.0,
+      "score": 0.014096203089292105,
+      "raw_value": 0.012809,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0128
+      }
+    },
+    {
+      "start_sec": 62.0,
+      "end_sec": 64.0,
+      "score": 0.008373578567691841,
+      "raw_value": 0.007613,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0076
+      }
+    },
+    {
+      "start_sec": 64.0,
+      "end_sec": 66.0,
+      "score": 0.6273234395220133,
+      "raw_value": 0.569604,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.5696
+      }
+    },
+    {
+      "start_sec": 66.0,
+      "end_sec": 68.0,
+      "score": 0.004938461962058427,
+      "raw_value": 0.004494,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0045
+      }
+    },
+    {
+      "start_sec": 68.0,
+      "end_sec": 70.0,
+      "score": 0.6999994493240453,
+      "raw_value": 0.635592,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.6356
+      }
+    },
+    {
+      "start_sec": 70.0,
+      "end_sec": 72.0,
+      "score": 0.05829675927200638,
+      "raw_value": 0.052942,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0529
+      }
+    },
+    {
+      "start_sec": 72.0,
+      "end_sec": 74.0,
+      "score": 0.07969602687298659,
+      "raw_value": 0.072372,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0724
+      }
+    },
+    {
+      "start_sec": 74.0,
+      "end_sec": 76.0,
+      "score": 0.05603127839422891,
+      "raw_value": 0.050885,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0509
+      }
+    },
+    {
+      "start_sec": 76.0,
+      "end_sec": 78.0,
+      "score": 0.011339519259891516,
+      "raw_value": 0.010306,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0103
+      }
+    },
+    {
+      "start_sec": 78.0,
+      "end_sec": 80.0,
+      "score": 0.06564387786007322,
+      "raw_value": 0.059613,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0596
+      }
+    },
+    {
+      "start_sec": 80.0,
+      "end_sec": 82.0,
+      "score": 0.09150472204631184,
+      "raw_value": 0.083094,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0831
+      }
+    },
+    {
+      "start_sec": 82.0,
+      "end_sec": 84.0,
+      "score": 0.04405187367493598,
+      "raw_value": 0.040008,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.04
+      }
+    },
+    {
+      "start_sec": 84.0,
+      "end_sec": 86.0,
+      "score": 0.030202373413364902,
+      "raw_value": 0.027433,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0274
+      }
+    },
+    {
+      "start_sec": 86.0,
+      "end_sec": 88.0,
+      "score": 0.024702221977477352,
+      "raw_value": 0.022439,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0224
+      }
+    },
+    {
+      "start_sec": 88.0,
+      "end_sec": 90.0,
+      "score": 0.015022440045155428,
+      "raw_value": 0.01365,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0137
+      }
+    },
+    {
+      "start_sec": 90.0,
+      "end_sec": 92.0,
+      "score": 0.017338583110768465,
+      "raw_value": 0.015753,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0158
+      }
+    },
+    {
+      "start_sec": 92.0,
+      "end_sec": 94.0,
+      "score": 0.03405380104077755,
+      "raw_value": 0.03093,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0309
+      }
+    },
+    {
+      "start_sec": 94.0,
+      "end_sec": 96.0,
+      "score": 0.050876951457914585,
+      "raw_value": 0.046205,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0462
+      }
+    },
+    {
+      "start_sec": 96.0,
+      "end_sec": 98.0,
+      "score": 0.013467331148985379,
+      "raw_value": 0.012238,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0122
+      }
+    },
+    {
+      "start_sec": 98.0,
+      "end_sec": 100.0,
+      "score": 0.01828134034527382,
+      "raw_value": 0.016609,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0166
+      }
+    },
+    {
+      "start_sec": 100.0,
+      "end_sec": 102.0,
+      "score": 0.022185632864340974,
+      "raw_value": 0.020154,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0202
+      }
+    },
+    {
+      "start_sec": 102.0,
+      "end_sec": 104.0,
+      "score": 0.015201960406398854,
+      "raw_value": 0.013813,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0138
+      }
+    },
+    {
+      "start_sec": 104.0,
+      "end_sec": 106.0,
+      "score": 0.013130317464687903,
+      "raw_value": 0.011932,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0119
+      }
+    },
+    {
+      "start_sec": 106.0,
+      "end_sec": 108.0,
+      "score": 0.013541121726919793,
+      "raw_value": 0.012305,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0123
+      }
+    },
+    {
+      "start_sec": 108.0,
+      "end_sec": 110.0,
+      "score": 0.01844764448360362,
+      "raw_value": 0.01676,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0168
+      }
+    },
+    {
+      "start_sec": 110.0,
+      "end_sec": 112.0,
+      "score": 0.010186403810677607,
+      "raw_value": 0.009259,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0093
+      }
+    },
+    {
+      "start_sec": 112.0,
+      "end_sec": 114.0,
+      "score": 0.009500261571078498,
+      "raw_value": 0.008636,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0086
+      }
+    },
+    {
+      "start_sec": 114.0,
+      "end_sec": 116.0,
+      "score": 0.00949916021916903,
+      "raw_value": 0.008635,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0086
+      }
+    },
+    {
+      "start_sec": 116.0,
+      "end_sec": 118.0,
+      "score": 0.021404774360527547,
+      "raw_value": 0.019445,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0194
+      }
+    },
+    {
+      "start_sec": 118.0,
+      "end_sec": 120.0,
+      "score": 0.030273961287480382,
+      "raw_value": 0.027498,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0275
+      }
+    },
+    {
+      "start_sec": 120.0,
+      "end_sec": 122.0,
+      "score": 0.005060712024009472,
+      "raw_value": 0.004605,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0046
+      }
+    },
+    {
+      "start_sec": 122.0,
+      "end_sec": 124.0,
+      "score": 0.009114788402764393,
+      "raw_value": 0.008286,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0083
+      }
+    },
+    {
+      "start_sec": 124.0,
+      "end_sec": 126.0,
+      "score": 0.004890002478041796,
+      "raw_value": 0.00445,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0044
+      }
+    },
+    {
+      "start_sec": 126.0,
+      "end_sec": 128.0,
+      "score": 0.043343704397147485,
+      "raw_value": 0.039365,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0394
+      }
+    },
+    {
+      "start_sec": 128.0,
+      "end_sec": 130.0,
+      "score": 0.03369255761447176,
+      "raw_value": 0.030602,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0306
+      }
+    },
+    {
+      "start_sec": 130.0,
+      "end_sec": 132.0,
+      "score": 0.05018309975494919,
+      "raw_value": 0.045575,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0456
+      }
+    },
+    {
+      "start_sec": 132.0,
+      "end_sec": 134.0,
+      "score": 0.03375974008094936,
+      "raw_value": 0.030663,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0307
+      }
+    },
+    {
+      "start_sec": 134.0,
+      "end_sec": 136.0,
+      "score": 0.07170351606597099,
+      "raw_value": 0.065115,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0651
+      }
+    },
+    {
+      "start_sec": 136.0,
+      "end_sec": 138.0,
+      "score": 0.016742751727745808,
+      "raw_value": 0.015212,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0152
+      }
+    },
+    {
+      "start_sec": 138.0,
+      "end_sec": 140.0,
+      "score": 0.00431069137366117,
+      "raw_value": 0.003924,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0039
+      }
+    },
+    {
+      "start_sec": 140.0,
+      "end_sec": 142.0,
+      "score": 0.027602081555108893,
+      "raw_value": 0.025072,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0251
+      }
+    },
+    {
+      "start_sec": 142.0,
+      "end_sec": 144.0,
+      "score": 0.045719320465871856,
+      "raw_value": 0.041522,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0415
+      }
+    },
+    {
+      "start_sec": 144.0,
+      "end_sec": 146.0,
+      "score": 0.01909303670255238,
+      "raw_value": 0.017346,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0173
+      }
+    },
+    {
+      "start_sec": 146.0,
+      "end_sec": 148.0,
+      "score": 0.0755593491010215,
+      "raw_value": 0.068616,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0686
+      }
+    },
+    {
+      "start_sec": 148.0,
+      "end_sec": 150.0,
+      "score": 0.06984553539469698,
+      "raw_value": 0.063428,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0634
+      }
+    },
+    {
+      "start_sec": 150.0,
+      "end_sec": 152.0,
+      "score": 0.18415595143038077,
+      "raw_value": 0.167219,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.1672
+      }
+    },
+    {
+      "start_sec": 152.0,
+      "end_sec": 154.0,
+      "score": 0.004801894325284286,
+      "raw_value": 0.00437,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0044
+      }
+    },
+    {
+      "start_sec": 154.0,
+      "end_sec": 156.0,
+      "score": 0.004525454996007599,
+      "raw_value": 0.004119,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0041
+      }
+    },
+    {
+      "start_sec": 156.0,
+      "end_sec": 158.0,
+      "score": 0.004051873674935983,
+      "raw_value": 0.003689,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0037
+      }
+    },
+    {
+      "start_sec": 158.0,
+      "end_sec": 160.0,
+      "score": 0.0043095900217517006,
+      "raw_value": 0.003923,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0039
+      }
+    },
+    {
+      "start_sec": 160.0,
+      "end_sec": 162.0,
+      "score": 0.0055552190313609955,
+      "raw_value": 0.005054,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0051
+      }
+    },
+    {
+      "start_sec": 162.0,
+      "end_sec": 164.0,
+      "score": 0.005776590765164239,
+      "raw_value": 0.005255,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0053
+      }
+    },
+    {
+      "start_sec": 164.0,
+      "end_sec": 166.0,
+      "score": 0.0052490432005286485,
+      "raw_value": 0.004776,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0048
+      }
+    },
+    {
+      "start_sec": 166.0,
+      "end_sec": 168.0,
+      "score": 0.005537597400809493,
+      "raw_value": 0.005038,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.005
+      }
+    },
+    {
+      "start_sec": 168.0,
+      "end_sec": 170.0,
+      "score": 0.005094853933203007,
+      "raw_value": 0.004636,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0046
+      }
+    },
+    {
+      "start_sec": 170.0,
+      "end_sec": 172.0,
+      "score": 0.006066246317354553,
+      "raw_value": 0.005518,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0055
+      }
+    },
+    {
+      "start_sec": 172.0,
+      "end_sec": 174.0,
+      "score": 0.0050298741705443436,
+      "raw_value": 0.004577,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0046
+      }
+    },
+    {
+      "start_sec": 174.0,
+      "end_sec": 176.0,
+      "score": 0.005589360940554531,
+      "raw_value": 0.005085,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0051
+      }
+    },
+    {
+      "start_sec": 176.0,
+      "end_sec": 178.0,
+      "score": 0.3678757675046119,
+      "raw_value": 0.334032,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.334
+      }
+    },
+    {
+      "start_sec": 178.0,
+      "end_sec": 180.0,
+      "score": 0.004452765769982654,
+      "raw_value": 0.004053,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0041
+      }
+    },
+    {
+      "start_sec": 180.0,
+      "end_sec": 182.0,
+      "score": 0.006517800600236791,
+      "raw_value": 0.005928,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0059
+      }
+    },
+    {
+      "start_sec": 182.0,
+      "end_sec": 184.0,
+      "score": 0.009748065750708995,
+      "raw_value": 0.008861,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0089
+      }
+    },
+    {
+      "start_sec": 184.0,
+      "end_sec": 186.0,
+      "score": 0.006306341033618767,
+      "raw_value": 0.005736,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0057
+      }
+    },
+    {
+      "start_sec": 186.0,
+      "end_sec": 188.0,
+      "score": 0.005298604036454748,
+      "raw_value": 0.004821,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0048
+      }
+    },
+    {
+      "start_sec": 188.0,
+      "end_sec": 190.0,
+      "score": 0.005869104325559624,
+      "raw_value": 0.005339,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0053
+      }
+    },
+    {
+      "start_sec": 190.0,
+      "end_sec": 192.0,
+      "score": 0.007056361683967069,
+      "raw_value": 0.006417,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0064
+      }
+    },
+    {
+      "start_sec": 192.0,
+      "end_sec": 194.0,
+      "score": 0.007374652385803574,
+      "raw_value": 0.006706,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0067
+      }
+    },
+    {
+      "start_sec": 194.0,
+      "end_sec": 196.0,
+      "score": 0.6354139706489715,
+      "raw_value": 0.57695,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.5769
+      }
+    },
+    {
+      "start_sec": 196.0,
+      "end_sec": 198.0,
+      "score": 0.006546435749882981,
+      "raw_value": 0.005954,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.006
+      }
+    },
+    {
+      "start_sec": 198.0,
+      "end_sec": 200.0,
+      "score": 0.00654753710179245,
+      "raw_value": 0.005955,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.006
+      }
+    },
+    {
+      "start_sec": 200.0,
+      "end_sec": 202.0,
+      "score": 0.006354800517635398,
+      "raw_value": 0.00578,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0058
+      }
+    },
+    {
+      "start_sec": 202.0,
+      "end_sec": 204.0,
+      "score": 0.005656543407032132,
+      "raw_value": 0.005146,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0051
+      }
+    },
+    {
+      "start_sec": 204.0,
+      "end_sec": 206.0,
+      "score": 0.8198694897987279,
+      "raw_value": 0.744431,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.7444
+      }
+    },
+    {
+      "start_sec": 206.0,
+      "end_sec": 208.0,
+      "score": 0.016806630138495003,
+      "raw_value": 0.01527,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0153
+      }
+    },
+    {
+      "start_sec": 208.0,
+      "end_sec": 210.0,
+      "score": 0.011136870508549244,
+      "raw_value": 0.010122,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0101
+      }
+    },
+    {
+      "start_sec": 210.0,
+      "end_sec": 212.0,
+      "score": 0.014623750653927695,
+      "raw_value": 0.013288,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0133
+      }
+    },
+    {
+      "start_sec": 212.0,
+      "end_sec": 214.0,
+      "score": 0.013914480024229741,
+      "raw_value": 0.012644,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0126
+      }
+    },
+    {
+      "start_sec": 214.0,
+      "end_sec": 216.0,
+      "score": 0.0152746496324238,
+      "raw_value": 0.013879,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0139
+      }
+    },
+    {
+      "start_sec": 216.0,
+      "end_sec": 218.0,
+      "score": 0.012804317299485118,
+      "raw_value": 0.011636,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0116
+      }
+    },
+    {
+      "start_sec": 218.0,
+      "end_sec": 220.0,
+      "score": 0.015906825628458934,
+      "raw_value": 0.014453,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0145
+      }
+    },
+    {
+      "start_sec": 220.0,
+      "end_sec": 222.0,
+      "score": 0.019119469148379635,
+      "raw_value": 0.01737,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0174
+      }
+    },
+    {
+      "start_sec": 222.0,
+      "end_sec": 224.0,
+      "score": 0.019229604339326523,
+      "raw_value": 0.01747,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0175
+      }
+    },
+    {
+      "start_sec": 224.0,
+      "end_sec": 226.0,
+      "score": 0.6180808942977505,
+      "raw_value": 0.561212,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.5612
+      }
+    },
+    {
+      "start_sec": 226.0,
+      "end_sec": 228.0,
+      "score": 0.004981414686527712,
+      "raw_value": 0.004533,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0045
+      }
+    },
+    {
+      "start_sec": 228.0,
+      "end_sec": 230.0,
+      "score": 0.00702662518241141,
+      "raw_value": 0.00639,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0064
+      }
+    },
+    {
+      "start_sec": 230.0,
+      "end_sec": 232.0,
+      "score": 0.0063977532421046835,
+      "raw_value": 0.005819,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0058
+      }
+    },
+    {
+      "start_sec": 232.0,
+      "end_sec": 234.0,
+      "score": 0.006486962746771662,
+      "raw_value": 0.0059,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0059
+      }
+    },
+    {
+      "start_sec": 234.0,
+      "end_sec": 236.0,
+      "score": 0.006326165367989206,
+      "raw_value": 0.005754,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0058
+      }
+    },
+    {
+      "start_sec": 236.0,
+      "end_sec": 238.0,
+      "score": 0.0057138137063245135,
+      "raw_value": 0.005198,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0052
+      }
+    },
+    {
+      "start_sec": 238.0,
+      "end_sec": 240.0,
+      "score": 0.00610809768991437,
+      "raw_value": 0.005556,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0056
+      }
+    },
+    {
+      "start_sec": 240.0,
+      "end_sec": 242.0,
+      "score": 0.005774388061345301,
+      "raw_value": 0.005253,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0053
+      }
+    },
+    {
+      "start_sec": 242.0,
+      "end_sec": 244.0,
+      "score": 0.0055409014565379,
+      "raw_value": 0.005041,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.005
+      }
+    },
+    {
+      "start_sec": 244.0,
+      "end_sec": 246.0,
+      "score": 0.005839367824003965,
+      "raw_value": 0.005312,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0053
+      }
+    },
+    {
+      "start_sec": 246.0,
+      "end_sec": 248.0,
+      "score": 0.0075046119111209005,
+      "raw_value": 0.006824,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0068
+      }
+    },
+    {
+      "start_sec": 248.0,
+      "end_sec": 250.0,
+      "score": 0.49586937966353695,
+      "raw_value": 0.450247,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.4502
+      }
+    },
+    {
+      "start_sec": 250.0,
+      "end_sec": 252.0,
+      "score": 0.005604779867287095,
+      "raw_value": 0.005099,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0051
+      }
+    },
+    {
+      "start_sec": 252.0,
+      "end_sec": 254.0,
+      "score": 0.007087199537432198,
+      "raw_value": 0.006445,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0064
+      }
+    },
+    {
+      "start_sec": 254.0,
+      "end_sec": 256.0,
+      "score": 0.010697431096671164,
+      "raw_value": 0.009723,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0097
+      }
+    },
+    {
+      "start_sec": 256.0,
+      "end_sec": 258.0,
+      "score": 0.01418871664968749,
+      "raw_value": 0.012893,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0129
+      }
+    },
+    {
+      "start_sec": 258.0,
+      "end_sec": 260.0,
+      "score": 0.4510080123351413,
+      "raw_value": 0.409514,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.4095
+      }
+    },
+    {
+      "start_sec": 260.0,
+      "end_sec": 262.0,
+      "score": 0.005862496214102811,
+      "raw_value": 0.005333,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0053
+      }
+    },
+    {
+      "start_sec": 262.0,
+      "end_sec": 264.0,
+      "score": 0.00853217324265536,
+      "raw_value": 0.007757,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0078
+      }
+    },
+    {
+      "start_sec": 264.0,
+      "end_sec": 266.0,
+      "score": 0.005436273025138357,
+      "raw_value": 0.004946,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0049
+      }
+    },
+    {
+      "start_sec": 266.0,
+      "end_sec": 268.0,
+      "score": 0.005269968886808557,
+      "raw_value": 0.004795,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0048
+      }
+    },
+    {
+      "start_sec": 268.0,
+      "end_sec": 270.0,
+      "score": 0.005361381095294475,
+      "raw_value": 0.004878,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0049
+      }
+    },
+    {
+      "start_sec": 270.0,
+      "end_sec": 272.0,
+      "score": 0.0051906715493267985,
+      "raw_value": 0.004723,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0047
+      }
+    },
+    {
+      "start_sec": 272.0,
+      "end_sec": 274.0,
+      "score": 0.006173077452573034,
+      "raw_value": 0.005615,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0056
+      }
+    },
+    {
+      "start_sec": 274.0,
+      "end_sec": 276.0,
+      "score": 0.005561827142817809,
+      "raw_value": 0.00506,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0051
+      }
+    },
+    {
+      "start_sec": 276.0,
+      "end_sec": 278.0,
+      "score": 0.005112475563754508,
+      "raw_value": 0.004652,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0047
+      }
+    },
+    {
+      "start_sec": 278.0,
+      "end_sec": 280.0,
+      "score": 0.005149921528676451,
+      "raw_value": 0.004686,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0047
+      }
+    },
+    {
+      "start_sec": 280.0,
+      "end_sec": 282.0,
+      "score": 0.0052908945730884656,
+      "raw_value": 0.004814,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0048
+      }
+    },
+    {
+      "start_sec": 282.0,
+      "end_sec": 284.0,
+      "score": 0.6428381838707012,
+      "raw_value": 0.583691,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.5837
+      }
+    },
+    {
+      "start_sec": 284.0,
+      "end_sec": 286.0,
+      "score": 0.007618051157796194,
+      "raw_value": 0.006927,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0069
+      }
+    },
+    {
+      "start_sec": 286.0,
+      "end_sec": 288.0,
+      "score": 0.009462815606156557,
+      "raw_value": 0.008602,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0086
+      }
+    },
+    {
+      "start_sec": 288.0,
+      "end_sec": 290.0,
+      "score": 0.01031085657644759,
+      "raw_value": 0.009372,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0094
+      }
+    },
+    {
+      "start_sec": 290.0,
+      "end_sec": 292.0,
+      "score": 0.010305349816900245,
+      "raw_value": 0.009367,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0094
+      }
+    },
+    {
+      "start_sec": 292.0,
+      "end_sec": 294.0,
+      "score": 0.006855915636443734,
+      "raw_value": 0.006235,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0062
+      }
+    },
+    {
+      "start_sec": 294.0,
+      "end_sec": 296.0,
+      "score": 0.714054902392687,
+      "raw_value": 0.648354,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.6484
+      }
+    },
+    {
+      "start_sec": 296.0,
+      "end_sec": 298.0,
+      "score": 0.007765632313665023,
+      "raw_value": 0.007061,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0071
+      }
+    },
+    {
+      "start_sec": 298.0,
+      "end_sec": 300.0,
+      "score": 0.005145516121038575,
+      "raw_value": 0.004682,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0047
+      }
+    },
+    {
+      "start_sec": 300.0,
+      "end_sec": 302.0,
+      "score": 0.005532090641262149,
+      "raw_value": 0.005033,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.005
+      }
+    },
+    {
+      "start_sec": 302.0,
+      "end_sec": 304.0,
+      "score": 0.0047181915801646525,
+      "raw_value": 0.004294,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0043
+      }
+    },
+    {
+      "start_sec": 304.0,
+      "end_sec": 306.0,
+      "score": 0.005503455491615959,
+      "raw_value": 0.005007,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.005
+      }
+    },
+    {
+      "start_sec": 306.0,
+      "end_sec": 308.0,
+      "score": 0.004875684903218701,
+      "raw_value": 0.004437,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0044
+      }
+    },
+    {
+      "start_sec": 308.0,
+      "end_sec": 310.0,
+      "score": 0.005426360857953138,
+      "raw_value": 0.004937,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0049
+      }
+    },
+    {
+      "start_sec": 310.0,
+      "end_sec": 312.0,
+      "score": 0.005626806905476472,
+      "raw_value": 0.005119,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0051
+      }
+    },
+    {
+      "start_sec": 312.0,
+      "end_sec": 314.0,
+      "score": 0.7622996227869709,
+      "raw_value": 0.692159,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.6922
+      }
+    },
+    {
+      "start_sec": 314.0,
+      "end_sec": 316.0,
+      "score": 0.012940884936259257,
+      "raw_value": 0.01176,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0118
+      }
+    },
+    {
+      "start_sec": 316.0,
+      "end_sec": 318.0,
+      "score": 0.011910019548996393,
+      "raw_value": 0.010824,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0108
+      }
+    },
+    {
+      "start_sec": 318.0,
+      "end_sec": 320.0,
+      "score": 0.028353203557366664,
+      "raw_value": 0.025754,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0258
+      }
+    },
+    {
+      "start_sec": 320.0,
+      "end_sec": 322.0,
+      "score": 0.015471791624218727,
+      "raw_value": 0.014058,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0141
+      }
+    },
+    {
+      "start_sec": 322.0,
+      "end_sec": 324.0,
+      "score": 0.8223045788705636,
+      "raw_value": 0.746642,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.7466
+      }
+    },
+    {
+      "start_sec": 324.0,
+      "end_sec": 326.0,
+      "score": 0.0051157796194829155,
+      "raw_value": 0.004655,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0047
+      }
+    },
+    {
+      "start_sec": 326.0,
+      "end_sec": 328.0,
+      "score": 0.005235826977615023,
+      "raw_value": 0.004764,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0048
+      }
+    },
+    {
+      "start_sec": 328.0,
+      "end_sec": 330.0,
+      "score": 0.005041989041548501,
+      "raw_value": 0.004588,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0046
+      }
+    },
+    {
+      "start_sec": 330.0,
+      "end_sec": 332.0,
+      "score": 0.005495746028249676,
+      "raw_value": 0.005,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.005
+      }
+    },
+    {
+      "start_sec": 332.0,
+      "end_sec": 334.0,
+      "score": 0.473117651917729,
+      "raw_value": 0.429589,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.4296
+      }
+    },
+    {
+      "start_sec": 334.0,
+      "end_sec": 336.0,
+      "score": 0.0060365098157988935,
+      "raw_value": 0.005491,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0055
+      }
+    },
+    {
+      "start_sec": 336.0,
+      "end_sec": 338.0,
+      "score": 0.45114788402764383,
+      "raw_value": 0.409641,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.4096
+      }
+    },
+    {
+      "start_sec": 338.0,
+      "end_sec": 340.0,
+      "score": 0.009852694182108539,
+      "raw_value": 0.008956,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.009
+      }
+    },
+    {
+      "start_sec": 340.0,
+      "end_sec": 342.0,
+      "score": 0.006826179134888075,
+      "raw_value": 0.006208,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0062
+      }
+    },
+    {
+      "start_sec": 342.0,
+      "end_sec": 344.0,
+      "score": 0.006281009939700983,
+      "raw_value": 0.005713,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0057
+      }
+    },
+    {
+      "start_sec": 344.0,
+      "end_sec": 346.0,
+      "score": 0.008678653046614719,
+      "raw_value": 0.00789,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0079
+      }
+    },
+    {
+      "start_sec": 346.0,
+      "end_sec": 348.0,
+      "score": 0.004277650816377102,
+      "raw_value": 0.003894,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0039
+      }
+    },
+    {
+      "start_sec": 348.0,
+      "end_sec": 350.0,
+      "score": 0.005260056719623338,
+      "raw_value": 0.004786,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0048
+      }
+    },
+    {
+      "start_sec": 350.0,
+      "end_sec": 352.0,
+      "score": 0.005554117679451527,
+      "raw_value": 0.005053,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0051
+      }
+    },
+    {
+      "start_sec": 352.0,
+      "end_sec": 354.0,
+      "score": 0.005128995842396542,
+      "raw_value": 0.004667,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0047
+      }
+    },
+    {
+      "start_sec": 354.0,
+      "end_sec": 356.0,
+      "score": 0.006155455822021531,
+      "raw_value": 0.005599,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0056
+      }
+    },
+    {
+      "start_sec": 356.0,
+      "end_sec": 358.0,
+      "score": 0.004997934965169746,
+      "raw_value": 0.004548,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0045
+      }
+    },
+    {
+      "start_sec": 358.0,
+      "end_sec": 360.0,
+      "score": 0.6317354552713456,
+      "raw_value": 0.57361,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.5736
+      }
+    },
+    {
+      "start_sec": 360.0,
+      "end_sec": 362.0,
+      "score": 0.00446598199289628,
+      "raw_value": 0.004065,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0041
+      }
+    },
+    {
+      "start_sec": 362.0,
+      "end_sec": 364.0,
+      "score": 0.7276268619730719,
+      "raw_value": 0.660677,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 1,
+        "max_scene_score": 0.6607
+      }
+    },
+    {
+      "start_sec": 364.0,
+      "end_sec": 366.0,
+      "score": 0.010112613232743192,
+      "raw_value": 0.009192,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0092
+      }
+    },
+    {
+      "start_sec": 366.0,
+      "end_sec": 368.0,
+      "score": 0.0052126985875161755,
+      "raw_value": 0.004743,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0047
+      }
+    },
+    {
+      "start_sec": 368.0,
+      "end_sec": 370.0,
+      "score": 0.007303064511688097,
+      "raw_value": 0.006641,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0066
+      }
+    },
+    {
+      "start_sec": 370.0,
+      "end_sec": 372.0,
+      "score": 0.00765219306698973,
+      "raw_value": 0.006958,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.007
+      }
+    },
+    {
+      "start_sec": 372.0,
+      "end_sec": 374.0,
+      "score": 0.007496902447754619,
+      "raw_value": 0.006817,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0068
+      }
+    },
+    {
+      "start_sec": 374.0,
+      "end_sec": 376.0,
+      "score": 0.007592720063878411,
+      "raw_value": 0.006904,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0069
+      }
+    },
+    {
+      "start_sec": 376.0,
+      "end_sec": 378.0,
+      "score": 0.007777747184669182,
+      "raw_value": 0.007072,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0071
+      }
+    },
+    {
+      "start_sec": 378.0,
+      "end_sec": 380.0,
+      "score": 0.007532145708857622,
+      "raw_value": 0.006849,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0068
+      }
+    },
+    {
+      "start_sec": 380.0,
+      "end_sec": 382.0,
+      "score": 0.008199564965995759,
+      "raw_value": 0.007455,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0075
+      }
+    },
+    {
+      "start_sec": 382.0,
+      "end_sec": 384.0,
+      "score": 0.007859247225969878,
+      "raw_value": 0.007146,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0071
+      }
+    },
+    {
+      "start_sec": 384.0,
+      "end_sec": 386.0,
+      "score": 0.007761226906027148,
+      "raw_value": 0.007057,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0071
+      }
+    },
+    {
+      "start_sec": 386.0,
+      "end_sec": 388.0,
+      "score": 0.007706159310553705,
+      "raw_value": 0.007007,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.007
+      }
+    },
+    {
+      "start_sec": 388.0,
+      "end_sec": 390.0,
+      "score": 0.0073239901979680055,
+      "raw_value": 0.00666,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0067
+      }
+    },
+    {
+      "start_sec": 390.0,
+      "end_sec": 392.0,
+      "score": 0.01103334342905917,
+      "raw_value": 0.010028,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.01
+      }
+    },
+    {
+      "start_sec": 392.0,
+      "end_sec": 394.0,
+      "score": 0.09703901539139294,
+      "raw_value": 0.088119,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0881
+      }
+    },
+    {
+      "start_sec": 394.0,
+      "end_sec": 396.0,
+      "score": 4.4054076378754906e-06,
+      "raw_value": 1.4e-05,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0
+      }
+    },
+    {
+      "start_sec": 396.0,
+      "end_sec": 396.969002,
+      "score": 0.0,
+      "raw_value": 1e-05,
+      "label": "scene_change",
+      "meta": {
+        "change_count": 0,
+        "max_scene_score": 0.0
+      }
+    }
+  ]
+}

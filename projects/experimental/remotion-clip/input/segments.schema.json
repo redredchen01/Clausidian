@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Highlight Segments",
+  "type": "object",
+  "required": ["source", "outputDurationSec", "segments"],
+  "properties": {
+    "source": {
+      "type": "string",
+      "description": "Path or URL to source video"
+    },
+    "outputDurationSec": {
+      "type": "number"
+    },
+    "segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["startSec", "endSec"],
+        "properties": {
+          "startSec": { "type": "number", "minimum": 0 },
+          "endSec": { "type": "number", "exclusiveMinimum": 0 },
+          "label": { "type": "string" },
+          "reason": { "type": "string" },
+          "speed": { "type": "number", "default": 1 },
+          "volume": { "type": "number", "default": 1 },
+          "transition": { "type": "string" }
+        }
+      }
+    }
+  }
+}

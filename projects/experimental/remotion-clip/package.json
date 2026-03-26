@@ -1,0 +1,22 @@
+{
+  "name": "remotion-clip",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "npx remotion studio src/index.ts",
+    "build": "npx remotion bundle src/index.ts",
+    "render": "npx remotion render src/index.ts Highlight out/highlight.mp4 --props=./input/segments.json",
+    "render:preview": "npx remotion render src/index.ts Highlight out/preview.mp4 --props=./input/segments.json --frames=0-90",
+    "probe": "ffprobe -v error -show_entries format=duration,size:stream=codec_name,width,height,r_frame_rate -of json"
+  },
+  "dependencies": {
+    "@remotion/media": "4.0.440",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "remotion": "4.0.440"
+  },
+  "devDependencies": {
+    "@remotion/cli": "4.0.440",
+    "typescript": "^5.8.3"
+  }
+}

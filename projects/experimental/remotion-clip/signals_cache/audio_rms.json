@@ -1,0 +1,2001 @@
+{
+  "signal_id": "audio_rms",
+  "source": "/Users/dex/Downloads/_待分拣/视频待分拣/【3D】 マッチングアプリで知り合った女がサキュバスだった話_clean.mp4",
+  "version": "1.0.0",
+  "duration_sec": 396.969002,
+  "params": {
+    "window_sec": 2.0
+  },
+  "windows": [
+    {
+      "start_sec": 0.0,
+      "end_sec": 2.0,
+      "score": 0.03174605124977789,
+      "raw_value": -79.05846295522389,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -79.06
+      }
+    },
+    {
+      "start_sec": 2.0,
+      "end_sec": 4.0,
+      "score": 0.5051135312987589,
+      "raw_value": -47.765038546511626,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -47.77
+      }
+    },
+    {
+      "start_sec": 4.0,
+      "end_sec": 6.0,
+      "score": 0.5530918632660381,
+      "raw_value": -44.59328220930232,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -44.59
+      }
+    },
+    {
+      "start_sec": 6.0,
+      "end_sec": 8.0,
+      "score": 0.5980911761330848,
+      "raw_value": -41.6184631627907,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -41.62
+      }
+    },
+    {
+      "start_sec": 8.0,
+      "end_sec": 10.0,
+      "score": 0.5673057804031693,
+      "raw_value": -43.6536271627907,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -43.65
+      }
+    },
+    {
+      "start_sec": 10.0,
+      "end_sec": 12.0,
+      "score": 0.6812701823999034,
+      "raw_value": -36.11965715116279,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.12
+      }
+    },
+    {
+      "start_sec": 12.0,
+      "end_sec": 14.0,
+      "score": 0.6435071947921644,
+      "raw_value": -38.616096488372094,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -38.62
+      }
+    },
+    {
+      "start_sec": 14.0,
+      "end_sec": 16.0,
+      "score": 0.5081218015586987,
+      "raw_value": -47.56616751724138,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -47.57
+      }
+    },
+    {
+      "start_sec": 16.0,
+      "end_sec": 18.0,
+      "score": 0.6689357807663497,
+      "raw_value": -36.935061,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.94
+      }
+    },
+    {
+      "start_sec": 18.0,
+      "end_sec": 20.0,
+      "score": 0.6743594705866371,
+      "raw_value": -36.576511174418606,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.58
+      }
+    },
+    {
+      "start_sec": 20.0,
+      "end_sec": 22.0,
+      "score": 0.5765376668278249,
+      "raw_value": -43.043324697674414,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -43.04
+      }
+    },
+    {
+      "start_sec": 22.0,
+      "end_sec": 24.0,
+      "score": 0.5819920278714336,
+      "raw_value": -42.68274725581396,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -42.68
+      }
+    },
+    {
+      "start_sec": 24.0,
+      "end_sec": 26.0,
+      "score": 0.4872750915295165,
+      "raw_value": -48.94430389534884,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -48.94
+      }
+    },
+    {
+      "start_sec": 26.0,
+      "end_sec": 28.0,
+      "score": 0.4221752811629544,
+      "raw_value": -53.24792862790697,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -53.25
+      }
+    },
+    {
+      "start_sec": 28.0,
+      "end_sec": 30.0,
+      "score": 0.4190725358869014,
+      "raw_value": -53.453045220930235,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -53.45
+      }
+    },
+    {
+      "start_sec": 30.0,
+      "end_sec": 32.0,
+      "score": 0.31606724859740126,
+      "raw_value": -60.26252898850575,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -60.26
+      }
+    },
+    {
+      "start_sec": 32.0,
+      "end_sec": 34.0,
+      "score": 0.35154610557374444,
+      "raw_value": -57.91708918604651,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -57.92
+      }
+    },
+    {
+      "start_sec": 34.0,
+      "end_sec": 36.0,
+      "score": 0.4806013182803483,
+      "raw_value": -49.38549436046512,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -49.39
+      }
+    },
+    {
+      "start_sec": 36.0,
+      "end_sec": 38.0,
+      "score": 0.7763221939634384,
+      "raw_value": -29.835949325581396,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -29.84
+      }
+    },
+    {
+      "start_sec": 38.0,
+      "end_sec": 40.0,
+      "score": 0.6685438879280241,
+      "raw_value": -36.96096829069768,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.96
+      }
+    },
+    {
+      "start_sec": 40.0,
+      "end_sec": 42.0,
+      "score": 0.6280337014935277,
+      "raw_value": -39.639019720930236,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -39.64
+      }
+    },
+    {
+      "start_sec": 42.0,
+      "end_sec": 44.0,
+      "score": 0.672059295055778,
+      "raw_value": -36.72857140697675,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.73
+      }
+    },
+    {
+      "start_sec": 44.0,
+      "end_sec": 46.0,
+      "score": 0.5916896118006134,
+      "raw_value": -42.0416584137931,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -42.04
+      }
+    },
+    {
+      "start_sec": 46.0,
+      "end_sec": 48.0,
+      "score": 0.6305738724211164,
+      "raw_value": -39.47109384883721,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -39.47
+      }
+    },
+    {
+      "start_sec": 48.0,
+      "end_sec": 50.0,
+      "score": 0.5783001407673158,
+      "raw_value": -42.92681089534884,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -42.93
+      }
+    },
+    {
+      "start_sec": 50.0,
+      "end_sec": 52.0,
+      "score": 0.6466411730916092,
+      "raw_value": -38.408915139534884,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -38.41
+      }
+    },
+    {
+      "start_sec": 52.0,
+      "end_sec": 54.0,
+      "score": 0.5871974592438046,
+      "raw_value": -42.33862608139535,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -42.34
+      }
+    },
+    {
+      "start_sec": 54.0,
+      "end_sec": 56.0,
+      "score": 0.6141459618891086,
+      "raw_value": -40.557111790697675,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -40.56
+      }
+    },
+    {
+      "start_sec": 56.0,
+      "end_sec": 58.0,
+      "score": 0.4268525791343873,
+      "raw_value": -52.938721348837205,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -52.94
+      }
+    },
+    {
+      "start_sec": 58.0,
+      "end_sec": 60.0,
+      "score": 0.6725897662415429,
+      "raw_value": -36.69350296511628,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.69
+      }
+    },
+    {
+      "start_sec": 60.0,
+      "end_sec": 62.0,
+      "score": 0.7434111556420229,
+      "raw_value": -32.01163551724138,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -32.01
+      }
+    },
+    {
+      "start_sec": 62.0,
+      "end_sec": 64.0,
+      "score": 0.6693561790658589,
+      "raw_value": -36.90726926744186,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.91
+      }
+    },
+    {
+      "start_sec": 64.0,
+      "end_sec": 66.0,
+      "score": 0.6053793734447354,
+      "raw_value": -41.13665429069768,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -41.14
+      }
+    },
+    {
+      "start_sec": 66.0,
+      "end_sec": 68.0,
+      "score": 0.7149696685148936,
+      "raw_value": -33.891848174418605,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -33.89
+      }
+    },
+    {
+      "start_sec": 68.0,
+      "end_sec": 70.0,
+      "score": 0.72377829627913,
+      "raw_value": -33.30952653488372,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -33.31
+      }
+    },
+    {
+      "start_sec": 70.0,
+      "end_sec": 72.0,
+      "score": 0.5690840990746416,
+      "raw_value": -43.536065895348834,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -43.54
+      }
+    },
+    {
+      "start_sec": 72.0,
+      "end_sec": 74.0,
+      "score": 0.6681594596079801,
+      "raw_value": -36.98638211627907,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.99
+      }
+    },
+    {
+      "start_sec": 74.0,
+      "end_sec": 76.0,
+      "score": 0.6553186314204535,
+      "raw_value": -37.83526486206897,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -37.84
+      }
+    },
+    {
+      "start_sec": 76.0,
+      "end_sec": 78.0,
+      "score": 0.763205179855009,
+      "raw_value": -30.703090197674417,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -30.7
+      }
+    },
+    {
+      "start_sec": 78.0,
+      "end_sec": 80.0,
+      "score": 0.8018425336387386,
+      "raw_value": -28.148848174418607,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -28.15
+      }
+    },
+    {
+      "start_sec": 80.0,
+      "end_sec": 82.0,
+      "score": 0.9150885894652769,
+      "raw_value": -20.6623666627907,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -20.66
+      }
+    },
+    {
+      "start_sec": 82.0,
+      "end_sec": 84.0,
+      "score": 0.9028034777848065,
+      "raw_value": -21.474512046511627,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -21.47
+      }
+    },
+    {
+      "start_sec": 84.0,
+      "end_sec": 86.0,
+      "score": 0.9215759098194226,
+      "raw_value": -20.233502244186045,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -20.23
+      }
+    },
+    {
+      "start_sec": 86.0,
+      "end_sec": 88.0,
+      "score": 0.9605051718592427,
+      "raw_value": -17.65996272093023,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -17.66
+      }
+    },
+    {
+      "start_sec": 88.0,
+      "end_sec": 90.0,
+      "score": 0.9312830200038771,
+      "raw_value": -19.591783639534885,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -19.59
+      }
+    },
+    {
+      "start_sec": 90.0,
+      "end_sec": 92.0,
+      "score": 0.9497522474701449,
+      "raw_value": -18.37081811494253,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -18.37
+      }
+    },
+    {
+      "start_sec": 92.0,
+      "end_sec": 94.0,
+      "score": 0.8885022476999666,
+      "raw_value": -22.41993918604651,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -22.42
+      }
+    },
+    {
+      "start_sec": 94.0,
+      "end_sec": 96.0,
+      "score": 0.9803076312553113,
+      "raw_value": -16.35085976744186,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -16.35
+      }
+    },
+    {
+      "start_sec": 96.0,
+      "end_sec": 98.0,
+      "score": 0.9552177866263722,
+      "raw_value": -18.009501709302324,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -18.01
+      }
+    },
+    {
+      "start_sec": 98.0,
+      "end_sec": 100.0,
+      "score": 1.0,
+      "raw_value": -15.049034697674417,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -15.05
+      }
+    },
+    {
+      "start_sec": 100.0,
+      "end_sec": 102.0,
+      "score": 0.9191397035654888,
+      "raw_value": -20.394555209302325,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -20.39
+      }
+    },
+    {
+      "start_sec": 102.0,
+      "end_sec": 104.0,
+      "score": 0.8815571542148859,
+      "raw_value": -22.87906611627907,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -22.88
+      }
+    },
+    {
+      "start_sec": 104.0,
+      "end_sec": 106.0,
+      "score": 0.931576966047301,
+      "raw_value": -19.572351425287355,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -19.57
+      }
+    },
+    {
+      "start_sec": 106.0,
+      "end_sec": 108.0,
+      "score": 0.764142516888742,
+      "raw_value": -30.64112462790698,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -30.64
+      }
+    },
+    {
+      "start_sec": 108.0,
+      "end_sec": 110.0,
+      "score": 0.8022923314600946,
+      "raw_value": -28.119112895348835,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -28.12
+      }
+    },
+    {
+      "start_sec": 110.0,
+      "end_sec": 112.0,
+      "score": 0.7899579956102687,
+      "raw_value": -28.934512395348836,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -28.93
+      }
+    },
+    {
+      "start_sec": 112.0,
+      "end_sec": 114.0,
+      "score": 0.7099530163893712,
+      "raw_value": -34.2234895116279,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -34.22
+      }
+    },
+    {
+      "start_sec": 114.0,
+      "end_sec": 116.0,
+      "score": 0.713205916717697,
+      "raw_value": -34.008446453488375,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -34.01
+      }
+    },
+    {
+      "start_sec": 116.0,
+      "end_sec": 118.0,
+      "score": 0.6719226582077682,
+      "raw_value": -36.737604209302326,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.74
+      }
+    },
+    {
+      "start_sec": 118.0,
+      "end_sec": 120.0,
+      "score": 0.6973658217856604,
+      "raw_value": -35.055605023255815,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -35.06
+      }
+    },
+    {
+      "start_sec": 120.0,
+      "end_sec": 122.0,
+      "score": 0.543241918376542,
+      "raw_value": -45.24444334482759,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -45.24
+      }
+    },
+    {
+      "start_sec": 122.0,
+      "end_sec": 124.0,
+      "score": 0.5360213902976364,
+      "raw_value": -45.72177873255814,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -45.72
+      }
+    },
+    {
+      "start_sec": 124.0,
+      "end_sec": 126.0,
+      "score": 0.683678160926627,
+      "raw_value": -35.960470267441856,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -35.96
+      }
+    },
+    {
+      "start_sec": 126.0,
+      "end_sec": 128.0,
+      "score": 0.7589124929557408,
+      "raw_value": -30.98687156976744,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -30.99
+      }
+    },
+    {
+      "start_sec": 128.0,
+      "end_sec": 130.0,
+      "score": 0.44872800410144287,
+      "raw_value": -51.49257858139535,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -51.49
+      }
+    },
+    {
+      "start_sec": 130.0,
+      "end_sec": 132.0,
+      "score": 0.7858611586532256,
+      "raw_value": -29.2053465,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -29.21
+      }
+    },
+    {
+      "start_sec": 132.0,
+      "end_sec": 134.0,
+      "score": 0.7346364517868049,
+      "raw_value": -32.591714511627906,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -32.59
+      }
+    },
+    {
+      "start_sec": 134.0,
+      "end_sec": 136.0,
+      "score": 0.5828811512371902,
+      "raw_value": -42.623969,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -42.62
+      }
+    },
+    {
+      "start_sec": 136.0,
+      "end_sec": 138.0,
+      "score": 0.4304632110223013,
+      "raw_value": -52.7000293372093,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -52.7
+      }
+    },
+    {
+      "start_sec": 138.0,
+      "end_sec": 140.0,
+      "score": 0.6931147075639303,
+      "raw_value": -35.33663810465116,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -35.34
+      }
+    },
+    {
+      "start_sec": 140.0,
+      "end_sec": 142.0,
+      "score": 0.6774351759363176,
+      "raw_value": -36.37318213953488,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.37
+      }
+    },
+    {
+      "start_sec": 142.0,
+      "end_sec": 144.0,
+      "score": 0.5396361612836277,
+      "raw_value": -45.48281309302325,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -45.48
+      }
+    },
+    {
+      "start_sec": 144.0,
+      "end_sec": 146.0,
+      "score": 0.2955740605899104,
+      "raw_value": -61.61729469767442,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -61.62
+      }
+    },
+    {
+      "start_sec": 146.0,
+      "end_sec": 148.0,
+      "score": 0.18586312291219573,
+      "raw_value": -68.87007626744186,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -68.87
+      }
+    },
+    {
+      "start_sec": 148.0,
+      "end_sec": 150.0,
+      "score": 0.0,
+      "raw_value": -81.15713406578948,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -81.16
+      }
+    },
+    {
+      "start_sec": 150.0,
+      "end_sec": 152.0,
+      "score": 0.07542759493089403,
+      "raw_value": -76.170759125,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -76.17
+      }
+    },
+    {
+      "start_sec": 152.0,
+      "end_sec": 154.0,
+      "score": 0.2904840302339562,
+      "raw_value": -61.95378693023256,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -61.95
+      }
+    },
+    {
+      "start_sec": 154.0,
+      "end_sec": 156.0,
+      "score": 0.3916772637583169,
+      "raw_value": -55.26409459302325,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -55.26
+      }
+    },
+    {
+      "start_sec": 156.0,
+      "end_sec": 158.0,
+      "score": 0.5753065271777136,
+      "raw_value": -43.124713,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -43.12
+      }
+    },
+    {
+      "start_sec": 158.0,
+      "end_sec": 160.0,
+      "score": 0.6939377766795727,
+      "raw_value": -35.282226569767445,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -35.28
+      }
+    },
+    {
+      "start_sec": 160.0,
+      "end_sec": 162.0,
+      "score": 0.8262481750834177,
+      "raw_value": -26.535437604651165,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -26.54
+      }
+    },
+    {
+      "start_sec": 162.0,
+      "end_sec": 164.0,
+      "score": 0.822232472680447,
+      "raw_value": -26.800908058139534,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -26.8
+      }
+    },
+    {
+      "start_sec": 164.0,
+      "end_sec": 166.0,
+      "score": 0.799354099993584,
+      "raw_value": -28.313353793103445,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -28.31
+      }
+    },
+    {
+      "start_sec": 166.0,
+      "end_sec": 168.0,
+      "score": 0.41988086733682545,
+      "raw_value": -53.39960796511628,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -53.4
+      }
+    },
+    {
+      "start_sec": 168.0,
+      "end_sec": 170.0,
+      "score": 0.6356704208187773,
+      "raw_value": -39.13417072093023,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -39.13
+      }
+    },
+    {
+      "start_sec": 170.0,
+      "end_sec": 172.0,
+      "score": 0.5654393366891464,
+      "raw_value": -43.77701420930232,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -43.78
+      }
+    },
+    {
+      "start_sec": 172.0,
+      "end_sec": 174.0,
+      "score": 0.5185469684795035,
+      "raw_value": -46.87697954651163,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -46.88
+      }
+    },
+    {
+      "start_sec": 174.0,
+      "end_sec": 176.0,
+      "score": 0.8077283638203774,
+      "raw_value": -27.759747127906977,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -27.76
+      }
+    },
+    {
+      "start_sec": 176.0,
+      "end_sec": 178.0,
+      "score": 0.6277740265604536,
+      "raw_value": -39.656186337209306,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -39.66
+      }
+    },
+    {
+      "start_sec": 178.0,
+      "end_sec": 180.0,
+      "score": 0.5332980582997963,
+      "raw_value": -45.90181303488372,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -45.9
+      }
+    },
+    {
+      "start_sec": 180.0,
+      "end_sec": 182.0,
+      "score": 0.8389780485879659,
+      "raw_value": -25.693889862068964,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -25.69
+      }
+    },
+    {
+      "start_sec": 182.0,
+      "end_sec": 184.0,
+      "score": 0.5623427367389738,
+      "raw_value": -43.98172454651163,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -43.98
+      }
+    },
+    {
+      "start_sec": 184.0,
+      "end_sec": 186.0,
+      "score": 0.5185434710366102,
+      "raw_value": -46.877210755813955,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -46.88
+      }
+    },
+    {
+      "start_sec": 186.0,
+      "end_sec": 188.0,
+      "score": 0.7483415411122701,
+      "raw_value": -31.68569710465116,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -31.69
+      }
+    },
+    {
+      "start_sec": 188.0,
+      "end_sec": 190.0,
+      "score": 0.8021112534825903,
+      "raw_value": -28.13108361627907,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -28.13
+      }
+    },
+    {
+      "start_sec": 190.0,
+      "end_sec": 192.0,
+      "score": 0.8707154057669397,
+      "raw_value": -23.5957935,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -23.6
+      }
+    },
+    {
+      "start_sec": 192.0,
+      "end_sec": 194.0,
+      "score": 0.6563080662006371,
+      "raw_value": -37.76985520930232,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -37.77
+      }
+    },
+    {
+      "start_sec": 194.0,
+      "end_sec": 196.0,
+      "score": 0.6449001717347742,
+      "raw_value": -38.52400943023255,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -38.52
+      }
+    },
+    {
+      "start_sec": 196.0,
+      "end_sec": 198.0,
+      "score": 0.7206724004906004,
+      "raw_value": -33.51485140229885,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -33.51
+      }
+    },
+    {
+      "start_sec": 198.0,
+      "end_sec": 200.0,
+      "score": 0.8856206205291705,
+      "raw_value": -22.61043808139535,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -22.61
+      }
+    },
+    {
+      "start_sec": 200.0,
+      "end_sec": 202.0,
+      "score": 0.8444123468501256,
+      "raw_value": -25.334638732558137,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -25.33
+      }
+    },
+    {
+      "start_sec": 202.0,
+      "end_sec": 204.0,
+      "score": 0.6801497929973727,
+      "raw_value": -36.19372396511628,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.19
+      }
+    },
+    {
+      "start_sec": 204.0,
+      "end_sec": 206.0,
+      "score": 0.4588217748553763,
+      "raw_value": -50.825298581395344,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -50.83
+      }
+    },
+    {
+      "start_sec": 206.0,
+      "end_sec": 208.0,
+      "score": 0.6243103085570295,
+      "raw_value": -39.88516615116279,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -39.89
+      }
+    },
+    {
+      "start_sec": 208.0,
+      "end_sec": 210.0,
+      "score": 0.856757573072952,
+      "raw_value": -24.51851929069767,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -24.52
+      }
+    },
+    {
+      "start_sec": 210.0,
+      "end_sec": 212.0,
+      "score": 0.7909980935975529,
+      "raw_value": -28.86575349425287,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -28.87
+      }
+    },
+    {
+      "start_sec": 212.0,
+      "end_sec": 214.0,
+      "score": 0.5920567287257279,
+      "raw_value": -42.01738901162791,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -42.02
+      }
+    },
+    {
+      "start_sec": 214.0,
+      "end_sec": 216.0,
+      "score": 0.7807251203189893,
+      "raw_value": -29.54488023255814,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -29.54
+      }
+    },
+    {
+      "start_sec": 216.0,
+      "end_sec": 218.0,
+      "score": 0.6552975284118233,
+      "raw_value": -37.83665994186046,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -37.84
+      }
+    },
+    {
+      "start_sec": 218.0,
+      "end_sec": 220.0,
+      "score": 0.4185620636579344,
+      "raw_value": -53.48679156976745,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -53.49
+      }
+    },
+    {
+      "start_sec": 220.0,
+      "end_sec": 222.0,
+      "score": 0.46388671698614203,
+      "raw_value": -50.49046488372093,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -50.49
+      }
+    },
+    {
+      "start_sec": 222.0,
+      "end_sec": 224.0,
+      "score": 0.46773105242660257,
+      "raw_value": -50.2363231744186,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -50.24
+      }
+    },
+    {
+      "start_sec": 224.0,
+      "end_sec": 226.0,
+      "score": 0.5526457762449596,
+      "raw_value": -44.62277217441861,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -44.62
+      }
+    },
+    {
+      "start_sec": 226.0,
+      "end_sec": 228.0,
+      "score": 0.31416593775684737,
+      "raw_value": -60.38822103448276,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -60.39
+      }
+    },
+    {
+      "start_sec": 228.0,
+      "end_sec": 230.0,
+      "score": 0.6665482055728681,
+      "raw_value": -37.09289905813953,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -37.09
+      }
+    },
+    {
+      "start_sec": 230.0,
+      "end_sec": 232.0,
+      "score": 0.8430821057731185,
+      "raw_value": -25.422578441860466,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -25.42
+      }
+    },
+    {
+      "start_sec": 232.0,
+      "end_sec": 234.0,
+      "score": 0.7202085802868305,
+      "raw_value": -33.54551367441861,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -33.55
+      }
+    },
+    {
+      "start_sec": 234.0,
+      "end_sec": 236.0,
+      "score": 0.8812098697796512,
+      "raw_value": -22.902024430232558,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -22.9
+      }
+    },
+    {
+      "start_sec": 236.0,
+      "end_sec": 238.0,
+      "score": 0.853488351168565,
+      "raw_value": -24.7346413372093,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -24.73
+      }
+    },
+    {
+      "start_sec": 238.0,
+      "end_sec": 240.0,
+      "score": 0.8377108965926013,
+      "raw_value": -25.777658872093024,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -25.78
+      }
+    },
+    {
+      "start_sec": 240.0,
+      "end_sec": 242.0,
+      "score": 0.6946905061147224,
+      "raw_value": -35.232465057471266,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -35.23
+      }
+    },
+    {
+      "start_sec": 242.0,
+      "end_sec": 244.0,
+      "score": 0.7124745979612153,
+      "raw_value": -34.05679254651163,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -34.06
+      }
+    },
+    {
+      "start_sec": 244.0,
+      "end_sec": 246.0,
+      "score": 0.8301185424113641,
+      "raw_value": -26.279574976744186,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -26.28
+      }
+    },
+    {
+      "start_sec": 246.0,
+      "end_sec": 248.0,
+      "score": 0.636843991264297,
+      "raw_value": -39.056588209302326,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -39.06
+      }
+    },
+    {
+      "start_sec": 248.0,
+      "end_sec": 250.0,
+      "score": 0.40850491474040446,
+      "raw_value": -54.15165056976745,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -54.15
+      }
+    },
+    {
+      "start_sec": 250.0,
+      "end_sec": 252.0,
+      "score": 0.39009607095196,
+      "raw_value": -55.368624244186044,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -55.37
+      }
+    },
+    {
+      "start_sec": 252.0,
+      "end_sec": 254.0,
+      "score": 0.2778884035283113,
+      "raw_value": -62.78645987209302,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -62.79
+      }
+    },
+    {
+      "start_sec": 254.0,
+      "end_sec": 256.0,
+      "score": 0.15372935881865357,
+      "raw_value": -70.99437833720931,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -70.99
+      }
+    },
+    {
+      "start_sec": 256.0,
+      "end_sec": 258.0,
+      "score": 0.35819159681371504,
+      "raw_value": -57.4777683908046,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -57.48
+      }
+    },
+    {
+      "start_sec": 258.0,
+      "end_sec": 260.0,
+      "score": 0.22508434861418689,
+      "raw_value": -66.27723558139536,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -66.28
+      }
+    },
+    {
+      "start_sec": 260.0,
+      "end_sec": 262.0,
+      "score": 0.6823006440394945,
+      "raw_value": -36.05153529069767,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.05
+      }
+    },
+    {
+      "start_sec": 262.0,
+      "end_sec": 264.0,
+      "score": 0.463910819862553,
+      "raw_value": -50.4888714883721,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -50.49
+      }
+    },
+    {
+      "start_sec": 264.0,
+      "end_sec": 266.0,
+      "score": 0.19540627190438645,
+      "raw_value": -68.23919682558139,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -68.24
+      }
+    },
+    {
+      "start_sec": 266.0,
+      "end_sec": 268.0,
+      "score": 0.5035246989612621,
+      "raw_value": -47.87007323255814,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -47.87
+      }
+    },
+    {
+      "start_sec": 268.0,
+      "end_sec": 270.0,
+      "score": 0.5919650962144216,
+      "raw_value": -42.0234466627907,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -42.02
+      }
+    },
+    {
+      "start_sec": 270.0,
+      "end_sec": 272.0,
+      "score": 0.5696332963734406,
+      "raw_value": -43.49975950574713,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -43.5
+      }
+    },
+    {
+      "start_sec": 272.0,
+      "end_sec": 274.0,
+      "score": 0.5018624051962661,
+      "raw_value": -47.979964313953495,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -47.98
+      }
+    },
+    {
+      "start_sec": 274.0,
+      "end_sec": 276.0,
+      "score": 0.4830561895237243,
+      "raw_value": -49.22320748837209,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -49.22
+      }
+    },
+    {
+      "start_sec": 276.0,
+      "end_sec": 278.0,
+      "score": 0.745872868653888,
+      "raw_value": -31.84889634883721,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -31.85
+      }
+    },
+    {
+      "start_sec": 278.0,
+      "end_sec": 280.0,
+      "score": 0.8508371990467796,
+      "raw_value": -24.90990396511628,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -24.91
+      }
+    },
+    {
+      "start_sec": 280.0,
+      "end_sec": 282.0,
+      "score": 0.561566462192069,
+      "raw_value": -44.03304258139535,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -44.03
+      }
+    },
+    {
+      "start_sec": 282.0,
+      "end_sec": 284.0,
+      "score": 0.5733939001207653,
+      "raw_value": -43.251153139534885,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -43.25
+      }
+    },
+    {
+      "start_sec": 284.0,
+      "end_sec": 286.0,
+      "score": 0.5962807094463715,
+      "raw_value": -41.73814967441861,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -41.74
+      }
+    },
+    {
+      "start_sec": 286.0,
+      "end_sec": 288.0,
+      "score": 0.690665249602816,
+      "raw_value": -35.49856711494253,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -35.5
+      }
+    },
+    {
+      "start_sec": 288.0,
+      "end_sec": 290.0,
+      "score": 0.7396399383721662,
+      "raw_value": -32.26094352325581,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -32.26
+      }
+    },
+    {
+      "start_sec": 290.0,
+      "end_sec": 292.0,
+      "score": 0.6134732231903823,
+      "raw_value": -40.601585267441855,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -40.6
+      }
+    },
+    {
+      "start_sec": 292.0,
+      "end_sec": 294.0,
+      "score": 0.5521925567903002,
+      "raw_value": -44.65273365116279,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -44.65
+      }
+    },
+    {
+      "start_sec": 294.0,
+      "end_sec": 296.0,
+      "score": 0.6584563495666698,
+      "raw_value": -37.62783627906977,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -37.63
+      }
+    },
+    {
+      "start_sec": 296.0,
+      "end_sec": 298.0,
+      "score": 0.6136051784883997,
+      "raw_value": -40.592861953488374,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -40.59
+      }
+    },
+    {
+      "start_sec": 298.0,
+      "end_sec": 300.0,
+      "score": 0.72930712643734,
+      "raw_value": -32.94402608139535,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -32.94
+      }
+    },
+    {
+      "start_sec": 300.0,
+      "end_sec": 302.0,
+      "score": 0.7070098924860633,
+      "raw_value": -34.41805383908046,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -34.42
+      }
+    },
+    {
+      "start_sec": 302.0,
+      "end_sec": 304.0,
+      "score": 0.6812722656685429,
+      "raw_value": -36.11951943023256,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.12
+      }
+    },
+    {
+      "start_sec": 304.0,
+      "end_sec": 306.0,
+      "score": 0.7256234707420193,
+      "raw_value": -33.18754555813953,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -33.19
+      }
+    },
+    {
+      "start_sec": 306.0,
+      "end_sec": 308.0,
+      "score": 0.7598370227419688,
+      "raw_value": -30.925752662790696,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -30.93
+      }
+    },
+    {
+      "start_sec": 308.0,
+      "end_sec": 310.0,
+      "score": 0.7763425320406295,
+      "raw_value": -29.83460481395349,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -29.83
+      }
+    },
+    {
+      "start_sec": 310.0,
+      "end_sec": 312.0,
+      "score": 0.6662639014935611,
+      "raw_value": -37.11169386046512,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -37.11
+      }
+    },
+    {
+      "start_sec": 312.0,
+      "end_sec": 314.0,
+      "score": 0.49246827059465237,
+      "raw_value": -48.60099269767442,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -48.6
+      }
+    },
+    {
+      "start_sec": 314.0,
+      "end_sec": 316.0,
+      "score": 0.7101897169711601,
+      "raw_value": -34.207841686046514,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -34.21
+      }
+    },
+    {
+      "start_sec": 316.0,
+      "end_sec": 318.0,
+      "score": 0.7088551439776581,
+      "raw_value": -34.296067770114945,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -34.3
+      }
+    },
+    {
+      "start_sec": 318.0,
+      "end_sec": 320.0,
+      "score": 0.7031349102996185,
+      "raw_value": -34.674221546511625,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -34.67
+      }
+    },
+    {
+      "start_sec": 320.0,
+      "end_sec": 322.0,
+      "score": 0.6713074936386181,
+      "raw_value": -36.77827156976744,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.78
+      }
+    },
+    {
+      "start_sec": 322.0,
+      "end_sec": 324.0,
+      "score": 0.6776551011398595,
+      "raw_value": -36.35864330232558,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.36
+      }
+    },
+    {
+      "start_sec": 324.0,
+      "end_sec": 326.0,
+      "score": 0.6766708824706903,
+      "raw_value": -36.42370812790698,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.42
+      }
+    },
+    {
+      "start_sec": 326.0,
+      "end_sec": 328.0,
+      "score": 0.8888533032665445,
+      "raw_value": -22.396731569767443,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -22.4
+      }
+    },
+    {
+      "start_sec": 328.0,
+      "end_sec": 330.0,
+      "score": 0.7751586947603842,
+      "raw_value": -29.912866046511628,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -29.91
+      }
+    },
+    {
+      "start_sec": 330.0,
+      "end_sec": 332.0,
+      "score": 0.7560429663880864,
+      "raw_value": -31.17657051724138,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -31.18
+      }
+    },
+    {
+      "start_sec": 332.0,
+      "end_sec": 334.0,
+      "score": 0.8116590082151832,
+      "raw_value": -27.499899697674422,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -27.5
+      }
+    },
+    {
+      "start_sec": 334.0,
+      "end_sec": 336.0,
+      "score": 0.8967887030539938,
+      "raw_value": -21.87213737209302,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -21.87
+      }
+    },
+    {
+      "start_sec": 336.0,
+      "end_sec": 338.0,
+      "score": 0.8417665404477332,
+      "raw_value": -25.50954796511628,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -25.51
+      }
+    },
+    {
+      "start_sec": 338.0,
+      "end_sec": 340.0,
+      "score": 0.9240902984507275,
+      "raw_value": -20.067280790697673,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -20.07
+      }
+    },
+    {
+      "start_sec": 340.0,
+      "end_sec": 342.0,
+      "score": 0.8741308789694467,
+      "raw_value": -23.370003058139535,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -23.37
+      }
+    },
+    {
+      "start_sec": 342.0,
+      "end_sec": 344.0,
+      "score": 0.8845167143477431,
+      "raw_value": -22.683415220930232,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -22.68
+      }
+    },
+    {
+      "start_sec": 344.0,
+      "end_sec": 346.0,
+      "score": 0.7954344575239009,
+      "raw_value": -28.572473906976743,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -28.57
+      }
+    },
+    {
+      "start_sec": 346.0,
+      "end_sec": 348.0,
+      "score": 0.8114674269632403,
+      "raw_value": -27.512564770114942,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -27.51
+      }
+    },
+    {
+      "start_sec": 348.0,
+      "end_sec": 350.0,
+      "score": 0.77736711746959,
+      "raw_value": -29.76687141860465,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -29.77
+      }
+    },
+    {
+      "start_sec": 350.0,
+      "end_sec": 352.0,
+      "score": 0.616725851589181,
+      "raw_value": -40.386560186046516,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -40.39
+      }
+    },
+    {
+      "start_sec": 352.0,
+      "end_sec": 354.0,
+      "score": 0.9159599218505302,
+      "raw_value": -20.60476453488372,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -20.6
+      }
+    },
+    {
+      "start_sec": 354.0,
+      "end_sec": 356.0,
+      "score": 0.7901736026573516,
+      "raw_value": -28.920259023255813,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -28.92
+      }
+    },
+    {
+      "start_sec": 356.0,
+      "end_sec": 358.0,
+      "score": 0.8834706930976217,
+      "raw_value": -22.752565697674417,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -22.75
+      }
+    },
+    {
+      "start_sec": 358.0,
+      "end_sec": 360.0,
+      "score": 0.9738688603475812,
+      "raw_value": -16.776514674418603,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -16.78
+      }
+    },
+    {
+      "start_sec": 360.0,
+      "end_sec": 362.0,
+      "score": 0.9130096310063985,
+      "raw_value": -20.799802655172414,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -20.8
+      }
+    },
+    {
+      "start_sec": 362.0,
+      "end_sec": 364.0,
+      "score": 0.9317696628689908,
+      "raw_value": -19.559612604651164,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -19.56
+      }
+    },
+    {
+      "start_sec": 364.0,
+      "end_sec": 366.0,
+      "score": 0.848665870093072,
+      "raw_value": -25.05344639534884,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -25.05
+      }
+    },
+    {
+      "start_sec": 366.0,
+      "end_sec": 368.0,
+      "score": 0.6105367598298649,
+      "raw_value": -40.79570927906977,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -40.8
+      }
+    },
+    {
+      "start_sec": 368.0,
+      "end_sec": 370.0,
+      "score": 0.5248385628955096,
+      "raw_value": -46.46105419767442,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -46.46
+      }
+    },
+    {
+      "start_sec": 370.0,
+      "end_sec": 372.0,
+      "score": 0.6189877517199353,
+      "raw_value": -40.23703026744186,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -40.24
+      }
+    },
+    {
+      "start_sec": 372.0,
+      "end_sec": 374.0,
+      "score": 0.7730714808561133,
+      "raw_value": -30.050847790697674,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -30.05
+      }
+    },
+    {
+      "start_sec": 374.0,
+      "end_sec": 376.0,
+      "score": 0.39451865925462354,
+      "raw_value": -55.0762553372093,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -55.08
+      }
+    },
+    {
+      "start_sec": 376.0,
+      "end_sec": 378.0,
+      "score": 0.5029539311280024,
+      "raw_value": -47.9078056091954,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -47.91
+      }
+    },
+    {
+      "start_sec": 378.0,
+      "end_sec": 380.0,
+      "score": 0.6705657126310433,
+      "raw_value": -36.82730930232558,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -36.83
+      }
+    },
+    {
+      "start_sec": 380.0,
+      "end_sec": 382.0,
+      "score": 0.6406473589209085,
+      "raw_value": -38.80515480232558,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -38.81
+      }
+    },
+    {
+      "start_sec": 382.0,
+      "end_sec": 384.0,
+      "score": 0.5423103062253917,
+      "raw_value": -45.306030453488376,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -45.31
+      }
+    },
+    {
+      "start_sec": 384.0,
+      "end_sec": 386.0,
+      "score": 0.5995054024509963,
+      "raw_value": -41.524971348837205,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -41.52
+      }
+    },
+    {
+      "start_sec": 386.0,
+      "end_sec": 388.0,
+      "score": 0.5020050135885441,
+      "raw_value": -47.97053674418605,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -47.97
+      }
+    },
+    {
+      "start_sec": 388.0,
+      "end_sec": 390.0,
+      "score": 0.5882016202324447,
+      "raw_value": -42.27224290697674,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -42.27
+      }
+    },
+    {
+      "start_sec": 390.0,
+      "end_sec": 392.0,
+      "score": 0.14558687203221587,
+      "raw_value": -71.5326626627907,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -71.53
+      }
+    },
+    {
+      "start_sec": 392.0,
+      "end_sec": 394.0,
+      "score": 0.1468884223707518,
+      "raw_value": -71.44661964367816,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -71.45
+      }
+    },
+    {
+      "start_sec": 394.0,
+      "end_sec": 396.0,
+      "score": 0.14569576116315733,
+      "raw_value": -71.52546420930231,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -71.53
+      }
+    },
+    {
+      "start_sec": 396.0,
+      "end_sec": 396.969002,
+      "score": 0.10552000488449981,
+      "raw_value": -74.18140709756098,
+      "label": "audio_rms",
+      "meta": {
+        "avg_rms_db": -74.18
+      }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "source": "./assets/source.mp4",
+  "outputDurationSec": 60,
+  "segments": [
+    {
+      "startSec": 12.5,
+      "endSec": 19.8,
+      "label": "开场钩子",
+      "reason": "一开始就有冲突",
+      "transition": "cut"
+    },
+    {
+      "startSec": 95.0,
+      "endSec": 103.0,
+      "label": "第一次爆点",
+      "reason": "情绪抬升明显",
+      "transition": "swipe"
+    },
+    {
+      "startSec": 318.2,
+      "endSec": 327.4,
+      "label": "结尾高光",
+      "reason": "信息密度高",
+      "transition": "fade"
+    }
+  ]
+}

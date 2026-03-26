@@ -1,0 +1,6 @@
+node_modules/
+out/
+build/
+public/*.mp4
+public/clips/
+.DS_Store

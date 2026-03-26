@@ -1,0 +1,2001 @@
+{
+  "signal_id": "loudness_ebur128",
+  "source": "/Users/dex/Downloads/_待分拣/视频待分拣/【3D】 マッチングアプリで知り合った女がサキュバスだった話_clean.mp4",
+  "version": "1.0.0",
+  "duration_sec": 396.969002,
+  "params": {
+    "window_sec": 2.0
+  },
+  "windows": [
+    {
+      "start_sec": 0.0,
+      "end_sec": 2.0,
+      "score": 0.3952299829642249,
+      "raw_value": -43.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -43.2
+      }
+    },
+    {
+      "start_sec": 2.0,
+      "end_sec": 4.0,
+      "score": 0.4514480408858604,
+      "raw_value": -39.9,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -39.9
+      }
+    },
+    {
+      "start_sec": 4.0,
+      "end_sec": 6.0,
+      "score": 0.5928449744463373,
+      "raw_value": -31.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -31.6
+      }
+    },
+    {
+      "start_sec": 6.0,
+      "end_sec": 8.0,
+      "score": 0.5826235093696763,
+      "raw_value": -32.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -32.2
+      }
+    },
+    {
+      "start_sec": 8.0,
+      "end_sec": 10.0,
+      "score": 0.7052810902896083,
+      "raw_value": -25.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -25.0
+      }
+    },
+    {
+      "start_sec": 10.0,
+      "end_sec": 12.0,
+      "score": 0.7461669505962522,
+      "raw_value": -22.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -22.6
+      }
+    },
+    {
+      "start_sec": 12.0,
+      "end_sec": 14.0,
+      "score": 0.6303236797274276,
+      "raw_value": -29.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -29.4
+      }
+    },
+    {
+      "start_sec": 14.0,
+      "end_sec": 16.0,
+      "score": 0.44293015332197627,
+      "raw_value": -40.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -40.4
+      }
+    },
+    {
+      "start_sec": 16.0,
+      "end_sec": 18.0,
+      "score": 0.7325383304940376,
+      "raw_value": -23.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -23.4
+      }
+    },
+    {
+      "start_sec": 18.0,
+      "end_sec": 20.0,
+      "score": 0.7069846678023851,
+      "raw_value": -24.9,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -24.9
+      }
+    },
+    {
+      "start_sec": 20.0,
+      "end_sec": 22.0,
+      "score": 0.6695059625212948,
+      "raw_value": -27.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -27.1
+      }
+    },
+    {
+      "start_sec": 22.0,
+      "end_sec": 24.0,
+      "score": 0.647359454855196,
+      "raw_value": -28.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -28.4
+      }
+    },
+    {
+      "start_sec": 24.0,
+      "end_sec": 26.0,
+      "score": 0.4412265758091994,
+      "raw_value": -40.5,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -40.5
+      }
+    },
+    {
+      "start_sec": 26.0,
+      "end_sec": 28.0,
+      "score": 0.41396933560477006,
+      "raw_value": -42.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -42.1
+      }
+    },
+    {
+      "start_sec": 28.0,
+      "end_sec": 30.0,
+      "score": 0.4224872231686542,
+      "raw_value": -41.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -41.6
+      }
+    },
+    {
+      "start_sec": 30.0,
+      "end_sec": 32.0,
+      "score": 0.46166950596252143,
+      "raw_value": -39.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -39.3
+      }
+    },
+    {
+      "start_sec": 32.0,
+      "end_sec": 34.0,
+      "score": 0.6746166950596253,
+      "raw_value": -26.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -26.8
+      }
+    },
+    {
+      "start_sec": 34.0,
+      "end_sec": 36.0,
+      "score": 0.889267461669506,
+      "raw_value": -14.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -14.2
+      }
+    },
+    {
+      "start_sec": 36.0,
+      "end_sec": 38.0,
+      "score": 0.9131175468483818,
+      "raw_value": -12.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -12.8
+      }
+    },
+    {
+      "start_sec": 38.0,
+      "end_sec": 40.0,
+      "score": 0.6422487223168655,
+      "raw_value": -28.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -28.7
+      }
+    },
+    {
+      "start_sec": 40.0,
+      "end_sec": 42.0,
+      "score": 0.676320272572402,
+      "raw_value": -26.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -26.7
+      }
+    },
+    {
+      "start_sec": 42.0,
+      "end_sec": 44.0,
+      "score": 0.698466780238501,
+      "raw_value": -25.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -25.4
+      }
+    },
+    {
+      "start_sec": 44.0,
+      "end_sec": 46.0,
+      "score": 0.6439522998296423,
+      "raw_value": -28.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -28.6
+      }
+    },
+    {
+      "start_sec": 46.0,
+      "end_sec": 48.0,
+      "score": 0.5979557069846679,
+      "raw_value": -31.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -31.3
+      }
+    },
+    {
+      "start_sec": 48.0,
+      "end_sec": 50.0,
+      "score": 0.6490630323679728,
+      "raw_value": -28.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -28.3
+      }
+    },
+    {
+      "start_sec": 50.0,
+      "end_sec": 52.0,
+      "score": 0.6252129471890971,
+      "raw_value": -29.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -29.7
+      }
+    },
+    {
+      "start_sec": 52.0,
+      "end_sec": 54.0,
+      "score": 0.6030664395229983,
+      "raw_value": -31.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -31.0
+      }
+    },
+    {
+      "start_sec": 54.0,
+      "end_sec": 56.0,
+      "score": 0.6933560477001703,
+      "raw_value": -25.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -25.7
+      }
+    },
+    {
+      "start_sec": 56.0,
+      "end_sec": 58.0,
+      "score": 0.6865417376490631,
+      "raw_value": -26.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -26.1
+      }
+    },
+    {
+      "start_sec": 58.0,
+      "end_sec": 60.0,
+      "score": 0.6439522998296423,
+      "raw_value": -28.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -28.6
+      }
+    },
+    {
+      "start_sec": 60.0,
+      "end_sec": 62.0,
+      "score": 0.7734241908006815,
+      "raw_value": -21.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -21.0
+      }
+    },
+    {
+      "start_sec": 62.0,
+      "end_sec": 64.0,
+      "score": 0.7308347529812607,
+      "raw_value": -23.5,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -23.5
+      }
+    },
+    {
+      "start_sec": 64.0,
+      "end_sec": 66.0,
+      "score": 0.7870528109028961,
+      "raw_value": -20.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -20.2
+      }
+    },
+    {
+      "start_sec": 66.0,
+      "end_sec": 68.0,
+      "score": 0.7035775127768313,
+      "raw_value": -25.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -25.1
+      }
+    },
+    {
+      "start_sec": 68.0,
+      "end_sec": 70.0,
+      "score": 0.7751277683134583,
+      "raw_value": -20.9,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -20.9
+      }
+    },
+    {
+      "start_sec": 70.0,
+      "end_sec": 72.0,
+      "score": 0.8057921635434413,
+      "raw_value": -19.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -19.1
+      }
+    },
+    {
+      "start_sec": 72.0,
+      "end_sec": 74.0,
+      "score": 0.7461669505962522,
+      "raw_value": -22.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -22.6
+      }
+    },
+    {
+      "start_sec": 74.0,
+      "end_sec": 76.0,
+      "score": 0.6524701873935265,
+      "raw_value": -28.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -28.1
+      }
+    },
+    {
+      "start_sec": 76.0,
+      "end_sec": 78.0,
+      "score": 0.8466780238500852,
+      "raw_value": -16.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -16.7
+      }
+    },
+    {
+      "start_sec": 78.0,
+      "end_sec": 80.0,
+      "score": 0.8415672913117548,
+      "raw_value": -17.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -17.0
+      }
+    },
+    {
+      "start_sec": 80.0,
+      "end_sec": 82.0,
+      "score": 0.8534923339011926,
+      "raw_value": -16.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -16.3
+      }
+    },
+    {
+      "start_sec": 82.0,
+      "end_sec": 84.0,
+      "score": 0.8875638841567293,
+      "raw_value": -14.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -14.3
+      }
+    },
+    {
+      "start_sec": 84.0,
+      "end_sec": 86.0,
+      "score": 0.9080068143100511,
+      "raw_value": -13.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -13.1
+      }
+    },
+    {
+      "start_sec": 86.0,
+      "end_sec": 88.0,
+      "score": 1.0,
+      "raw_value": -7.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -7.7
+      }
+    },
+    {
+      "start_sec": 88.0,
+      "end_sec": 90.0,
+      "score": 0.9693356047700171,
+      "raw_value": -9.5,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -9.5
+      }
+    },
+    {
+      "start_sec": 90.0,
+      "end_sec": 92.0,
+      "score": 0.9931856899488927,
+      "raw_value": -8.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -8.1
+      }
+    },
+    {
+      "start_sec": 92.0,
+      "end_sec": 94.0,
+      "score": 0.9028960817717206,
+      "raw_value": -13.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -13.4
+      }
+    },
+    {
+      "start_sec": 94.0,
+      "end_sec": 96.0,
+      "score": 0.981260647359455,
+      "raw_value": -8.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -8.8
+      }
+    },
+    {
+      "start_sec": 96.0,
+      "end_sec": 98.0,
+      "score": 0.9931856899488927,
+      "raw_value": -8.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -8.1
+      }
+    },
+    {
+      "start_sec": 98.0,
+      "end_sec": 100.0,
+      "score": 0.9948892674616695,
+      "raw_value": -8.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -8.0
+      }
+    },
+    {
+      "start_sec": 100.0,
+      "end_sec": 102.0,
+      "score": 0.9403747870528109,
+      "raw_value": -11.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -11.2
+      }
+    },
+    {
+      "start_sec": 102.0,
+      "end_sec": 104.0,
+      "score": 0.9284497444633731,
+      "raw_value": -11.9,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -11.9
+      }
+    },
+    {
+      "start_sec": 104.0,
+      "end_sec": 106.0,
+      "score": 0.9659284497444633,
+      "raw_value": -9.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -9.7
+      }
+    },
+    {
+      "start_sec": 106.0,
+      "end_sec": 108.0,
+      "score": 0.8654173764906303,
+      "raw_value": -15.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -15.6
+      }
+    },
+    {
+      "start_sec": 108.0,
+      "end_sec": 110.0,
+      "score": 0.8926746166950597,
+      "raw_value": -14.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -14.0
+      }
+    },
+    {
+      "start_sec": 110.0,
+      "end_sec": 112.0,
+      "score": 0.8074957410562181,
+      "raw_value": -19.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -19.0
+      }
+    },
+    {
+      "start_sec": 112.0,
+      "end_sec": 114.0,
+      "score": 0.788756388415673,
+      "raw_value": -20.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -20.1
+      }
+    },
+    {
+      "start_sec": 114.0,
+      "end_sec": 116.0,
+      "score": 0.788756388415673,
+      "raw_value": -20.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -20.1
+      }
+    },
+    {
+      "start_sec": 116.0,
+      "end_sec": 118.0,
+      "score": 0.8364565587734243,
+      "raw_value": -17.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -17.3
+      }
+    },
+    {
+      "start_sec": 118.0,
+      "end_sec": 120.0,
+      "score": 0.7563884156729132,
+      "raw_value": -22.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -22.0
+      }
+    },
+    {
+      "start_sec": 120.0,
+      "end_sec": 122.0,
+      "score": 0.6013628620102215,
+      "raw_value": -31.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -31.1
+      }
+    },
+    {
+      "start_sec": 122.0,
+      "end_sec": 124.0,
+      "score": 0.6541737649063033,
+      "raw_value": -28.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -28.0
+      }
+    },
+    {
+      "start_sec": 124.0,
+      "end_sec": 126.0,
+      "score": 0.7683134582623511,
+      "raw_value": -21.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -21.3
+      }
+    },
+    {
+      "start_sec": 126.0,
+      "end_sec": 128.0,
+      "score": 0.8160136286201023,
+      "raw_value": -18.5,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -18.5
+      }
+    },
+    {
+      "start_sec": 128.0,
+      "end_sec": 130.0,
+      "score": 0.6899488926746168,
+      "raw_value": -25.9,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -25.9
+      }
+    },
+    {
+      "start_sec": 130.0,
+      "end_sec": 132.0,
+      "score": 0.8449744463373084,
+      "raw_value": -16.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -16.8
+      }
+    },
+    {
+      "start_sec": 132.0,
+      "end_sec": 134.0,
+      "score": 0.8143100511073255,
+      "raw_value": -18.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -18.6
+      }
+    },
+    {
+      "start_sec": 134.0,
+      "end_sec": 136.0,
+      "score": 0.7444633730834753,
+      "raw_value": -22.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -22.7
+      }
+    },
+    {
+      "start_sec": 136.0,
+      "end_sec": 138.0,
+      "score": 0.7035775127768313,
+      "raw_value": -25.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -25.1
+      }
+    },
+    {
+      "start_sec": 138.0,
+      "end_sec": 140.0,
+      "score": 0.7597955706984669,
+      "raw_value": -21.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -21.8
+      }
+    },
+    {
+      "start_sec": 140.0,
+      "end_sec": 142.0,
+      "score": 0.7529812606473595,
+      "raw_value": -22.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -22.2
+      }
+    },
+    {
+      "start_sec": 142.0,
+      "end_sec": 144.0,
+      "score": 0.6746166950596253,
+      "raw_value": -26.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -26.8
+      }
+    },
+    {
+      "start_sec": 144.0,
+      "end_sec": 146.0,
+      "score": 0.6030664395229983,
+      "raw_value": -31.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -31.0
+      }
+    },
+    {
+      "start_sec": 146.0,
+      "end_sec": 148.0,
+      "score": 0.05792163543441236,
+      "raw_value": -63.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -63.0
+      }
+    },
+    {
+      "start_sec": 148.0,
+      "end_sec": 150.0,
+      "score": 0.054514480408858645,
+      "raw_value": -63.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -63.2
+      }
+    },
+    {
+      "start_sec": 150.0,
+      "end_sec": 152.0,
+      "score": 0.051107325383305056,
+      "raw_value": -63.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -63.4
+      }
+    },
+    {
+      "start_sec": 152.0,
+      "end_sec": 154.0,
+      "score": 0.38671209540034074,
+      "raw_value": -43.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -43.7
+      }
+    },
+    {
+      "start_sec": 154.0,
+      "end_sec": 156.0,
+      "score": 0.354344122657581,
+      "raw_value": -45.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -45.6
+      }
+    },
+    {
+      "start_sec": 156.0,
+      "end_sec": 158.0,
+      "score": 0.7853492333901193,
+      "raw_value": -20.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -20.3
+      }
+    },
+    {
+      "start_sec": 158.0,
+      "end_sec": 160.0,
+      "score": 0.819420783645656,
+      "raw_value": -18.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -18.3
+      }
+    },
+    {
+      "start_sec": 160.0,
+      "end_sec": 162.0,
+      "score": 0.8909710391822828,
+      "raw_value": -14.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -14.1
+      }
+    },
+    {
+      "start_sec": 162.0,
+      "end_sec": 164.0,
+      "score": 0.8551959114139693,
+      "raw_value": -16.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -16.2
+      }
+    },
+    {
+      "start_sec": 164.0,
+      "end_sec": 166.0,
+      "score": 0.9011925042589438,
+      "raw_value": -13.5,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -13.5
+      }
+    },
+    {
+      "start_sec": 166.0,
+      "end_sec": 168.0,
+      "score": 0.6712095400340716,
+      "raw_value": -27.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -27.0
+      }
+    },
+    {
+      "start_sec": 168.0,
+      "end_sec": 170.0,
+      "score": 0.7938671209540035,
+      "raw_value": -19.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -19.8
+      }
+    },
+    {
+      "start_sec": 170.0,
+      "end_sec": 172.0,
+      "score": 0.7393526405451448,
+      "raw_value": -23.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -23.0
+      }
+    },
+    {
+      "start_sec": 172.0,
+      "end_sec": 174.0,
+      "score": 0.8057921635434413,
+      "raw_value": -19.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -19.1
+      }
+    },
+    {
+      "start_sec": 174.0,
+      "end_sec": 176.0,
+      "score": 0.8943781942078365,
+      "raw_value": -13.9,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -13.9
+      }
+    },
+    {
+      "start_sec": 176.0,
+      "end_sec": 178.0,
+      "score": 0.8228279386712096,
+      "raw_value": -18.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -18.1
+      }
+    },
+    {
+      "start_sec": 178.0,
+      "end_sec": 180.0,
+      "score": 0.5451448040885861,
+      "raw_value": -34.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -34.4
+      }
+    },
+    {
+      "start_sec": 180.0,
+      "end_sec": 182.0,
+      "score": 0.8398637137989778,
+      "raw_value": -17.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -17.1
+      }
+    },
+    {
+      "start_sec": 182.0,
+      "end_sec": 184.0,
+      "score": 0.798977853492334,
+      "raw_value": -19.5,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -19.5
+      }
+    },
+    {
+      "start_sec": 184.0,
+      "end_sec": 186.0,
+      "score": 0.5093696763202726,
+      "raw_value": -36.5,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -36.5
+      }
+    },
+    {
+      "start_sec": 186.0,
+      "end_sec": 188.0,
+      "score": 0.8126064735945485,
+      "raw_value": -18.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -18.7
+      }
+    },
+    {
+      "start_sec": 188.0,
+      "end_sec": 190.0,
+      "score": 0.778534923339012,
+      "raw_value": -20.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -20.7
+      }
+    },
+    {
+      "start_sec": 190.0,
+      "end_sec": 192.0,
+      "score": 0.8739352640545145,
+      "raw_value": -15.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -15.1
+      }
+    },
+    {
+      "start_sec": 192.0,
+      "end_sec": 194.0,
+      "score": 0.7853492333901193,
+      "raw_value": -20.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -20.3
+      }
+    },
+    {
+      "start_sec": 194.0,
+      "end_sec": 196.0,
+      "score": 0.8960817717206134,
+      "raw_value": -13.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -13.8
+      }
+    },
+    {
+      "start_sec": 196.0,
+      "end_sec": 198.0,
+      "score": 0.9063032367972743,
+      "raw_value": -13.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -13.2
+      }
+    },
+    {
+      "start_sec": 198.0,
+      "end_sec": 200.0,
+      "score": 0.8807495741056218,
+      "raw_value": -14.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -14.7
+      }
+    },
+    {
+      "start_sec": 200.0,
+      "end_sec": 202.0,
+      "score": 0.8637137989778535,
+      "raw_value": -15.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -15.7
+      }
+    },
+    {
+      "start_sec": 202.0,
+      "end_sec": 204.0,
+      "score": 0.8637137989778535,
+      "raw_value": -15.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -15.7
+      }
+    },
+    {
+      "start_sec": 204.0,
+      "end_sec": 206.0,
+      "score": 0.7870528109028961,
+      "raw_value": -20.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -20.2
+      }
+    },
+    {
+      "start_sec": 206.0,
+      "end_sec": 208.0,
+      "score": 0.5792163543441228,
+      "raw_value": -32.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -32.4
+      }
+    },
+    {
+      "start_sec": 208.0,
+      "end_sec": 210.0,
+      "score": 0.9114139693356048,
+      "raw_value": -12.9,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -12.9
+      }
+    },
+    {
+      "start_sec": 210.0,
+      "end_sec": 212.0,
+      "score": 0.7700170357751278,
+      "raw_value": -21.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -21.2
+      }
+    },
+    {
+      "start_sec": 212.0,
+      "end_sec": 214.0,
+      "score": 0.6848381601362862,
+      "raw_value": -26.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -26.2
+      }
+    },
+    {
+      "start_sec": 214.0,
+      "end_sec": 216.0,
+      "score": 0.7802385008517888,
+      "raw_value": -20.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -20.6
+      }
+    },
+    {
+      "start_sec": 216.0,
+      "end_sec": 218.0,
+      "score": 0.8551959114139693,
+      "raw_value": -16.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -16.2
+      }
+    },
+    {
+      "start_sec": 218.0,
+      "end_sec": 220.0,
+      "score": 0.46337308347529815,
+      "raw_value": -39.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -39.2
+      }
+    },
+    {
+      "start_sec": 220.0,
+      "end_sec": 222.0,
+      "score": 0.5894378194207838,
+      "raw_value": -31.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -31.8
+      }
+    },
+    {
+      "start_sec": 222.0,
+      "end_sec": 224.0,
+      "score": 0.838160136286201,
+      "raw_value": -17.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -17.2
+      }
+    },
+    {
+      "start_sec": 224.0,
+      "end_sec": 226.0,
+      "score": 0.8211243611584327,
+      "raw_value": -18.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -18.2
+      }
+    },
+    {
+      "start_sec": 226.0,
+      "end_sec": 228.0,
+      "score": 0.6354344122657581,
+      "raw_value": -29.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -29.1
+      }
+    },
+    {
+      "start_sec": 228.0,
+      "end_sec": 230.0,
+      "score": 0.848381601362862,
+      "raw_value": -16.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -16.6
+      }
+    },
+    {
+      "start_sec": 230.0,
+      "end_sec": 232.0,
+      "score": 0.8722316865417377,
+      "raw_value": -15.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -15.2
+      }
+    },
+    {
+      "start_sec": 232.0,
+      "end_sec": 234.0,
+      "score": 0.889267461669506,
+      "raw_value": -14.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -14.2
+      }
+    },
+    {
+      "start_sec": 234.0,
+      "end_sec": 236.0,
+      "score": 0.9659284497444633,
+      "raw_value": -9.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -9.7
+      }
+    },
+    {
+      "start_sec": 236.0,
+      "end_sec": 238.0,
+      "score": 0.9318568994889268,
+      "raw_value": -11.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -11.7
+      }
+    },
+    {
+      "start_sec": 238.0,
+      "end_sec": 240.0,
+      "score": 0.9437819420783646,
+      "raw_value": -11.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -11.0
+      }
+    },
+    {
+      "start_sec": 240.0,
+      "end_sec": 242.0,
+      "score": 0.8296422487223168,
+      "raw_value": -17.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -17.7
+      }
+    },
+    {
+      "start_sec": 242.0,
+      "end_sec": 244.0,
+      "score": 0.8654173764906303,
+      "raw_value": -15.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -15.6
+      }
+    },
+    {
+      "start_sec": 244.0,
+      "end_sec": 246.0,
+      "score": 0.8398637137989778,
+      "raw_value": -17.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -17.1
+      }
+    },
+    {
+      "start_sec": 246.0,
+      "end_sec": 248.0,
+      "score": 0.8296422487223168,
+      "raw_value": -17.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -17.7
+      }
+    },
+    {
+      "start_sec": 248.0,
+      "end_sec": 250.0,
+      "score": 0.848381601362862,
+      "raw_value": -16.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -16.6
+      }
+    },
+    {
+      "start_sec": 250.0,
+      "end_sec": 252.0,
+      "score": 0.6354344122657581,
+      "raw_value": -29.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -29.1
+      }
+    },
+    {
+      "start_sec": 252.0,
+      "end_sec": 254.0,
+      "score": 0.6422487223168655,
+      "raw_value": -28.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -28.7
+      }
+    },
+    {
+      "start_sec": 254.0,
+      "end_sec": 256.0,
+      "score": 0.020442930153322023,
+      "raw_value": -65.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -65.2
+      }
+    },
+    {
+      "start_sec": 256.0,
+      "end_sec": 258.0,
+      "score": 0.6252129471890971,
+      "raw_value": -29.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -29.7
+      }
+    },
+    {
+      "start_sec": 258.0,
+      "end_sec": 260.0,
+      "score": 0.6252129471890971,
+      "raw_value": -29.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -29.7
+      }
+    },
+    {
+      "start_sec": 260.0,
+      "end_sec": 262.0,
+      "score": 0.7870528109028961,
+      "raw_value": -20.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -20.2
+      }
+    },
+    {
+      "start_sec": 262.0,
+      "end_sec": 264.0,
+      "score": 0.7308347529812607,
+      "raw_value": -23.5,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -23.5
+      }
+    },
+    {
+      "start_sec": 264.0,
+      "end_sec": 266.0,
+      "score": 0.3577512776831347,
+      "raw_value": -45.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -45.4
+      }
+    },
+    {
+      "start_sec": 266.0,
+      "end_sec": 268.0,
+      "score": 0.6626916524701875,
+      "raw_value": -27.5,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -27.5
+      }
+    },
+    {
+      "start_sec": 268.0,
+      "end_sec": 270.0,
+      "score": 0.7018739352640545,
+      "raw_value": -25.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -25.2
+      }
+    },
+    {
+      "start_sec": 270.0,
+      "end_sec": 272.0,
+      "score": 0.7172061328790461,
+      "raw_value": -24.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -24.3
+      }
+    },
+    {
+      "start_sec": 272.0,
+      "end_sec": 274.0,
+      "score": 0.657580919931857,
+      "raw_value": -27.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -27.8
+      }
+    },
+    {
+      "start_sec": 274.0,
+      "end_sec": 276.0,
+      "score": 0.6252129471890971,
+      "raw_value": -29.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -29.7
+      }
+    },
+    {
+      "start_sec": 276.0,
+      "end_sec": 278.0,
+      "score": 0.798977853492334,
+      "raw_value": -19.5,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -19.5
+      }
+    },
+    {
+      "start_sec": 278.0,
+      "end_sec": 280.0,
+      "score": 0.8296422487223168,
+      "raw_value": -17.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -17.7
+      }
+    },
+    {
+      "start_sec": 280.0,
+      "end_sec": 282.0,
+      "score": 0.7666098807495741,
+      "raw_value": -21.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -21.4
+      }
+    },
+    {
+      "start_sec": 282.0,
+      "end_sec": 284.0,
+      "score": 0.7632027257240205,
+      "raw_value": -21.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -21.6
+      }
+    },
+    {
+      "start_sec": 284.0,
+      "end_sec": 286.0,
+      "score": 0.7649063032367973,
+      "raw_value": -21.5,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -21.5
+      }
+    },
+    {
+      "start_sec": 286.0,
+      "end_sec": 288.0,
+      "score": 0.7683134582623511,
+      "raw_value": -21.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -21.3
+      }
+    },
+    {
+      "start_sec": 288.0,
+      "end_sec": 290.0,
+      "score": 0.8057921635434413,
+      "raw_value": -19.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -19.1
+      }
+    },
+    {
+      "start_sec": 290.0,
+      "end_sec": 292.0,
+      "score": 0.6729131175468485,
+      "raw_value": -26.9,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -26.9
+      }
+    },
+    {
+      "start_sec": 292.0,
+      "end_sec": 294.0,
+      "score": 0.6609880749574106,
+      "raw_value": -27.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -27.6
+      }
+    },
+    {
+      "start_sec": 294.0,
+      "end_sec": 296.0,
+      "score": 0.7240204429301534,
+      "raw_value": -23.9,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -23.9
+      }
+    },
+    {
+      "start_sec": 296.0,
+      "end_sec": 298.0,
+      "score": 0.7529812606473595,
+      "raw_value": -22.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -22.2
+      }
+    },
+    {
+      "start_sec": 298.0,
+      "end_sec": 300.0,
+      "score": 0.7717206132879046,
+      "raw_value": -21.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -21.1
+      }
+    },
+    {
+      "start_sec": 300.0,
+      "end_sec": 302.0,
+      "score": 0.7257240204429303,
+      "raw_value": -23.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -23.8
+      }
+    },
+    {
+      "start_sec": 302.0,
+      "end_sec": 304.0,
+      "score": 0.7495741056218059,
+      "raw_value": -22.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -22.4
+      }
+    },
+    {
+      "start_sec": 304.0,
+      "end_sec": 306.0,
+      "score": 0.7257240204429303,
+      "raw_value": -23.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -23.8
+      }
+    },
+    {
+      "start_sec": 306.0,
+      "end_sec": 308.0,
+      "score": 0.8620102214650768,
+      "raw_value": -15.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -15.8
+      }
+    },
+    {
+      "start_sec": 308.0,
+      "end_sec": 310.0,
+      "score": 0.7972742759795571,
+      "raw_value": -19.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -19.6
+      }
+    },
+    {
+      "start_sec": 310.0,
+      "end_sec": 312.0,
+      "score": 0.7632027257240205,
+      "raw_value": -21.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -21.6
+      }
+    },
+    {
+      "start_sec": 312.0,
+      "end_sec": 314.0,
+      "score": 0.7495741056218059,
+      "raw_value": -22.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -22.4
+      }
+    },
+    {
+      "start_sec": 314.0,
+      "end_sec": 316.0,
+      "score": 0.7666098807495741,
+      "raw_value": -21.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -21.4
+      }
+    },
+    {
+      "start_sec": 316.0,
+      "end_sec": 318.0,
+      "score": 0.7359454855195912,
+      "raw_value": -23.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -23.2
+      }
+    },
+    {
+      "start_sec": 318.0,
+      "end_sec": 320.0,
+      "score": 0.7495741056218059,
+      "raw_value": -22.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -22.4
+      }
+    },
+    {
+      "start_sec": 320.0,
+      "end_sec": 322.0,
+      "score": 0.7001703577512778,
+      "raw_value": -25.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -25.3
+      }
+    },
+    {
+      "start_sec": 322.0,
+      "end_sec": 324.0,
+      "score": 0.7103918228279387,
+      "raw_value": -24.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -24.7
+      }
+    },
+    {
+      "start_sec": 324.0,
+      "end_sec": 326.0,
+      "score": 0.747870528109029,
+      "raw_value": -22.5,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -22.5
+      }
+    },
+    {
+      "start_sec": 326.0,
+      "end_sec": 328.0,
+      "score": 0.8841567291311755,
+      "raw_value": -14.5,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -14.5
+      }
+    },
+    {
+      "start_sec": 328.0,
+      "end_sec": 330.0,
+      "score": 0.8807495741056218,
+      "raw_value": -14.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -14.7
+      }
+    },
+    {
+      "start_sec": 330.0,
+      "end_sec": 332.0,
+      "score": 0.8245315161839865,
+      "raw_value": -18.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -18.0
+      }
+    },
+    {
+      "start_sec": 332.0,
+      "end_sec": 334.0,
+      "score": 0.8824531516183987,
+      "raw_value": -14.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -14.6
+      }
+    },
+    {
+      "start_sec": 334.0,
+      "end_sec": 336.0,
+      "score": 0.960817717206133,
+      "raw_value": -10.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -10.0
+      }
+    },
+    {
+      "start_sec": 336.0,
+      "end_sec": 338.0,
+      "score": 0.909710391822828,
+      "raw_value": -13.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -13.0
+      }
+    },
+    {
+      "start_sec": 338.0,
+      "end_sec": 340.0,
+      "score": 0.9386712095400341,
+      "raw_value": -11.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -11.3
+      }
+    },
+    {
+      "start_sec": 340.0,
+      "end_sec": 342.0,
+      "score": 0.9028960817717206,
+      "raw_value": -13.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -13.4
+      }
+    },
+    {
+      "start_sec": 342.0,
+      "end_sec": 344.0,
+      "score": 0.9063032367972743,
+      "raw_value": -13.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -13.2
+      }
+    },
+    {
+      "start_sec": 344.0,
+      "end_sec": 346.0,
+      "score": 0.819420783645656,
+      "raw_value": -18.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -18.3
+      }
+    },
+    {
+      "start_sec": 346.0,
+      "end_sec": 348.0,
+      "score": 0.8313458262350937,
+      "raw_value": -17.6,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -17.6
+      }
+    },
+    {
+      "start_sec": 348.0,
+      "end_sec": 350.0,
+      "score": 0.9880749574105623,
+      "raw_value": -8.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -8.4
+      }
+    },
+    {
+      "start_sec": 350.0,
+      "end_sec": 352.0,
+      "score": 0.8603066439522999,
+      "raw_value": -15.9,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -15.9
+      }
+    },
+    {
+      "start_sec": 352.0,
+      "end_sec": 354.0,
+      "score": 0.9114139693356048,
+      "raw_value": -12.9,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -12.9
+      }
+    },
+    {
+      "start_sec": 354.0,
+      "end_sec": 356.0,
+      "score": 0.8620102214650768,
+      "raw_value": -15.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -15.8
+      }
+    },
+    {
+      "start_sec": 356.0,
+      "end_sec": 358.0,
+      "score": 0.981260647359455,
+      "raw_value": -8.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -8.8
+      }
+    },
+    {
+      "start_sec": 358.0,
+      "end_sec": 360.0,
+      "score": 0.9522998296422488,
+      "raw_value": -10.5,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -10.5
+      }
+    },
+    {
+      "start_sec": 360.0,
+      "end_sec": 362.0,
+      "score": 0.9557069846678025,
+      "raw_value": -10.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -10.3
+      }
+    },
+    {
+      "start_sec": 362.0,
+      "end_sec": 364.0,
+      "score": 0.9574105621805792,
+      "raw_value": -10.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -10.2
+      }
+    },
+    {
+      "start_sec": 364.0,
+      "end_sec": 366.0,
+      "score": 0.9080068143100511,
+      "raw_value": -13.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -13.1
+      }
+    },
+    {
+      "start_sec": 366.0,
+      "end_sec": 368.0,
+      "score": 0.778534923339012,
+      "raw_value": -20.7,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -20.7
+      }
+    },
+    {
+      "start_sec": 368.0,
+      "end_sec": 370.0,
+      "score": 0.5349233390119251,
+      "raw_value": -35.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -35.0
+      }
+    },
+    {
+      "start_sec": 370.0,
+      "end_sec": 372.0,
+      "score": 0.7206132879045997,
+      "raw_value": -24.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -24.1
+      }
+    },
+    {
+      "start_sec": 372.0,
+      "end_sec": 374.0,
+      "score": 0.8347529812606475,
+      "raw_value": -17.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -17.4
+      }
+    },
+    {
+      "start_sec": 374.0,
+      "end_sec": 376.0,
+      "score": 0.6729131175468485,
+      "raw_value": -26.9,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -26.9
+      }
+    },
+    {
+      "start_sec": 376.0,
+      "end_sec": 378.0,
+      "score": 0.7257240204429303,
+      "raw_value": -23.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -23.8
+      }
+    },
+    {
+      "start_sec": 378.0,
+      "end_sec": 380.0,
+      "score": 0.8449744463373084,
+      "raw_value": -16.8,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -16.8
+      }
+    },
+    {
+      "start_sec": 380.0,
+      "end_sec": 382.0,
+      "score": 0.7563884156729132,
+      "raw_value": -22.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -22.0
+      }
+    },
+    {
+      "start_sec": 382.0,
+      "end_sec": 384.0,
+      "score": 0.6149914821124363,
+      "raw_value": -30.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -30.3
+      }
+    },
+    {
+      "start_sec": 384.0,
+      "end_sec": 386.0,
+      "score": 0.8432708688245316,
+      "raw_value": -16.9,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -16.9
+      }
+    },
+    {
+      "start_sec": 386.0,
+      "end_sec": 388.0,
+      "score": 0.788756388415673,
+      "raw_value": -20.1,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -20.1
+      }
+    },
+    {
+      "start_sec": 388.0,
+      "end_sec": 390.0,
+      "score": 0.7904599659284498,
+      "raw_value": -20.0,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -20.0
+      }
+    },
+    {
+      "start_sec": 390.0,
+      "end_sec": 392.0,
+      "score": 0.0,
+      "raw_value": -66.4,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -66.4
+      }
+    },
+    {
+      "start_sec": 392.0,
+      "end_sec": 394.0,
+      "score": 0.003407155025553711,
+      "raw_value": -66.2,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -66.2
+      }
+    },
+    {
+      "start_sec": 394.0,
+      "end_sec": 396.0,
+      "score": 0.0017035775127769764,
+      "raw_value": -66.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -66.3
+      }
+    },
+    {
+      "start_sec": 396.0,
+      "end_sec": 396.969002,
+      "score": 0.0017035775127769764,
+      "raw_value": -66.3,
+      "label": "loudness_ebur128",
+      "meta": {
+        "peak_momentary_lufs": -66.3
+      }
+    }
+  ]
+}
