@@ -21,18 +21,20 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(morgan('combined'));
 
-// Auto-detect and authenticate any agent
-app.use(autoAuthenticateAgent);
-
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/wraps', wrapRoutes);
-app.use('/api/users', userRoutes);
-
-// Health check
+// Health check (before auth middleware)
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Public routes (before auth middleware)
+app.use('/api/auth', authRoutes);
+
+// Auto-detect and authenticate any agent (for protected routes)
+app.use(autoAuthenticateAgent);
+
+// Protected routes (after auth middleware)
+app.use('/api/wraps', wrapRoutes);
+app.use('/api/users', userRoutes);
 
 // Error handling
 app.use(errorHandler);

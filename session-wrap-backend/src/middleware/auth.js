@@ -3,6 +3,15 @@ const axios = require('axios');
 
 // Verify Claude Code subscription token
 async function verifyClaudeToken(token) {
+  // Allow test tokens in development
+  if (process.env.NODE_ENV !== 'production' && token.startsWith('sk_test_')) {
+    return {
+      valid: true,
+      user: { id: 'test-user', email: 'test@example.com' },
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+    };
+  }
+
   try {
     const response = await axios.get(`${process.env.CLAUDE_CODE_API_URL}/user/profile`, {
       headers: {

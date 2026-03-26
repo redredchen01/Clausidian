@@ -25,7 +25,16 @@ detect_agent_type() {
 # Login with agent token
 cmd_login() {
   AGENT_TYPE=$(detect_agent_type)
-  AGENT_TOKEN=$(eval echo \$${AGENT_TYPE^^}_TOKEN)
+
+  # Get token for agent type (works with bash and zsh)
+  case "$AGENT_TYPE" in
+    claude-code) AGENT_TOKEN="$CLAUDE_CODE_TOKEN" ;;
+    cursor) AGENT_TOKEN="$CURSOR_TOKEN" ;;
+    windsurf) AGENT_TOKEN="$WINDSURF_TOKEN" ;;
+    cline) AGENT_TOKEN="$CLINE_TOKEN" ;;
+    aider) AGENT_TOKEN="$AIDER_TOKEN" ;;
+    *) AGENT_TOKEN="" ;;
+  esac
 
   if [ -z "$AGENT_TOKEN" ]; then
     echo "❌ Error: No agent token found"

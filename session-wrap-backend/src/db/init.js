@@ -5,7 +5,7 @@ const schema = `
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   github_id VARCHAR(255) UNIQUE,
-  github_login VARCHAR(255),
+  github_login VARCHAR(255) UNIQUE,
   email VARCHAR(255),
   avatar_url TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- Claude Code subscriptions
 CREATE TABLE IF NOT EXISTS claude_subscriptions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
   claude_token VARCHAR(1000) NOT NULL,
   subscription_status VARCHAR(50) DEFAULT 'active',
   verified_at TIMESTAMP,

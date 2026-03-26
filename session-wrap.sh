@@ -101,11 +101,21 @@ if [ -f "$SESSION_WRAP_TOKEN_FILE" ] && [ -n "$(cat "$SESSION_WRAP_TOKEN_FILE" 2
   MEMORY_SIZE=$(du -sb "$MEMORY_DIR" | cut -f1)
   OBSIDIAN_COUNT=$(find "$OBSIDIAN_DIR" -type f -name "*.md" 2>/dev/null | wc -l)
 
+  # Get agent token
+  case "$AGENT_TYPE" in
+    claude-code) AGENT_TOKEN="$CLAUDE_CODE_TOKEN" ;;
+    cursor) AGENT_TOKEN="$CURSOR_TOKEN" ;;
+    windsurf) AGENT_TOKEN="$WINDSURF_TOKEN" ;;
+    cline) AGENT_TOKEN="$CLINE_TOKEN" ;;
+    aider) AGENT_TOKEN="$AIDER_TOKEN" ;;
+    *) AGENT_TOKEN="" ;;
+  esac
+
   # Try to sync wrap to backend
   SYNC_RESPONSE=$(curl -s -X POST "$SESSION_WRAP_API_URL/api/wraps" \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer $JWT_TOKEN" \
-    -H "x-claude-token: $(eval echo \$${AGENT_TYPE^^}_TOKEN)" \
+    -H "x-claude-token: $AGENT_TOKEN" \
     -d "{
       \"workspaceName\": \"YD 2026\",
       \"summary\": \"$SUMMARY\",
