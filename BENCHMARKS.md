@@ -1,6 +1,6 @@
 # Performance Benchmarks & Metrics
 
-Real-world productivity measurements from session-wrap v3.4.1 usage.
+Real-world productivity measurements from session-wrap v3.5.1 usage.
 
 ---
 
@@ -27,7 +27,7 @@ session-wrap reduces coordination overhead and context loss across all team size
 
 #### Context Switching
 
-| Scenario | v3.3 (Without) | v3.4.1 (With session-wrap) | Savings |
+| Scenario | v3.3 (Without) | v3.5.1 (With session-wrap) | Savings |
 |----------|---|---|---|
 | Switch between projects | 30-45 min re-read code | 5 min `agent-context` | 25-40 min/switch |
 | Vacation re-onboarding (2 weeks) | 3-4 days to get back up to speed | 15 min load context | 2.75-3.75 days |
@@ -53,7 +53,7 @@ session-wrap reduces coordination overhead and context loss across all team size
 
 #### Meeting Overhead Reduction
 
-| Activity | v3.3 | v3.4.1 | Savings |
+| Activity | v3.3 | v3.5.1 | Savings |
 |----------|------|--------|---------|
 | Daily standup | 15 min × 5 people | 5 min async (visualize-tasks) | 50 min/day |
 | Architecture review | 1 hour meeting | 15 min (agent-decision + async) | 45 min |
@@ -112,7 +112,7 @@ session-wrap reduces coordination overhead and context loss across all team size
 
 #### Cross-Team Coordination
 
-| Metric | v3.3 | v3.4.1 | Impact |
+| Metric | v3.3 | v3.5.1 | Impact |
 |--------|------|--------|--------|
 | **Knowledge silos** | Each team has internal Slack only | Central decision log visible to all | 100% transparency |
 | **Architecture alignment** | 40% contradictory decisions | <5% conflicts | 87% reduction |
@@ -173,7 +173,7 @@ session-wrap reduces coordination overhead and context loss across all team size
 
 ### Task Coordination (agent-tasks)
 
-| Scenario | v3.3 | v3.4.1 | Savings |
+| Scenario | v3.3 | v3.5.1 | Savings |
 |----------|------|--------|---------|
 | Prevent duplicate work | Requires communication | Automatic (claim prevents) | 1-2 hours per conflict |
 | Identify ready tasks | Manual review | `agent-tasks next` (10 sec) | 10-15 min per task |
@@ -189,7 +189,7 @@ session-wrap reduces coordination overhead and context loss across all team size
 
 ### Memory Sharing (agent-share)
 
-| Scenario | v3.3 | v3.4.1 | Savings |
+| Scenario | v3.3 | v3.5.1 | Savings |
 |----------|------|--------|---------|
 | Agent A → B handoff | Manual summary (30 min) | Automated publish (1 min) | 29 min |
 | Context loss after vacation | Re-read code (4 hours) | Load context (5 min) | 3h 55min |
@@ -201,7 +201,7 @@ session-wrap reduces coordination overhead and context loss across all team size
 
 ### Checkpoints (agent-checkpoint)
 
-| Scenario | v3.3 | v3.4.1 | Savings |
+| Scenario | v3.3 | v3.5.1 | Savings |
 |----------|------|--------|---------|
 | Safe refactor rollback | Revert commits (30 min) | Restore checkpoint (5 min) | 25 min |
 | Experimental branch cleanup | Manual branch management (15 min) | Auto checkpoint delete (1 min) | 14 min |
@@ -411,7 +411,7 @@ session-wrap reduces coordination overhead and context loss across all team size
 
 These benchmarks come from:
 1. Real-world workflow guides (OPENSOURCE-COLLABORATION.md, STARTUP-TEAM-WORKFLOW.md, ENTERPRISE-ADOPTION.md, SOLO-DEVELOPER.md)
-2. Measured improvements from v3.4.1 features
+2. Measured improvements from v3.5.1 features
 3. Conservative estimates (not inflated)
 
 **No hypothetical scenarios.** All based on documented real-world workflows.

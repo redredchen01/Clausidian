@@ -1,6 +1,6 @@
 {
   "name": "session-wrap-skill",
-  "version": "3.4.1",
+  "version": "3.5.1",
   "description": "Universal session wrap-up: automatically persist project context to memory files for seamless resume",
   "main": "scripts/session-wrap.sh",
   "files": [
