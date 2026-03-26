@@ -42,3 +42,14 @@ __pycache__/
 .zshrc-wrap
 scripts/login-agents.sh
 .session-wrap-trigger.json
+
+# Database & cache files
+*.rdb
+dump.db
+*.sqlite
+*.db
+
+# Temporary & generated
+*.env.backup*
+.env.local
+checkpoints/
