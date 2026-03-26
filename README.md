@@ -32,6 +32,7 @@ Transform from manual session saving → **agent infrastructure** for multi-agen
 - 📚 **Knowledge base** — Persistent project conventions & architecture
 - ⚙️ **Auto-optimize** — Keep memory lean for context windows
 - 🔐 **Git-backed** — Checkpoints with full rollback support
+- 🎯 **Web Dashboard** — Real-time visualization (tasks, decisions, memory, sync status)
 
 ## 📚 Documentation
 
@@ -44,6 +45,7 @@ Start here based on your needs:
 | **[AGENT-WORKFLOW.md](AGENT-WORKFLOW.md)** | 6 workflow patterns + best practices |
 | **[INTEGRATIONS.md](INTEGRATIONS.md)** | Claude Code, Cursor, Windsurf setup |
 | **[PRODUCTION-SETUP.md](PRODUCTION-SETUP.md)** | Deploy backend to Railway/Docker/VPS |
+| **[web/README.md](web/README.md)** | Dashboard setup, deployment, and usage |
 | **[VISUALIZATION-GUIDE.md](VISUALIZATION-GUIDE.md)** | Visualize tasks, decisions, memory, timeline |
 | **[FAQ-TROUBLESHOOTING.md](FAQ-TROUBLESHOOTING.md)** | Common issues & solutions |
 | **[BENCHMARKS.md](BENCHMARKS.md)** | Productivity metrics & time savings |
@@ -311,11 +313,40 @@ See **[PRODUCTION-SETUP.md](PRODUCTION-SETUP.md)** for full deployment guide.
 
 **Note:** Backend enables cloud sync and web dashboards for distributed teams. Fully optional — CLI tools work perfectly without it.
 
+## Web Dashboard
+
+Real-time monitoring dashboard for distributed teams:
+
+```bash
+cd web
+npm install
+npm run dev                  # Local dev (http://localhost:5173)
+npm run build                # Production build
+```
+
+Deploy to Vercel with one click:
+
+```bash
+npm i -g vercel
+vercel
+```
+
+**Features:**
+- 📊 Task status visualization (pending/in-progress/completed)
+- 🎯 Decision timeline with reasoning chains
+- 💾 Memory usage metrics and growth trends
+- 🔄 Real-time sync status and active agents
+
+See **[web/README.md](web/README.md)** for full setup and configuration.
+
 ## Files
 
 - `scripts/session-wrap.sh` — Core session wrapping
 - `scripts/obsidian-sync.sh` — Knowledge vault sync
+- `scripts/deploy-railway.sh` — Railway backend deployment automation
+- `scripts/setup.sh` — One-command project initialization
 - `scripts/agent-*.sh` — 7 agent coordination tools
+- `web/` — React dashboard (React + Vite + TypeScript)
 - `.zshrc-wrap` — Aliases and workflow aliases
 - `package.json` — npm metadata
 
