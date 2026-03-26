@@ -66,6 +66,14 @@ See how session-wrap works in practice across different team structures:
 4. **Team setup:** See [INTEGRATIONS.md](INTEGRATIONS.md) for your editor
 5. **Real-world:** Find your scenario in the workflow guides above
 
+## Upgrade from v3.3 → v3.4.0
+
+See **[MIGRATION.md](MIGRATION.md)** for step-by-step upgrade guide.
+
+**Note:** v3.4.0 is fully backward compatible. No breaking changes.
+
+---
+
 ## Installation
 
 ### npm (Recommended)
