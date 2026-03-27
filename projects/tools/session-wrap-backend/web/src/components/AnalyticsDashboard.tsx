@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { useAnalytics, useWorkspace } from '../hooks'
 import { TrendChart } from './TrendChart'
 import { AgentLeaderboard } from './AgentLeaderboard'
@@ -12,7 +13,7 @@ interface KPICardProps {
   color: 'blue' | 'green' | 'yellow' | 'purple'
 }
 
-const KPICard = ({ title, value, icon, trend, color }: KPICardProps) => {
+const KPICardComponent = ({ title, value, icon, trend, color }: KPICardProps) => {
   const colorClasses = {
     blue: 'bg-blue-50 text-blue-600',
     green: 'bg-green-50 text-green-600',
@@ -32,7 +33,9 @@ const KPICard = ({ title, value, icon, trend, color }: KPICardProps) => {
   )
 }
 
-const InsightCard = (insight: Insight) => {
+const KPICard = memo(KPICardComponent)
+
+const InsightCardComponent = (insight: Insight) => {
   const iconMap = {
     positive: <CheckCircle2 size={18} className="text-green-600" />,
     warning: <AlertCircle size={18} className="text-yellow-600" />,
@@ -46,7 +49,7 @@ const InsightCard = (insight: Insight) => {
   }
 
   return (
-    <div key={insight.message} className={`${bgMap[insight.type]} border rounded-lg p-4`}>
+    <div className={`${bgMap[insight.type]} border rounded-lg p-4`}>
       <div className="flex gap-3">
         <div className="flex-shrink-0">{iconMap[insight.type]}</div>
         <div className="flex-1">
@@ -58,11 +61,13 @@ const InsightCard = (insight: Insight) => {
   )
 }
 
+const InsightCard = memo(InsightCardComponent)
+
 interface AnalyticsDashboardProps {
   workspaceId?: string | null
 }
 
-export const AnalyticsDashboard = ({ workspaceId }: AnalyticsDashboardProps) => {
+const AnalyticsDashboardComponent = ({ workspaceId }: AnalyticsDashboardProps) => {
   const { currentWorkspace } = useWorkspace()
   const wsId = workspaceId || currentWorkspace?.id
   const { dashboard, insights, agents, isLoading, error, days, setDays } = useAnalytics(wsId || null)
@@ -214,3 +219,5 @@ export const AnalyticsDashboard = ({ workspaceId }: AnalyticsDashboardProps) => 
     </div>
   )
 }
+
+export const AnalyticsDashboard = memo(AnalyticsDashboardComponent)
