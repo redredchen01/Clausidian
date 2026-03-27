@@ -13,6 +13,7 @@ from hr_admin_bots.bots.offboarding import OffboardingBot
 from hr_admin_bots.shared.sheets import SheetsClient
 from hr_admin_bots.shared.auth import EmployeeAuth
 from hr_admin_bots.shared.notifier import EmailNotifier
+from hr_admin_bots.shared.approval import ApprovalManager
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +39,10 @@ class BotManager:
         )
         self.auth: EmployeeAuth = EmployeeAuth(sheets_client=self.sheets_client)
         self.notifier: EmailNotifier = EmailNotifier(self.config)
+        self.approval_manager: ApprovalManager = ApprovalManager(
+            sheets_client=self.sheets_client,
+            notifier=self.notifier,
+        )
 
         self.bots: list[Any] = self._create_bots()
 
@@ -58,6 +63,7 @@ class BotManager:
                 sheets_client=self.sheets_client,
                 auth=self.auth,
                 notifier=self.notifier,
+                approval_manager=self.approval_manager,
             )
             instances.append(instance)
             logger.info("bot '%s' created", name)

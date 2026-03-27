@@ -27,8 +27,8 @@ class OnboardingBot(BaseBot):
     CONFIRMING = CONFIRMING
     SUBMITTING = SUBMITTING
 
-    def __init__(self, name: str, bot_config: Any, sheets_client: Any, auth: Any, notifier: Any) -> None:
-        super().__init__(name, bot_config, sheets_client, auth, notifier)
+    def __init__(self, name: str, bot_config: Any, sheets_client: Any, auth: Any, notifier: Any, approval_manager: Any = None) -> None:
+        super().__init__(name, bot_config, sheets_client, auth, notifier, approval_manager)
 
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         await update.message.reply_text(

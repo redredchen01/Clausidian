@@ -6,6 +6,7 @@ from typing import Any, Optional
 from telegram import Update
 from telegram.ext import (
     Application,
+    CallbackQueryHandler,
     CommandHandler,
     ConversationHandler,
     ContextTypes,
@@ -33,12 +34,14 @@ class BaseBot:
         sheets_client: Any,
         auth: Any,
         notifier: Any,
+        approval_manager: Any = None,
     ) -> None:
         self.name = name
         self.bot_config = bot_config
         self.sheets_client = sheets_client
         self.auth = auth
         self.notifier = notifier
+        self.approval_manager = approval_manager
 
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         """入口指令，歡迎使用者並要求輸入員工編號。"""
@@ -48,7 +51,11 @@ class BaseBot:
         return WAITING_ID
 
     async def verify_id(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-        """查詢員工資料，存入 user_data，顯示資訊後詢問確認。"""
+        """查詢員工資料，存入 user_data，顯示資訊後詢問確認。
+
+        成功驗證後，若員工尚未綁定 Telegram ID，自動綁定；
+        若已綁定其他帳號，則拒絕繼續。
+        """
         employee_id = update.message.text.strip()
         employee = self.auth.lookup(employee_id)
 
@@ -58,12 +65,32 @@ class BaseBot:
             )
             return WAITING_ID
 
+        # Telegram ID 綁定檢查
+        current_tid = update.effective_user.id
+        bound_tid = self.sheets_client.get_telegram_id(employee_id)
+
+        if bound_tid is None:
+            # 尚未綁定 — 自動綁定目前使用者
+            self.sheets_client.bind_telegram_id(employee_id, current_tid)
+        elif bound_tid != current_tid:
+            await update.message.reply_text(
+                "此員工編號已綁定其他 Telegram 帳號，無法繼續。\n"
+                "如有疑問請聯絡 HR。"
+            )
+            return WAITING_ID
+
         context.user_data["employee"] = employee
         info = self._format_employee_info(employee)
         await update.message.reply_text(
             f"{info}\n\n確認以上資訊正確嗎？請輸入「確認」或「取消」。"
         )
         return CONFIRMING
+
+    async def status_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """查詢使用者的申請狀態（子類別可覆寫以提供更精確的查詢）。"""
+        await update.message.reply_text(
+            "此功能尚未在此 Bot 實作。請使用請假 Bot 的 /status 指令。"
+        )
 
     async def cancel(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         """取消對話並清除狀態。"""
@@ -99,4 +126,14 @@ class BaseBot:
         """根據 bot_config.token 建立 Telegram Application 實例。"""
         app = Application.builder().token(self.bot_config.token).build()
         app.add_handler(self.build_conversation_handler())
+
+        # 若有 approval_manager，註冊核准/駁回 callback handler
+        if self.approval_manager is not None:
+            app.add_handler(
+                CallbackQueryHandler(
+                    self.approval_manager.handle_approval_callback,
+                    pattern=r"^(approve|reject):",
+                )
+            )
+
         return app

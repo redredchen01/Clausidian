@@ -15,21 +15,24 @@ from hr_admin_bots.config import BotConfig
 # ---------------------------------------------------------------------------
 
 EMPLOYEE = {
-    "id": "E001",
+    "employee_id": "E001",
     "name": "Alice",
     "department": "Engineering",
     "position": "Engineer",
     "manager_email": "mgr@company.com",
+    "telegram_id": 12345,
 }
 
 
-def make_update(text: str) -> MagicMock:
+def make_update(text: str, user_id: int = 12345) -> MagicMock:
     """Build a minimal Telegram Update mock with message.text set."""
     update = MagicMock()
     update.message = MagicMock()
     update.message.text = text
     update.message.reply_text = AsyncMock()
     update.callback_query = None
+    update.effective_user = MagicMock()
+    update.effective_user.id = user_id
     return update
 
 
@@ -47,16 +50,20 @@ def make_base_bot(auth_return=EMPLOYEE, sheets_return=None) -> BaseBot:
     auth = MagicMock()
     auth.lookup.return_value = auth_return
     sheets = MagicMock()
+    sheets.get_telegram_id.return_value = 12345  # match default user_id
+    sheets.bind_telegram_id.return_value = True
     if sheets_return is not None:
         sheets.find_row.return_value = sheets_return
     notifier = MagicMock()
     notifier.hr_email = "hr@company.com"
+    approval = MagicMock()
     return BaseBot(
         name="base",
         bot_config=make_bot_config(),
         sheets_client=sheets,
         auth=auth,
         notifier=notifier,
+        approval_manager=approval,
     )
 
 
@@ -66,14 +73,19 @@ def make_leave_bot(auth_return=EMPLOYEE) -> LeaveBot:
     sheets = MagicMock()
     sheets.find_rows.return_value = []
     sheets.find_row.return_value = None
+    sheets.find_employee.return_value = auth_return
+    sheets.get_telegram_id.return_value = 12345
+    sheets.bind_telegram_id.return_value = True
     notifier = MagicMock()
     notifier.hr_email = "hr@company.com"
+    approval = MagicMock()
     return LeaveBot(
         name="leave",
         bot_config=make_bot_config(),
         sheets_client=sheets,
         auth=auth,
         notifier=notifier,
+        approval_manager=approval,
     )
 
 
@@ -101,7 +113,7 @@ class TestBaseBotVerifyId:
 
         await bot.verify_id(update, ctx)
 
-        assert ctx.user_data["employee"]["id"] == "E001"
+        assert ctx.user_data["employee"]["employee_id"] == "E001"
         assert ctx.user_data["employee"]["name"] == "Alice"
 
     @pytest.mark.asyncio

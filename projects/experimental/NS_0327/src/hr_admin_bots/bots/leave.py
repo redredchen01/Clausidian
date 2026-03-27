@@ -6,6 +6,7 @@ from typing import Any, Optional
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
+    Application,
     CallbackQueryHandler,
     CommandHandler,
     ConversationHandler,
@@ -43,8 +44,16 @@ class LeaveBot(BaseBot):
     INPUT_REASON = INPUT_REASON
     CONFIRMING = CONFIRMING
 
-    def __init__(self, name: str, bot_config: Any, sheets_client: Any, auth: Any, notifier: Any) -> None:
-        super().__init__(name, bot_config, sheets_client, auth, notifier)
+    def __init__(
+        self,
+        name: str,
+        bot_config: Any,
+        sheets_client: Any,
+        auth: Any,
+        notifier: Any,
+        approval_manager: Any = None,
+    ) -> None:
+        super().__init__(name, bot_config, sheets_client, auth, notifier, approval_manager)
 
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         await update.message.reply_text(
@@ -62,6 +71,19 @@ class LeaveBot(BaseBot):
             )
             return WAITING_ID
 
+        # Telegram ID 綁定檢查
+        current_tid = update.effective_user.id
+        bound_tid = self.sheets_client.get_telegram_id(employee_id)
+
+        if bound_tid is None:
+            self.sheets_client.bind_telegram_id(employee_id, current_tid)
+        elif bound_tid != current_tid:
+            await update.message.reply_text(
+                "此員工編號已綁定其他 Telegram 帳號，無法繼續。\n"
+                "如有疑問請聯絡 HR。"
+            )
+            return WAITING_ID
+
         context.user_data["employee"] = employee
         return await self.select_type(update, context)
 
@@ -70,7 +92,6 @@ class LeaveBot(BaseBot):
         employee = context.user_data.get("employee", {})
         employee_id = employee.get("employee_id", "")
 
-        # 從 sheet 取得年假餘額
         annual_balance = self._get_annual_balance(employee_id)
 
         keyboard = [
@@ -167,7 +188,7 @@ class LeaveBot(BaseBot):
         end_date = context.user_data.get("end_date", "")
         days = context.user_data.get("days", 0)
 
-        # 重疊日期檢查（status 為 pending 或 approved）
+        # 重疊日期檢查
         overlap = self._check_overlap(employee_id, start_date, end_date)
         if overlap:
             await update.message.reply_text(
@@ -206,6 +227,7 @@ class LeaveBot(BaseBot):
             return CONFIRMING
 
         employee = context.user_data.get("employee", {})
+        apply_date = date.today().isoformat()
         row = {
             "employee_id": employee.get("employee_id", ""),
             "name": employee.get("name", ""),
@@ -216,24 +238,45 @@ class LeaveBot(BaseBot):
             "days": context.user_data.get("days", 0),
             "reason": context.user_data.get("reason", ""),
             "status": "pending",
-            "apply_date": date.today().isoformat(),
+            "apply_date": apply_date,
         }
 
         try:
             self.sheets_client.append_row("leaves", row)
-            # 通知主管
-            manager_email = employee.get("manager_email", self.notifier.hr_email)
-            await self.notifier.send_async(
-                to=manager_email,
-                subject=f"請假申請通知 - {employee.get('name', '')}",
-                body=(
-                    f"員工 {employee.get('name', '')}（{employee.get('employee_id', '')}）"
-                    f"提出請假申請，請審核。\n\n"
-                    f"假別：{row['leave_type']}\n"
-                    f"日期：{row['start_date']} 至 {row['end_date']}（{row['days']} 天）\n"
-                    f"原因：{row['reason']}"
-                ),
-            )
+
+            # 取得剛寫入的 row index（最後一筆資料 row）
+            ws = self.sheets_client.get_worksheet("leaves")
+            records = ws.get_all_records()
+            row_index = len(records)  # 1-based，最後一筆
+
+            request_data = dict(row)
+            request_data["id"] = str(row_index)
+
+            if self.approval_manager is not None:
+                # 優先送 Telegram 主管核准，否則 fallback email
+                app = update.get_bot()  # type: ignore[attr-defined]
+                # build_application 產出的 app 無法在此取得，改傳 context.bot 的包裝
+                sent_telegram = await self.approval_manager.send_approval_request(
+                    _BotWrapper(update.get_bot()),  # type: ignore[attr-defined]
+                    employee,
+                    request_data,
+                    "leave",
+                )
+            else:
+                # 舊有 email 通知邏輯
+                manager_email = employee.get("manager_email", self.notifier.hr_email)
+                await self.notifier.send_async(
+                    to=manager_email,
+                    subject=f"請假申請通知 - {employee.get('name', '')}",
+                    body=(
+                        f"員工 {employee.get('name', '')}（{employee.get('employee_id', '')}）"
+                        f"提出請假申請，請審核。\n\n"
+                        f"假別：{row['leave_type']}\n"
+                        f"日期：{row['start_date']} 至 {row['end_date']}（{row['days']} 天）\n"
+                        f"原因：{row['reason']}"
+                    ),
+                )
+
             await update.message.reply_text(
                 "請假申請已成功送出！主管將盡快審核。"
             )
@@ -251,7 +294,98 @@ class LeaveBot(BaseBot):
         await update.message.reply_text("已取消請假申請。如需重新開始，請輸入 /start。")
         return ConversationHandler.END
 
+    # --- Feature 4: /status 與 /balance 指令 ---
+
+    async def status_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """顯示使用者近期/待審請假申請狀態。"""
+        telegram_id = update.effective_user.id
+
+        # 找出對應員工
+        employee = self._find_employee_by_telegram_id(telegram_id)
+        if not employee:
+            await update.message.reply_text(
+                "找不到您的員工資料。請先透過 /start 綁定員工編號。"
+            )
+            return
+
+        employee_id = str(employee.get("employee_id", ""))
+        try:
+            rows = self.sheets_client.find_rows("leaves", filters={"employee_id": employee_id})
+        except Exception as e:
+            logger.error("status_command query error: %s", e)
+            await update.message.reply_text("查詢失敗，請稍後再試。")
+            return
+
+        if not rows:
+            await update.message.reply_text("您目前沒有任何請假紀錄。")
+            return
+
+        # 顯示最近 5 筆（依 apply_date 倒序）
+        sorted_rows = sorted(rows, key=lambda r: r.get("apply_date", ""), reverse=True)[:5]
+        lines = ["您的請假申請紀錄（最近 5 筆）：\n"]
+        for r in sorted_rows:
+            status_label = {
+                "pending": "待審中",
+                "approved": "已核准",
+                "rejected": "已駁回",
+            }.get(str(r.get("status", "")), r.get("status", ""))
+            lines.append(
+                f"• {r.get('leave_type', '')} | {r.get('start_date', '')}~{r.get('end_date', '')} "
+                f"（{r.get('days', '')} 天） | {status_label}"
+            )
+
+        await update.message.reply_text("\n".join(lines))
+
+    async def balance_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """顯示各假別剩餘天數。"""
+        telegram_id = update.effective_user.id
+
+        employee = self._find_employee_by_telegram_id(telegram_id)
+        if not employee:
+            await update.message.reply_text(
+                "找不到您的員工資料。請先透過 /start 綁定員工編號。"
+            )
+            return
+
+        employee_id = str(employee.get("employee_id", ""))
+        lines = ["您的假別餘額：\n"]
+
+        # 年假
+        annual_balance = self._get_annual_balance(employee_id)
+        lines.append(f"• 年假：剩餘 {annual_balance} 天")
+
+        # 病假（無限）
+        lines.append("• 病假：無限額")
+
+        # 其他固定配額假別
+        for leave_type, quota in LEAVE_QUOTA.items():
+            if leave_type in ("病假",):
+                continue
+            used = self._get_used_days(employee_id, leave_type)
+            remaining = max(quota - used, 0)
+            lines.append(f"• {leave_type}：年度配額 {quota} 天，已用 {used} 天，剩餘 {remaining} 天")
+
+        await update.message.reply_text("\n".join(lines))
+
     # --- 內部工具方法 ---
+
+    def _find_employee_by_telegram_id(self, telegram_id: int) -> Optional[dict]:
+        """依 Telegram ID 從 employees sheet 找員工。"""
+        try:
+            ws = self.sheets_client.get_worksheet("employees")
+            records = ws.get_all_records()
+            for row in records:
+                raw = row.get("telegram_id", "")
+                if raw == "" or raw is None:
+                    continue
+                try:
+                    if int(raw) == telegram_id:
+                        return row
+                except (ValueError, TypeError):
+                    continue
+        except Exception as e:
+            logger.warning("_find_employee_by_telegram_id error: %s", e)
+        return None
 
     def _get_annual_balance(self, employee_id: str) -> int:
         """從 employees sheet 的 annual_leave_quota 欄位取得年假額度，減去已用天數。"""
@@ -281,7 +415,6 @@ class LeaveBot(BaseBot):
         if quota == -1:
             return None
 
-        # 計算本年度已使用天數
         used = self._get_used_days(employee_id, leave_type)
         remaining = quota - used
         if days > remaining:
@@ -325,7 +458,6 @@ class LeaveBot(BaseBot):
                 existing_start = row.get("start_date", "")
                 existing_end = row.get("end_date", "")
                 if existing_start and existing_end:
-                    # 日期區間重疊判斷
                     if not (end_date < existing_start or start_date > existing_end):
                         return True
         except Exception as e:
@@ -357,6 +489,30 @@ class LeaveBot(BaseBot):
             },
             fallbacks=[CommandHandler("cancel", self.cancel)],
         )
+
+    def build_application(self) -> Application:
+        """建立 Application，加入 /status、/balance 指令與 approval callback。"""
+        app = Application.builder().token(self.bot_config.token).build()
+        app.add_handler(self.build_conversation_handler())
+        app.add_handler(CommandHandler("status", self.status_command))
+        app.add_handler(CommandHandler("balance", self.balance_command))
+
+        if self.approval_manager is not None:
+            app.add_handler(
+                CallbackQueryHandler(
+                    self.approval_manager.handle_approval_callback,
+                    pattern=r"^(approve|reject):",
+                )
+            )
+
+        return app
+
+
+class _BotWrapper:
+    """ApprovalManager.send_approval_request 需要 bot_app.bot，此 wrapper 補足介面。"""
+
+    def __init__(self, bot: Any) -> None:
+        self.bot = bot
 
 
 def _parse_date(text: str) -> Optional[date]:
