@@ -1,6 +1,6 @@
 {
   "name": "obsidian-agent",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "CLI toolkit for AI agents to manage Obsidian vaults — journal, notes, search, index sync, and more",
   "type": "module",
   "bin": {

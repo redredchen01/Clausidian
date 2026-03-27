@@ -120,6 +120,62 @@ async function main() {
       break;
     }
 
+    case 'backlinks': {
+      const { backlinks } = await import('../src/commands/backlinks.mjs');
+      backlinks(resolveVault(flags), positional[0]);
+      break;
+    }
+
+    case 'update': {
+      const { update } = await import('../src/commands/update.mjs');
+      update(resolveVault(flags), positional[0], {
+        status: flags.status,
+        tags: flags.tags,
+        tag: flags.tag,
+        summary: flags.summary,
+      });
+      break;
+    }
+
+    case 'archive': {
+      const { archive } = await import('../src/commands/archive.mjs');
+      archive(resolveVault(flags), positional[0]);
+      break;
+    }
+
+    case 'stats': {
+      const { stats } = await import('../src/commands/stats.mjs');
+      stats(resolveVault(flags));
+      break;
+    }
+
+    case 'graph': {
+      const { graph } = await import('../src/commands/graph.mjs');
+      graph(resolveVault(flags), { type: flags.type });
+      break;
+    }
+
+    case 'orphans': {
+      const { orphans } = await import('../src/commands/orphans.mjs');
+      orphans(resolveVault(flags));
+      break;
+    }
+
+    case 'tag': {
+      const subcmd = positional[0];
+      if (subcmd === 'rename') {
+        const { tagRename } = await import('../src/commands/tag.mjs');
+        tagRename(resolveVault(flags), positional[1], positional[2]);
+      } else if (subcmd === 'list') {
+        const { tagList } = await import('../src/commands/tag.mjs');
+        tagList(resolveVault(flags));
+      } else {
+        console.error('Usage: obsidian-agent tag <rename|list>');
+        process.exit(1);
+      }
+      break;
+    }
+
     case 'hook': {
       const event = positional[0];
       const vaultRoot = resolveVault(flags);
@@ -165,11 +221,19 @@ Commands:
   journal [--date DATE]    Create/open today's journal
   note <title> <type>      Create a note (area/project/resource/idea)
   capture <idea>           Quick idea capture
-  search <keyword>         Search notes
+  search <keyword>         Full-text search across all notes
   list [type]              List notes with filters
   review                   Generate weekly review
   review monthly           Generate monthly review
   sync                     Rebuild tag & graph indices
+  backlinks <note>         Show notes that link to a note
+  update <note>            Update note frontmatter fields
+  archive <note>           Set note status to archived
+  stats                    Show vault statistics
+  graph                    Generate Mermaid knowledge graph
+  orphans                  Find notes with no inbound links
+  tag list                 List all tags with counts
+  tag rename <old> <new>   Rename a tag across the vault
   hook <event>             Handle agent hook events
 
 Flags:

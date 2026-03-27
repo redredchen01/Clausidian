@@ -57,9 +57,15 @@ export class Vault {
     return result;
   }
 
+  // ── Extract body (content after frontmatter) ────────
+
+  extractBody(content) {
+    return content.replace(/^---\n[\s\S]*?\n---\n?/, '').trim();
+  }
+
   // ── Scan all notes ───────────────────────────────────
 
-  scanNotes() {
+  scanNotes({ includeBody = false } = {}) {
     const notes = [];
     for (const dir of this.dirs) {
       const dirPath = this.path(dir);
@@ -69,7 +75,7 @@ export class Vault {
         const content = this.read(dir, file);
         if (!content) continue;
         const fm = this.parseFrontmatter(content);
-        notes.push({
+        const note = {
           file: file.replace('.md', ''),
           dir,
           title: fm.title || file.replace('.md', ''),
@@ -80,24 +86,84 @@ export class Vault {
           related: Array.isArray(fm.related) ? fm.related : [],
           created: fm.created || '',
           updated: fm.updated || '',
-        });
+        };
+        if (includeBody) note.body = this.extractBody(content);
+        notes.push(note);
       }
     }
     return notes;
   }
 
-  // ── Search notes by keyword ──────────────────────────
+  // ── Search notes by keyword (full-text) ────────────
 
   search(keyword, { type, tag, status } = {}) {
-    const notes = this.scanNotes();
+    const notes = this.scanNotes({ includeBody: true });
     const kw = keyword.toLowerCase();
     return notes.filter(n => {
       if (type && n.type !== type) return false;
       if (tag && !n.tags.includes(tag)) return false;
       if (status && n.status !== status) return false;
-      const haystack = `${n.title} ${n.summary} ${n.tags.join(' ')}`.toLowerCase();
+      const haystack = `${n.title} ${n.summary} ${n.tags.join(' ')} ${n.body || ''}`.toLowerCase();
       return haystack.includes(kw);
-    });
+    }).map(({ body, ...rest }) => rest);
+  }
+
+  // ── Find backlinks (notes that link TO a given note) ─
+
+  backlinks(noteName) {
+    const notes = this.scanNotes({ includeBody: true });
+    return notes.filter(n => {
+      if (n.file === noteName) return false;
+      const content = `${n.related.join(' ')} ${n.body || ''}`;
+      return content.includes(`[[${noteName}]]`);
+    }).map(({ body, ...rest }) => rest);
+  }
+
+  // ── Find orphan notes (no inbound links) ─────────────
+
+  orphans() {
+    const notes = this.scanNotes({ includeBody: true });
+    const linked = new Set();
+    for (const n of notes) {
+      for (const rel of n.related) linked.add(rel);
+      const wikilinks = (n.body || '').match(/\[\[([^\]]+)\]\]/g) || [];
+      for (const wl of wikilinks) linked.add(wl.slice(2, -2));
+    }
+    return notes.filter(n => !linked.has(n.file) && n.type !== 'journal')
+      .map(({ body, ...rest }) => rest);
+  }
+
+  // ── Update frontmatter fields on a note ──────────────
+
+  updateNote(dir, filename, updates) {
+    const filePath = `${dir}/${filename}.md`;
+    let content = this.read(filePath);
+    if (!content) return null;
+    for (const [key, val] of Object.entries(updates)) {
+      const strVal = Array.isArray(val) ? `[${val.join(', ')}]` : `"${val}"`;
+      const regex = new RegExp(`^(${key}:)\\s*.*$`, 'm');
+      if (content.match(regex)) {
+        content = content.replace(regex, `$1 ${strVal}`);
+      }
+    }
+    this.write(filePath, content);
+    return true;
+  }
+
+  // ── Vault stats ──────────────────────────────────────
+
+  stats() {
+    const notes = this.scanNotes();
+    const byType = {};
+    const byStatus = {};
+    const byTag = {};
+    for (const n of notes) {
+      byType[n.type] = (byType[n.type] || 0) + 1;
+      byStatus[n.status] = (byStatus[n.status] || 0) + 1;
+      for (const t of n.tags) byTag[t] = (byTag[t] || 0) + 1;
+    }
+    const orphanCount = this.orphans().length;
+    return { total: notes.length, byType, byStatus, byTag, orphans: orphanCount };
   }
 
   // ── Find related notes ───────────────────────────────

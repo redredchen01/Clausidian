@@ -128,7 +128,81 @@ describe('commands (import)', () => {
     const { note } = await import('../src/commands/note.mjs');
     const result = note(TMP, 'API Testing', 'project', { tags: ['dev', 'test'] });
     assert.equal(result.status, 'created');
-    // Should find related notes due to matching tags
     assert.ok(result.related >= 0);
+  });
+
+  // ── v0.2.0 new commands ──────────────────────────────
+
+  it('search finds content in note body (full-text)', async () => {
+    const { search } = await import('../src/commands/search.mjs');
+    // "vector search" is in the body of the capture note
+    const result = search(TMP, 'vector', {});
+    assert.ok(result.results.length >= 1);
+  });
+
+  it('backlinks finds linking notes', async () => {
+    const { backlinks } = await import('../src/commands/backlinks.mjs');
+    // api-testing should link to test-project via related
+    const result = backlinks(TMP, 'test-project');
+    assert.ok(result.results.length >= 1);
+  });
+
+  it('update modifies frontmatter', async () => {
+    const { update } = await import('../src/commands/update.mjs');
+    const result = update(TMP, 'test-project', { summary: 'Updated summary' });
+    assert.equal(result.status, 'updated');
+    const content = readFileSync(join(TMP, 'projects', 'test-project.md'), 'utf8');
+    assert.ok(content.includes('Updated summary'));
+  });
+
+  it('archive sets status to archived', async () => {
+    const { archive } = await import('../src/commands/archive.mjs');
+    const result = archive(TMP, 'cool-idea');
+    assert.equal(result.status, 'archived');
+    const content = readFileSync(join(TMP, 'ideas', 'cool-idea.md'), 'utf8');
+    assert.ok(content.includes('archived'));
+  });
+
+  it('archive detects already archived', async () => {
+    const { archive } = await import('../src/commands/archive.mjs');
+    const result = archive(TMP, 'cool-idea');
+    assert.equal(result.status, 'already_archived');
+  });
+
+  it('stats returns vault statistics', async () => {
+    const { stats } = await import('../src/commands/stats.mjs');
+    const result = stats(TMP);
+    assert.ok(result.total >= 4);
+    assert.ok(result.byType.project >= 1);
+    assert.ok(typeof result.orphans === 'number');
+  });
+
+  it('graph generates Mermaid output', async () => {
+    const { graph } = await import('../src/commands/graph.mjs');
+    const result = graph(TMP);
+    assert.ok(result.nodes >= 1);
+    assert.ok(result.mermaid.includes('graph LR'));
+    assert.ok(result.mermaid.includes('classDef'));
+  });
+
+  it('orphans finds unlinked notes', async () => {
+    const { orphans } = await import('../src/commands/orphans.mjs');
+    const result = orphans(TMP);
+    assert.ok(Array.isArray(result.results));
+  });
+
+  it('tag list shows all tags', async () => {
+    const { tagList } = await import('../src/commands/tag.mjs');
+    const result = tagList(TMP);
+    assert.ok(Object.keys(result.tags).length >= 1);
+  });
+
+  it('tag rename changes tags across vault', async () => {
+    const { tagRename } = await import('../src/commands/tag.mjs');
+    const result = tagRename(TMP, 'dev', 'development');
+    assert.ok(result.renamed >= 1);
+    const content = readFileSync(join(TMP, 'projects', 'test-project.md'), 'utf8');
+    assert.ok(content.includes('development'));
+    assert.ok(!content.includes('[dev,') && !content.includes('[dev]'));
   });
 });

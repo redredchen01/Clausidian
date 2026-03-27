@@ -110,4 +110,47 @@ related: []
     assert.equal(vault.typeDir('idea'), 'ideas');
     assert.equal(vault.typeDir('journal'), 'journal');
   });
+
+  // ── v0.2.0 methods ──────────────────────────────────
+
+  it('extractBody strips frontmatter', () => {
+    const content = vault.read('projects', 'build-api.md');
+    const body = vault.extractBody(content);
+    assert.ok(body.startsWith('# Build API'));
+    assert.ok(!body.includes('---'));
+  });
+
+  it('scanNotes with includeBody', () => {
+    const notes = vault.scanNotes({ includeBody: true });
+    assert.ok(notes[0].body !== undefined);
+  });
+
+  it('search finds in body text', () => {
+    const results = vault.search('Build');
+    assert.ok(results.length >= 1);
+  });
+
+  it('backlinks returns linking notes', () => {
+    // vector-search doesn't have backlinks in this setup
+    const results = vault.backlinks('build-api');
+    assert.ok(Array.isArray(results));
+  });
+
+  it('orphans finds unlinked notes', () => {
+    const results = vault.orphans();
+    assert.ok(Array.isArray(results));
+  });
+
+  it('updateNote modifies frontmatter', () => {
+    vault.updateNote('projects', 'build-api', { summary: 'New summary' });
+    const content = vault.read('projects', 'build-api.md');
+    assert.ok(content.includes('New summary'));
+  });
+
+  it('stats returns vault statistics', () => {
+    const s = vault.stats();
+    assert.ok(s.total >= 2);
+    assert.ok(s.byType.project >= 1);
+    assert.ok(typeof s.orphans === 'number');
+  });
 });

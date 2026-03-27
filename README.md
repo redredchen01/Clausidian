@@ -47,6 +47,28 @@ obsidian-agent review
 # Generate monthly review
 obsidian-agent review monthly
 
+# What links to this note?
+obsidian-agent backlinks "build-api"
+
+# Update a note's metadata
+obsidian-agent update "build-api" --status active --summary "Core API"
+
+# Archive a completed project
+obsidian-agent archive "old-project"
+
+# Vault statistics
+obsidian-agent stats
+
+# Generate Mermaid knowledge graph
+obsidian-agent graph
+
+# Find orphan notes (no inbound links)
+obsidian-agent orphans
+
+# Tag management
+obsidian-agent tag list
+obsidian-agent tag rename "old-tag" "new-tag"
+
 # Rebuild indices
 obsidian-agent sync
 ```
@@ -121,11 +143,19 @@ related: ["[[other-note]]", "[[another-note]]"]
 | `journal` | Create/open today's journal entry |
 | `note <title> <type>` | Create a note (area/project/resource/idea) |
 | `capture <idea>` | Quick idea capture to `ideas/` |
-| `search <keyword>` | Search notes by keyword |
+| `search <keyword>` | Full-text search across all notes |
 | `list [type]` | List notes with filters |
 | `review` | Generate weekly review from journals |
 | `review monthly` | Generate monthly review from weekly reviews & journals |
 | `sync` | Rebuild `_tags.md` and `_graph.md` indices |
+| `backlinks <note>` | Show notes that link to a given note |
+| `update <note>` | Update note frontmatter (status, tags, summary) |
+| `archive <note>` | Set note status to archived |
+| `stats` | Show vault statistics (counts, top tags, orphans) |
+| `graph` | Generate Mermaid knowledge graph diagram |
+| `orphans` | Find notes with no inbound links |
+| `tag list` | List all tags with counts |
+| `tag rename <old> <new>` | Rename a tag across the vault |
 | `hook <event>` | Handle agent hook events |
 
 ### Flags
@@ -140,6 +170,8 @@ related: ["[[other-note]]", "[[another-note]]"]
 | `--date <YYYY-MM-DD>` | Specify date for journal/review |
 | `--year <YYYY>` | Year for monthly review |
 | `--month <MM>` | Month for monthly review (1-12) |
+| `--summary <text>` | Set note summary (for update) |
+| `--tags <a,b,c>` | Set tags (for note/update) |
 
 ## Agent Hooks
 
