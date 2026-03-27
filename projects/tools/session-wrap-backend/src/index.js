@@ -7,6 +7,8 @@ const authRoutes = require('./routes/auth');
 const wrapRoutes = require('./routes/wraps');
 const userRoutes = require('./routes/users');
 const rbacRoutes = require('./routes/rbac');
+const { router: analyticsRoutes } = require('./routes/analytics');
+const { router: integrationsRoutes } = require('./routes/integrations');
 const { errorHandler } = require('./middleware/errorHandler');
 const { autoAuthenticateAgent } = require('./middleware/agent-auth');
 
@@ -37,6 +39,8 @@ app.use(autoAuthenticateAgent);
 app.use('/api/wraps', wrapRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api', rbacRoutes);
+app.use('/api', analyticsRoutes);
+app.use('/api', integrationsRoutes);
 
 // Error handling
 app.use(errorHandler);
