@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import smtplib
 import logging
 from email.mime.text import MIMEText
@@ -42,6 +43,10 @@ class EmailNotifier:
         except Exception as e:
             logger.error("Unexpected error sending email to %s: %s", to, e)
             return False
+
+    async def send_async(self, to: str, subject: str, body: str) -> bool:
+        """Non-blocking send via asyncio.to_thread. Use in async handlers."""
+        return await asyncio.to_thread(self.send, to, subject, body)
 
     def notify_hr(self, subject: str, body: str) -> bool:
         """Send notification to the HR email defined in config."""

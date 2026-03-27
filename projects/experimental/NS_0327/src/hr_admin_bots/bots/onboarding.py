@@ -87,7 +87,7 @@ class OnboardingBot(BaseBot):
 
         employee = context.user_data.get("employee", {})
         row = {
-            "employee_id": employee.get("id", ""),
+            "employee_id": employee.get("employee_id", ""),
             "name": employee.get("name", ""),
             "department": employee.get("department", ""),
             "position": employee.get("position", ""),
@@ -97,11 +97,11 @@ class OnboardingBot(BaseBot):
 
         try:
             self.sheets_client.append_row("onboarding", row)
-            self.notifier.send(
+            await self.notifier.send_async(
                 to=self.notifier.hr_email,
                 subject=f"新進人員報到通知 - {employee.get('name', '')}",
                 body=(
-                    f"員工 {employee.get('name', '')}（{employee.get('id', '')}）"
+                    f"員工 {employee.get('name', '')}（{employee.get('employee_id', '')}）"
                     f"已完成報到申請。\n"
                     f"部門：{employee.get('department', '')}\n"
                     f"職位：{employee.get('position', '')}\n"

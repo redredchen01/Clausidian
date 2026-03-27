@@ -74,7 +74,7 @@ class BaseBot:
     def _format_employee_info(self, employee: dict) -> str:
         """格式化員工基本資訊為顯示文字。"""
         return (
-            f"員工編號：{employee.get('id', '')}\n"
+            f"員工編號：{employee.get('employee_id', '')}\n"
             f"姓名：{employee.get('name', '')}\n"
             f"部門：{employee.get('department', '')}\n"
             f"職位：{employee.get('position', '')}"

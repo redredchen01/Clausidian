@@ -29,6 +29,11 @@ class EmployeeAuth:
         self._cache[employee_id] = (now, record)
         return record
 
+    def verify(self, employee_id: str) -> tuple[bool, Optional[dict]]:
+        """Return (found, employee_record) tuple."""
+        record = self.lookup(employee_id)
+        return (record is not None, record)
+
     def is_valid(self, employee_id: str) -> bool:
         """Return True if employee exists in the sheet."""
         return self.lookup(employee_id) is not None
