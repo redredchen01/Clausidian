@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios'
 import type { Task, Decision, MemoryStat, SyncStatus, DashboardState } from './types'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 const WS_URL = API_URL.replace(/^http/, 'ws') + '/ws'
 
 export interface WsMessage {
