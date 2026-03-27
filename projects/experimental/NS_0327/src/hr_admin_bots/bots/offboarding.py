@@ -95,7 +95,7 @@ class OffboardingBot(BaseBot):
         checklist_json = "|".join(OFFBOARDING_CHECKLIST)
 
         row = {
-            "employee_id": employee.get("id", ""),
+            "employee_id": employee.get("employee_id", ""),
             "name": employee.get("name", ""),
             "department": employee.get("department", ""),
             "position": employee.get("position", ""),
@@ -113,7 +113,7 @@ class OffboardingBot(BaseBot):
                 f"  {i + 1}. {item}" for i, item in enumerate(OFFBOARDING_CHECKLIST)
             )
             email_body = (
-                f"員工 {employee.get('name', '')}（{employee.get('id', '')}）"
+                f"員工 {employee.get('name', '')}（{employee.get('employee_id', '')}）"
                 f"提出離職申請，請盡快處理。\n\n"
                 f"部門：{employee.get('department', '')}\n"
                 f"職位：{employee.get('position', '')}\n"
@@ -121,13 +121,13 @@ class OffboardingBot(BaseBot):
                 f"離職交接清單：\n{checklist_text}"
             )
 
-            self.notifier.send(
+            await self.notifier.send_async(
                 to=self.notifier.hr_email,
                 subject=f"離職申請通知（HR）- {employee.get('name', '')}",
                 body=email_body,
             )
             if manager_email != self.notifier.hr_email:
-                self.notifier.send(
+                await self.notifier.send_async(
                     to=manager_email,
                     subject=f"離職申請通知（主管）- {employee.get('name', '')}",
                     body=email_body,

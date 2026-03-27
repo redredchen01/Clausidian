@@ -68,7 +68,7 @@ class LeaveBot(BaseBot):
     async def select_type(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         """顯示假別選單（InlineKeyboard）。"""
         employee = context.user_data.get("employee", {})
-        employee_id = employee.get("id", "")
+        employee_id = employee.get("employee_id", "")
 
         # 從 sheet 取得年假餘額
         annual_balance = self._get_annual_balance(employee_id)
@@ -161,7 +161,7 @@ class LeaveBot(BaseBot):
         context.user_data["reason"] = reason
 
         employee = context.user_data.get("employee", {})
-        employee_id = employee.get("id", "")
+        employee_id = employee.get("employee_id", "")
         leave_type = context.user_data.get("leave_type", "")
         start_date = context.user_data.get("start_date", "")
         end_date = context.user_data.get("end_date", "")
@@ -207,7 +207,7 @@ class LeaveBot(BaseBot):
 
         employee = context.user_data.get("employee", {})
         row = {
-            "employee_id": employee.get("id", ""),
+            "employee_id": employee.get("employee_id", ""),
             "name": employee.get("name", ""),
             "department": employee.get("department", ""),
             "leave_type": context.user_data.get("leave_type", ""),
@@ -223,11 +223,11 @@ class LeaveBot(BaseBot):
             self.sheets_client.append_row("leaves", row)
             # 通知主管
             manager_email = employee.get("manager_email", self.notifier.hr_email)
-            self.notifier.send(
+            await self.notifier.send_async(
                 to=manager_email,
                 subject=f"請假申請通知 - {employee.get('name', '')}",
                 body=(
-                    f"員工 {employee.get('name', '')}（{employee.get('id', '')}）"
+                    f"員工 {employee.get('name', '')}（{employee.get('employee_id', '')}）"
                     f"提出請假申請，請審核。\n\n"
                     f"假別：{row['leave_type']}\n"
                     f"日期：{row['start_date']} 至 {row['end_date']}（{row['days']} 天）\n"
@@ -254,11 +254,14 @@ class LeaveBot(BaseBot):
     # --- 內部工具方法 ---
 
     def _get_annual_balance(self, employee_id: str) -> int:
-        """從 sheet 取得員工年假餘額。"""
+        """從 employees sheet 的 annual_leave_quota 欄位取得年假額度，減去已用天數。"""
         try:
-            row = self.sheets_client.find_row("annual_leave_balance", "employee_id", employee_id)
-            if row:
-                return int(row.get("balance", 0))
+            emp = self.sheets_client.find_employee(employee_id)
+            if not emp:
+                return 0
+            quota = int(emp.get("annual_leave_quota", 0))
+            used = self._get_used_days(employee_id, "年假")
+            return max(quota - used, 0)
         except Exception as e:
             logger.warning("get annual balance error: %s", e)
         return 0

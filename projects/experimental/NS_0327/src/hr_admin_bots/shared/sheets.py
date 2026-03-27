@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from datetime import datetime
 from typing import Any, Optional
 
 import gspread
@@ -15,16 +14,6 @@ _SCOPES = [
 # Column name that stores the employee ID in the employees worksheet
 _EMPLOYEE_ID_COL = "employee_id"
 
-# Column used to match employee in leave records
-_LEAVE_EMPLOYEE_COL = "employee_id"
-_LEAVE_TYPE_COL = "leave_type"
-_LEAVE_STATUS_COL = "status"
-_LEAVE_YEAR_COL = "year"
-_LEAVE_DAYS_COL = "days"
-_LEAVE_QUOTA_COL = "leave_quota"
-
-# Approved status value
-_STATUS_APPROVED = "approved"
 
 
 class SheetsClient:
@@ -89,30 +78,6 @@ class SheetsClient:
             ):
                 result.append(row)
         return result
-
-    def get_leave_balance(self, employee_id: str, leave_type: str) -> float:
-        """Calculate remaining leave = annual quota minus approved days in current year."""
-        employee = self.find_employee(employee_id)
-        if employee is None:
-            return 0.0
-
-        quota = float(employee.get(_LEAVE_QUOTA_COL + "_" + leave_type, 0))
-
-        current_year = str(datetime.now().year)
-        ws = self.get_worksheet("leaves")
-        records = ws.get_all_records()
-
-        used = 0.0
-        for row in records:
-            if (
-                str(row.get(_LEAVE_EMPLOYEE_COL, "")).strip() == str(employee_id).strip()
-                and str(row.get(_LEAVE_TYPE_COL, "")).strip() == leave_type.strip()
-                and str(row.get(_LEAVE_STATUS_COL, "")).strip() == _STATUS_APPROVED
-                and str(row.get(_LEAVE_YEAR_COL, "")).strip() == current_year
-            ):
-                used += float(row.get(_LEAVE_DAYS_COL, 0))
-
-        return max(quota - used, 0.0)
 
     def check_duplicate(
         self,

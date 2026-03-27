@@ -59,7 +59,7 @@ class WorkPermitBot(BaseBot):
 
         # 自動填入資料
         permit_data = {
-            "employee_id": employee.get("id", ""),
+            "employee_id": employee.get("employee_id", ""),
             "name": employee.get("name", ""),
             "department": employee.get("department", ""),
             "position": employee.get("position", ""),
@@ -95,11 +95,11 @@ class WorkPermitBot(BaseBot):
         try:
             self.sheets_client.append_row("work_permits", permit_data)
             employee = context.user_data.get("employee", {})
-            self.notifier.send(
+            await self.notifier.send_async(
                 to=self.notifier.hr_email,
                 subject=f"工作許可申請通知 - {employee.get('name', '')}",
                 body=(
-                    f"員工 {employee.get('name', '')}（{employee.get('id', '')}）"
+                    f"員工 {employee.get('name', '')}（{employee.get('employee_id', '')}）"
                     f"已提交工作許可申請。\n"
                     f"部門：{permit_data.get('department', '')}\n"
                     f"職位：{permit_data.get('position', '')}\n"
