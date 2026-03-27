@@ -1,161 +1,83 @@
 # HR Admin Bot Package
 
-4 個 Telegram Bot 組成的 HR 行政自動化工具包，統一經理器啟動，Google Sheets 作為數據層。
+4 個 Telegram Bot 組成的 HR 行政自動化工具包。Google Sheets 作為資料層，統一 BotManager 並行啟動，內建 MCP Server 供 AI agent 呼叫。
 
-**版本：v0.4.0**
+**版本：v0.5.0**
 
-## Bot 清單
+## 功能
 
-| Bot | 功能 | 流程 |
-|-----|------|------|
-| Onboarding | 新人入職 | 輸入ID → 確認資料 → 寫入Sheet → 通知HR |
-| Work Permit | 工作證申請 | 輸入ID → 自動填入部門職位 → 提交 → 通知HR |
-| Leave | 假期申請 | 輸入ID → 選假別 → 填日期原因 → 檢查餘額 → 提交 → 通知經理 |
-| Offboarding | 離職流程 | 輸入ID → 自動生成申請 → 提交 → 通知HR+經理 |
+- 4 個 Telegram Bot：入職報到、工作證申請、請假申請、離職流程
+- 員工 Telegram ID 自動綁定與驗證
+- 主管 Telegram 核准（InlineKeyboard）+ email fallback
+- 請假餘額檢查、重疊日期偵測
+- 智能建議：歷史假別/原因推薦、異常模式偵測、月報
+- 背景排程提醒（待審逾時、假期即將到期）
+- MCP Server：10 個 HR 工具，JSON-RPC 2.0 over stdin/stdout
+- HTTP Health Check（port 8080）
+- Audit Trail：所有操作寫入 Google Sheets `audit_log`
+- Webhook 通知（Slack、Teams 等）
 
 ## 安裝
 
+### pip
+
 ```bash
+pip install hr-admin-bots
+# 或從原始碼安裝（可編輯模式）
 pip install -e .
 ```
 
-## 配置
-
-1. 複製 `config.example.json` → `config.json`
-2. 填入 4 個 Telegram Bot Token（透過 @BotFather 建立）
-3. 填入 Google Sheet ID 和 Service Account 金鑰路徑
-4. 填入 SMTP Email 設定
-5. （選填）填入 Webhook URL 清單
-
-## Google Sheet 結構
-
-需要 1 個 Spreadsheet，包含 6 個 Worksheet：
-
-| Worksheet | 用途 |
-|-----------|------|
-| employees | 員工名冊（ID、姓名、部門、職位、Email、主管Email） |
-| onboarding | 入職記錄 |
-| work_permits | 工作證申請記錄 |
-| leaves | 請假記錄 |
-| offboarding | 離職記錄 |
-| audit_log | 操作稽核記錄（自動寫入） |
-
-## Docker 部署
+### Docker
 
 ```bash
-# 1. 複製環境變數範本
-cp .env.example .env
-# 2. 填入 .env 與 config.json、credentials.json
-# 3. 啟動所有服務
+cp config.example.json config.json
+# 填入 config.json（Bot Tokens、Sheet ID、SMTP）
+# 準備好 credentials.json（Google Service Account）
 docker-compose up -d
-
-# 查看健康狀態
-curl http://localhost:8080/
-# 回應範例：{"healthy": true, "bots_running": 4, "uptime_seconds": 120}
 ```
 
-## 健康檢查（Health Check）
+## 快速開始
 
-服務啟動後會在 port 8080 提供 HTTP health check，適用於 Docker/k8s 存活探針：
+1. 複製設定範本：`cp config.example.json config.json`
+2. 編輯 `config.json`：填入 Bot Tokens、Google Sheet ID、SMTP、HR email
+3. 放置 Google Service Account 金鑰（`credentials.json`）
+4. 啟動：`hr-admin-bots serve --config config.json`
+
+## CLI 參考
 
 ```
-GET http://localhost:8080/
-→ 200 {"healthy": true, "bots_running": 4, "uptime_seconds": 300}
-→ 503 (不健康時)
+hr-admin-bots <subcommand> [options]
 ```
 
-使用 `--health-port 0` 可停用：
+| 子命令 | 說明 | 主要選項 |
+|--------|------|---------|
+| `serve` | 啟動所有 Telegram Bot | `--config`, `--no-scheduler`, `--health-port` |
+| `mcp` | 啟動 MCP Server（stdin/stdout） | `--config` |
+| `lookup <id>` | 查詢員工資料（JSON 輸出） | `--config` |
+| `balance <id>` | 查詢各假別餘額 | `--config` |
+| `status <id>` | 查詢員工待審申請 | `--config` |
+| `report` | 輸出本月 HR 月報（JSON） | `--config` |
+| `version` | 顯示版本 | — |
 
 ```bash
-hr-admin-bots serve --health-port 0
+# 範例
+hr-admin-bots serve --config config.json --health-port 8080
+hr-admin-bots lookup E001 --config config.json
+hr-admin-bots balance E001 --config config.json
+hr-admin-bots report --config config.json
 ```
 
-## CLI 指令
+## MCP Server 設定
 
-```bash
-# 啟動所有 Telegram Bot
-hr-admin-bots serve [--config config.json] [--no-scheduler] [--health-port 8080]
-
-# 啟動 MCP Server（供 AI agent 使用）
-hr-admin-bots mcp [--config config.json]
-
-# 快速員工查詢
-hr-admin-bots lookup <employee_id> [--config config.json]
-
-# 查詢假別餘額
-hr-admin-bots balance <employee_id> [--config config.json]
-
-# 查詢待審申請狀態
-hr-admin-bots status <employee_id> [--config config.json]
-
-# 顯示版本
-hr-admin-bots version
-```
-
-## 自動提醒排程器
-
-`serve` 指令啟動後會同時啟動背景排程器（預設每 6 小時檢查一次）：
-
-| 規則 | 觸發條件 | 通知對象 |
-|------|---------|---------|
-| 請假待審提醒 | 待審超過 48 小時 | 主管（email 或 Telegram） |
-| 離職待處理提醒 | 待審超過 72 小時 | HR |
-| 假期即將到期 | 已核准假期 3 天內結束 | 員工 |
-
-停用排程器：`hr-admin-bots serve --no-scheduler`
-
-## 操作稽核（Audit Trail）
-
-所有 HR 操作自動寫入 Google Sheets 的 `audit_log` 工作表：
-
-| 欄位 | 說明 |
-|------|------|
-| timestamp | 操作時間（ISO 8601） |
-| action | 操作類型（leave_submit、leave_approve、telegram_bind 等） |
-| actor | 執行者（Telegram user ID 或系統） |
-| target_employee | 被操作的員工 ID |
-| details | 額外說明 |
-
-## MCP Server
-
-MCP Server 讓 Claude Code、OpenClaw 等 AI agent 可以直接呼叫 HR 操作。
-
-透過 stdin/stdout JSON-RPC 2.0 協定通訊，無須額外的 MCP 套件。
+MCP Server 讓 Claude Code 等 AI agent 可直接呼叫 HR 操作。
 
 ### 啟動
 
 ```bash
 hr-admin-bots mcp --config config.json
-# 或
-python -m hr_admin_bots.mcp_server --config config.json
 ```
 
-### 可用工具
-
-| 工具 | 說明 |
-|------|------|
-| `hr_lookup_employee` | 依員工 ID 查詢員工資料 |
-| `hr_check_leave_balance` | 查詢指定假別的剩餘天數 |
-| `hr_apply_leave` | 提交請假申請 |
-| `hr_approve_leave` | 核准或駁回請假申請 |
-| `hr_list_pending` | 列出所有待審申請 |
-| `hr_submit_onboarding` | 提交入職記錄 |
-| `hr_submit_work_permit` | 提交工作證申請 |
-| `hr_submit_offboarding` | 提交離職申請 |
-
-## Leave Bot 指令
-
-Leave Bot 支援以下 Telegram 指令：
-
-| 指令 | 說明 |
-|------|------|
-| `/start` | 開始請假申請流程 |
-| `/status` | 查看個人近期請假紀錄 |
-| `/balance` | 查看各假別剩餘天數 |
-| `/stats` | 顯示 HR 統計（本月申請數、狀態分布、平均審核時間） |
-| `/cancel` | 取消當前操作 |
-
-### Claude Code 整合範例（.mcp.json）
+### Claude Code 整合（.mcp.json）
 
 ```json
 {
@@ -168,20 +90,49 @@ Leave Bot 支援以下 Telegram 指令：
 }
 ```
 
-## Webhook 通知
+### 可用工具（10 個）
 
-在 `config.json` 加入 `webhooks` 陣列，即可在核准/駁回事件時自動 POST 通知：
+| 工具 | 說明 |
+|------|------|
+| `hr_lookup_employee` | 依員工 ID 查詢員工資料 |
+| `hr_check_leave_balance` | 查詢指定假別剩餘天數 |
+| `hr_apply_leave` | 提交請假申請 |
+| `hr_approve_leave` | 核准或駁回請假申請 |
+| `hr_list_pending` | 列出所有待審申請 |
+| `hr_submit_onboarding` | 提交入職記錄 |
+| `hr_submit_work_permit` | 提交工作證申請 |
+| `hr_submit_offboarding` | 提交離職申請 |
+| `hr_detect_anomalies` | 偵測員工異常請假模式 |
+| `hr_monthly_report` | 產生本月 HR 統計月報 |
 
-```json
-{
-  "webhooks": [
-    "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK",
-    "https://YOUR_TEAM.webhook.office.com/webhookb2/..."
-  ]
-}
-```
+## Google Sheets 結構
 
-Payload 格式：
+需要 1 個 Spreadsheet，包含以下 6 個 Worksheet：
+
+| Worksheet | 用途 | 主要欄位 |
+|-----------|------|---------|
+| `employees` | 員工名冊 | employee_id, name, department, position, email, manager_email, telegram_id, annual_leave_quota, hire_date |
+| `onboarding` | 入職記錄 | employee_id, name, department, position, onboarding_date, status |
+| `work_permits` | 工作證申請 | employee_id, name, department, position, apply_date, apply_month, status |
+| `leaves` | 請假記錄 | employee_id, name, department, leave_type, start_date, end_date, days, reason, status, apply_date, approved_at |
+| `offboarding` | 離職記錄 | employee_id, name, department, position, apply_date, status, checklist |
+| `audit_log` | 操作稽核（自動寫入） | timestamp, action, actor, target_employee, details |
+
+## 假期類型
+
+| 類型 | 年度額度 |
+|------|---------|
+| 年假 | 依 `employees.annual_leave_quota` 設定 |
+| 病假 | 無限制 |
+| 事假 | 10 天 |
+| 喪假 | 3 天 |
+| 婚假 | 5 天 |
+| 產假 | 98 天 |
+| 陪產假 | 15 天 |
+
+## Webhook Payload
+
+在 `config.json` 的 `webhooks` 陣列設定目標 URL，核准/駁回事件觸發 POST：
 
 ```json
 {
@@ -194,21 +145,22 @@ Payload 格式：
 }
 ```
 
-## 假期類型
-
-| 類型 | 額度 |
-|------|------|
-| 年假 | 依員工名冊設定 |
-| 病假 | 無限制 |
-| 事假 | 10天/年 |
-| 喪假 | 3天 |
-| 婚假 | 5天 |
-| 產假 | 98天 |
-| 陪產假 | 15天 |
-
 ## 技術棧
 
 - Python 3.9+
-- python-telegram-bot v20+ (async)
+- python-telegram-bot v20+（async）
 - gspread + google-auth
-- smtplib / urllib.request (stdlib)
+- smtplib / urllib.request（stdlib，無額外 HTTP 依賴）
+
+## 開發
+
+```bash
+# 安裝開發依賴
+pip install -e ".[dev]"
+
+# 跑測試
+pytest tests/
+
+# 測試涵蓋率
+pytest tests/ --cov=hr_admin_bots
+```

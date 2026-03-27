@@ -258,3 +258,168 @@ class TestCheckDuplicate:
         client = make_client({"work_permits": records})
         result = client.check_duplicate("work_permits", "E001")
         assert result is True
+
+
+# ---------------------------------------------------------------------------
+# update_cell  (v0.2)
+# ---------------------------------------------------------------------------
+
+class TestUpdateCell:
+    def _make_client_with_ws(self, headers: list[str]):
+        """Build client and inject a ws mock with given headers into cache."""
+        client = make_client()
+        ws = MagicMock()
+        ws.row_values.return_value = headers
+        client._ws_cache["leaves"] = ws
+        return client, ws
+
+    def test_success_calls_ws_update_cell_with_correct_coords(self):
+        client, ws = self._make_client_with_ws(["employee_id", "status", "days"])
+        client.update_cell("leaves", 1, "status", "approved")
+        # col_index: "status" is index 1 (0-based) → 2 (1-based)
+        # sheet_row: row_index 1 + 1 header = 2
+        ws.update_cell.assert_called_once_with(2, 2, "approved")
+
+    def test_first_column_correct_index(self):
+        client, ws = self._make_client_with_ws(["employee_id", "name", "status"])
+        client.update_cell("leaves", 3, "employee_id", "E999")
+        # col 1 (1-based), sheet row 4
+        ws.update_cell.assert_called_once_with(4, 1, "E999")
+
+    def test_column_not_found_raises_value_error(self):
+        client, ws = self._make_client_with_ws(["employee_id", "name"])
+        with pytest.raises(ValueError) as exc_info:
+            client.update_cell("leaves", 1, "nonexistent_col", "x")
+        assert "nonexistent_col" in str(exc_info.value)
+        assert "leaves" in str(exc_info.value)
+
+    def test_column_not_found_does_not_call_ws_update(self):
+        client, ws = self._make_client_with_ws(["employee_id"])
+        with pytest.raises(ValueError):
+            client.update_cell("leaves", 1, "missing", "val")
+        ws.update_cell.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# bind_telegram_id  (v0.2)
+# ---------------------------------------------------------------------------
+
+class TestBindTelegramId:
+    def test_success_returns_true_and_calls_update_cell(self):
+        records = [
+            {"employee_id": "E001", "name": "Alice", "telegram_id": ""},
+        ]
+        client = make_client({"employees": records})
+        # Override the ws so row_values has telegram_id
+        ws = client._ws_cache.get("employees")
+        if ws is None:
+            ws = MagicMock()
+            client._ws_cache["employees"] = ws
+        ws.get_all_records.return_value = records
+        ws.row_values.return_value = ["employee_id", "name", "telegram_id"]
+
+        result = client.bind_telegram_id("E001", 99999)
+
+        assert result is True
+        ws.update_cell.assert_called_once()
+        args = ws.update_cell.call_args[0]
+        # sheet_row = idx(0) + 2 = 2, col_index = 3 (1-based for telegram_id)
+        assert args[0] == 2
+        assert args[1] == 3
+        assert args[2] == "99999"
+
+    def test_employee_not_found_returns_false(self):
+        records = [{"employee_id": "E002", "telegram_id": ""}]
+        client = make_client({"employees": records})
+        ws = MagicMock()
+        ws.get_all_records.return_value = records
+        ws.row_values.return_value = ["employee_id", "telegram_id"]
+        client._ws_cache["employees"] = ws
+
+        result = client.bind_telegram_id("E001", 12345)
+
+        assert result is False
+        ws.update_cell.assert_not_called()
+
+    def test_no_telegram_id_column_returns_false(self):
+        records = [{"employee_id": "E001", "name": "Alice"}]
+        client = make_client({"employees": records})
+        ws = MagicMock()
+        ws.get_all_records.return_value = records
+        ws.row_values.return_value = ["employee_id", "name"]  # no telegram_id column
+        client._ws_cache["employees"] = ws
+
+        result = client.bind_telegram_id("E001", 12345)
+
+        assert result is False
+        ws.update_cell.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# get_telegram_id  (v0.2)
+# ---------------------------------------------------------------------------
+
+class TestGetTelegramId:
+    def test_found_returns_int(self):
+        records = [{"employee_id": "E001", "telegram_id": 12345}]
+        client = make_client({"employees": records})
+        result = client.get_telegram_id("E001")
+        assert result == 12345
+
+    def test_employee_not_found_returns_none(self):
+        client = make_client({"employees": []})
+        result = client.get_telegram_id("GHOST")
+        assert result is None
+
+    def test_empty_string_telegram_id_returns_none(self):
+        records = [{"employee_id": "E001", "telegram_id": ""}]
+        client = make_client({"employees": records})
+        result = client.get_telegram_id("E001")
+        assert result is None
+
+    def test_non_numeric_telegram_id_returns_none(self):
+        records = [{"employee_id": "E001", "telegram_id": "not_a_number"}]
+        client = make_client({"employees": records})
+        result = client.get_telegram_id("E001")
+        assert result is None
+
+    def test_numeric_string_telegram_id_returns_int(self):
+        records = [{"employee_id": "E001", "telegram_id": "55555"}]
+        client = make_client({"employees": records})
+        result = client.get_telegram_id("E001")
+        assert result == 55555
+
+
+# ---------------------------------------------------------------------------
+# get_telegram_id_by_email  (v0.2)
+# ---------------------------------------------------------------------------
+
+class TestGetTelegramIdByEmail:
+    def test_found_returns_int(self):
+        records = [{"employee_id": "E001", "email": "alice@company.com", "telegram_id": 77777}]
+        client = make_client({"employees": records})
+        result = client.get_telegram_id_by_email("alice@company.com")
+        assert result == 77777
+
+    def test_not_found_returns_none(self):
+        records = [{"employee_id": "E001", "email": "alice@company.com", "telegram_id": 77777}]
+        client = make_client({"employees": records})
+        result = client.get_telegram_id_by_email("nobody@company.com")
+        assert result is None
+
+    def test_case_insensitive_match(self):
+        records = [{"employee_id": "E001", "email": "Alice@Company.COM", "telegram_id": 88888}]
+        client = make_client({"employees": records})
+        result = client.get_telegram_id_by_email("alice@company.com")
+        assert result == 88888
+
+    def test_empty_email_arg_returns_none(self):
+        client = make_client({"employees": [{"employee_id": "E001", "email": "a@b.com", "telegram_id": 1}]})
+        result = client.get_telegram_id_by_email("")
+        assert result is None
+
+    def test_empty_telegram_id_returns_none(self):
+        records = [{"employee_id": "E001", "email": "alice@company.com", "telegram_id": ""}]
+        client = make_client({"employees": records})
+        result = client.get_telegram_id_by_email("alice@company.com")
+        assert result is None

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Optional
 
 from telegram import Update
 from telegram.ext import (
@@ -15,6 +14,9 @@ from telegram.ext import (
 )
 
 from hr_admin_bots.config import BotConfig
+from hr_admin_bots.shared.sheets import SheetsClient
+from hr_admin_bots.shared.auth import EmployeeAuth
+from hr_admin_bots.shared.notifier import EmailNotifier
 
 logger = logging.getLogger(__name__)
 
@@ -31,11 +33,11 @@ class BaseBot:
         self,
         name: str,
         bot_config: BotConfig,
-        sheets_client: Any,
-        auth: Any,
-        notifier: Any,
-        approval_manager: Any = None,
-        audit_logger: Any = None,
+        sheets_client: SheetsClient,
+        auth: EmployeeAuth,
+        notifier: EmailNotifier,
+        approval_manager=None,
+        audit_logger=None,
     ) -> None:
         self.name = name
         self.bot_config = bot_config

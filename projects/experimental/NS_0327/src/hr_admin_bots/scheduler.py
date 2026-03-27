@@ -176,7 +176,6 @@ class ReminderScheduler:
             except ValueError:
                 # 嘗試 date-only format
                 try:
-                    from datetime import date as _date
                     end_date = datetime.combine(
                         datetime.strptime(end_date_str, "%Y-%m-%d").date(),
                         datetime.min.time(),
