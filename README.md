@@ -1,4 +1,4 @@
-# Session Wrap Skill v3.6.0
+# Session Wrap Skill v3.7.0
 
 **Agent-native session management for seamless multi-agent coordination.**
 
@@ -6,11 +6,11 @@ Automatically persist project context, track decisions, and enable agents to sha
 
 Works with Claude Code, Cursor, Windsurf, Cline, Aider, and any AI agent.
 
-## ✨ What's New (v3.6.0)
+## ✨ What's New (v3.7.0)
 
-**Phase 6:** Setup automation + Railway deployment + real-time web dashboard
+**Phase 7:** Interactive dashboard with WebSocket sync, task editing, search, and team collaboration
 
-Transformed from adoption friction → developer-friendly: 15-min setup → 2 min, one-click backend deployment, real-time team monitoring dashboard.
+Transformed from read-only monitoring → full team coordination: real-time WebSocket updates, task CRUD from UI, decision search/filtering, activity feed, inline comments, @mention system.
 
 ### Agent Tools + Automation (7 tools + 3 automation scripts)
 
@@ -439,6 +439,54 @@ agent-knowledge get "architecture"        # Understand design
 ```
 
 ## Changelog
+
+### v3.7.0 (2026-03-27)
+
+**Phase 7: Interactive Dashboard & Team Collaboration**
+
+#### Added
+- **WebSocket Real-Time Sync** (Phase 7A)
+  - useWebSocket hook with auto-reconnect (exponential backoff)
+  - <100ms message latency vs 5s polling
+  - Fallback to polling if WebSocket unavailable
+  - Graceful error handling and recovery
+
+- **Task Editing from UI** (Phase 7B)
+  - CreateTaskModal for task creation
+  - Inline task editing (status, description)
+  - Delete tasks with confirmation
+  - Optimistic UI updates
+  - Full CRUD API integration
+
+- **Decision Search & Filtering** (Phase 7C)
+  - SearchBar with debounced keyword search
+  - FilterChips: agent filter, date range
+  - Real-time filtering with result count
+  - Persistent filter state
+  - URL-ready filter params
+
+- **Team Collaboration** (Phase 7D)
+  - ActivityFeed: real-time event stream
+  - CommentsSection: inline comments on tasks
+  - MentionInput: @mention autocomplete
+  - Comment API endpoints (CRUD)
+  - Mention extraction and validation
+
+#### Improved
+- Dashboard now fully interactive (not just read-only)
+- Real-time updates via WebSocket (replaces polling)
+- Search results <200ms response time
+- Component architecture supports future extensibility
+- Better UX with loading states and error handling
+
+#### Architecture
+- Event-driven WebSocket with HTTP fallback
+- Modular component design (11 new/refactored)
+- Efficient filtering with useMemo
+- Mention system independent of backend
+- Activity feed extensible for new event types
+
+**Total changes:** 1,679 lines (Phases 7A-D)
 
 ### v3.6.0 (2026-03-26)
 

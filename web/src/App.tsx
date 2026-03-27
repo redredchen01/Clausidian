@@ -261,7 +261,7 @@ function App() {
       {/* Footer */}
       <footer className="bg-white border-t border-gray-200 mt-12">
         <div className="max-w-7xl mx-auto px-6 py-6 text-center text-sm text-gray-600">
-          <p>Session Wrap v3.7.0 • Real-time multi-agent coordination dashboard</p>
+          <p>🎉 Session Wrap v3.7.0 • WebSocket Sync, Task Editing, Search, Team Collaboration</p>
         </div>
       </footer>
 
