@@ -157,6 +157,8 @@ related: ["[[other-note]]", "[[another-note]]"]
 | `tag list` | List all tags with counts |
 | `tag rename <old> <new>` | Rename a tag across the vault |
 | `patch <note>` | Edit a section by heading (`--heading`, `--append/--prepend/--replace`) |
+| `health` | Vault health scoring (completeness, connectivity, freshness, organization) |
+| `watch` | Auto-rebuild indices on file changes |
 | `serve` | Start MCP server (stdio transport) |
 | `hook <event>` | Handle agent hook events |
 
@@ -216,6 +218,18 @@ Run as an [MCP](https://modelcontextprotocol.io/) server for AI assistants (Clau
 ```
 
 Exposes 15 tools: journal, note, capture, search, list, backlinks, update, archive, patch, stats, orphans, graph, sync, tag_list, tag_rename.
+
+## Vault Health
+
+```bash
+obsidian-agent health
+```
+
+Scores your vault across 4 dimensions (0-100 each):
+- **Completeness** — frontmatter quality (title, type, tags, summary, created)
+- **Connectivity** — links and relationships between notes
+- **Freshness** — how recently notes were updated
+- **Organization** — tags, types, naming conventions, summaries
 
 ## Agent Hooks
 

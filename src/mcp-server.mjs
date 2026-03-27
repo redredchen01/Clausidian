@@ -144,6 +144,11 @@ const TOOLS = [
     },
   },
   {
+    name: 'health',
+    description: 'Vault health scoring (completeness, connectivity, freshness, organization)',
+    inputSchema: { type: 'object', properties: {} },
+  },
+  {
     name: 'sync',
     description: 'Rebuild tag and graph indices',
     inputSchema: { type: 'object', properties: {} },
@@ -241,6 +246,10 @@ export class McpServer {
           const { graph } = await import('./commands/graph.mjs');
           return graph(this.vaultRoot, { type: args.type });
         }
+        case 'health': {
+          const { health } = await import('./commands/health.mjs');
+          return health(this.vaultRoot);
+        }
         case 'sync': {
           const { sync } = await import('./commands/sync.mjs');
           return sync(this.vaultRoot);
@@ -272,7 +281,7 @@ export class McpServer {
           result: {
             protocolVersion: '2024-11-05',
             capabilities: { tools: {} },
-            serverInfo: { name: 'obsidian-agent', version: '0.3.0' },
+            serverInfo: { name: 'obsidian-agent', version: '0.4.0' },
           },
         };
 

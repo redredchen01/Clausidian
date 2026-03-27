@@ -258,6 +258,17 @@ describe('commands (import)', () => {
     assert.ok(tools.result.tools.some(t => t.name === 'search'));
   });
 
+  it('health returns vault scoring', async () => {
+    const { health } = await import('../src/commands/health.mjs');
+    const result = health(TMP);
+    assert.ok(result.overall >= 0 && result.overall <= 100);
+    assert.ok(['A', 'B', 'C', 'D', 'F'].includes(result.grade));
+    assert.ok(result.scores.completeness >= 0);
+    assert.ok(result.scores.connectivity >= 0);
+    assert.ok(result.scores.freshness >= 0);
+    assert.ok(result.scores.organization >= 0);
+  });
+
   it('MCP server handles tool calls', async () => {
     const { McpServer } = await import('../src/mcp-server.mjs');
     const server = new McpServer(TMP);

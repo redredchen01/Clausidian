@@ -194,6 +194,18 @@ async function main() {
       break;
     }
 
+    case 'watch': {
+      const { watch } = await import('../src/commands/watch.mjs');
+      result = watch(resolveVault(flags));
+      return; // Keeps running
+    }
+
+    case 'health': {
+      const { health } = await import('../src/commands/health.mjs');
+      result = health(resolveVault(flags));
+      break;
+    }
+
     case 'serve': {
       const { McpServer } = await import('../src/mcp-server.mjs');
       const server = new McpServer(resolveVault(flags));
@@ -260,6 +272,8 @@ Commands:
   patch <note>             Edit a section by heading
   tag list                 List all tags with counts
   tag rename <old> <new>   Rename a tag across the vault
+  watch                    Auto-rebuild indices on file changes
+  health                   Vault health scoring report
   serve                    Start MCP server (stdio transport)
   hook <event>             Handle agent hook events
 
