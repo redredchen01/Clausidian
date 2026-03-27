@@ -163,6 +163,49 @@ CREATE TABLE IF NOT EXISTS integration_events (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Analytics Forecasts (Phase 10A)
+CREATE TABLE IF NOT EXISTS analytics_forecasts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  forecast_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  forecast_horizon INT DEFAULT 30,
+  metric_type VARCHAR(50),
+  predicted_value NUMERIC(10,2),
+  confidence_score NUMERIC(3,2),
+  lower_bound NUMERIC(10,2),
+  upper_bound NUMERIC(10,2),
+  actual_value NUMERIC(10,2),
+  error_percentage NUMERIC(5,2),
+  model_type VARCHAR(50),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY(workspace_id, forecast_date, metric_type)
+);
+
+-- Anomaly Detections (Phase 10A)
+CREATE TABLE IF NOT EXISTS anomaly_detections (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  anomaly_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  metric_type VARCHAR(50),
+  metric_value NUMERIC(10,2),
+  expected_value NUMERIC(10,2),
+  deviation_percentage NUMERIC(5,2),
+  severity VARCHAR(20),
+  description TEXT,
+  is_resolved BOOLEAN DEFAULT FALSE,
+  resolved_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Forecast Feedback (Phase 10A)
+CREATE TABLE IF NOT EXISTS forecast_feedback (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  forecast_id UUID NOT NULL REFERENCES analytics_forecasts(id) ON DELETE CASCADE,
+  is_accurate BOOLEAN,
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_wraps_user_id ON session_wraps(user_id);
 CREATE INDEX IF NOT EXISTS idx_wraps_created_at ON session_wraps(created_at DESC);
@@ -177,6 +220,11 @@ CREATE INDEX IF NOT EXISTS idx_decision_analytics_workspace ON decision_analytic
 CREATE INDEX IF NOT EXISTS idx_agent_perf_workspace ON agent_performance(workspace_id, agent_name, date DESC);
 CREATE INDEX IF NOT EXISTS idx_integrations_workspace ON integrations(workspace_id);
 CREATE INDEX IF NOT EXISTS idx_integration_events_workspace ON integration_events(workspace_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_analytics_forecasts_workspace ON analytics_forecasts(workspace_id, forecast_date DESC);
+CREATE INDEX IF NOT EXISTS idx_analytics_forecasts_metric ON analytics_forecasts(workspace_id, metric_type);
+CREATE INDEX IF NOT EXISTS idx_anomaly_detections_workspace ON anomaly_detections(workspace_id, anomaly_date DESC);
+CREATE INDEX IF NOT EXISTS idx_anomaly_detections_severity ON anomaly_detections(workspace_id, severity);
+CREATE INDEX IF NOT EXISTS idx_forecast_feedback_forecast ON forecast_feedback(forecast_id);
 `;
 
 async function initDB() {

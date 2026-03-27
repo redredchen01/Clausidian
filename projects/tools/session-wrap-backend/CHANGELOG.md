@@ -5,6 +5,59 @@ All notable changes to the Session Wrap Backend will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.10.0] - 2026-03-27
+
+### Added - Phase 10A: Advanced Analytics & Forecasting
+
+#### Phase 10A - Time Series Forecasting & Anomaly Detection
+- **Database Schema:**
+  - `analytics_forecasts` table - Stores forecast predictions with confidence bounds
+  - `anomaly_detections` table - Tracks detected anomalies with severity levels
+  - `forecast_feedback` table - Records user feedback for model improvement
+  - 7 new performance indexes for workspace_id, metric_type, severity, dates
+
+- **Forecasting Engine (src/utils/forecast.js):**
+  - Exponential smoothing with configurable alpha (0-1)
+  - Holt's double exponential smoothing for trend capture
+  - Z-score based anomaly detection with severity classification
+  - Moving average forecasting with window-based predictions
+  - Seasonal decomposition separating trend/seasonal/residual components
+
+- **API Endpoints (src/routes/forecasting.js):**
+  - `GET /api/forecasting/forecast/:workspaceId` - Holt's method predictions (10+ periods, confidence bounds)
+  - `GET /api/forecasting/anomalies/:workspaceId` - Z-score anomalies (critical/high/medium severity)
+  - `GET /api/forecasting/insights/:workspaceId` - AI insights from forecasts & anomalies
+  - `POST /api/forecasting/feedback/:forecastId` - Feedback on forecast accuracy
+  - `GET /api/forecasting/history/:workspaceId` - Forecast history with pagination
+
+- **Frontend Components:**
+  - `ForecastChart.tsx` - Recharts area chart with confidence bounds
+  - `AnomalyViewer.tsx` - Severity-based anomaly display with statistics
+  - `ForecastInsights.tsx` - AI recommendations with metric-specific insights
+  - `useForecasting()` hook - Data fetching for forecast/anomaly/insight data
+
+- **Integration:**
+  - Added "Advanced Analytics & Forecasting" section to AnalyticsDashboard
+  - Metric type selector (completed_tasks, pending_tasks, in_progress_tasks, total_decisions)
+  - Real-time forecast updates when changing metrics
+
+- **Testing:**
+  - 40+ unit tests for forecast algorithms (exponential, Holt, anomaly detection)
+  - E2E tests for forecasting workflow
+  - Anomaly severity classification validation
+  - Confidence bounds correctness checks
+
+- **Documentation:**
+  - Complete API docs for 5 forecasting endpoints
+  - Algorithm explanation and parameter documentation
+  - Component usage examples and prop interfaces
+
+### Changed
+- AnalyticsDashboard enhanced with Advanced Analytics section
+- types.ts updated with ForecastData, AnomalyData, ForecastInsight interfaces
+
+---
+
 ## [3.9.0] - 2026-03-27
 
 ### Added - Phase 9: Frontend-Backend Integration & Optimization

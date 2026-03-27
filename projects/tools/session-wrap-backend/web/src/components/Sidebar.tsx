@@ -53,7 +53,7 @@ const SidebarComponent = () => {
 
       {/* Footer */}
       <div className="border-t border-slate-700 pt-4 text-xs text-slate-400">
-        <p>v3.9.0</p>
+        <p>v3.10.0</p>
       </div>
     </aside>
   )

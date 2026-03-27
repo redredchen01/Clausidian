@@ -1,8 +1,8 @@
 {
   "name": "session-wrap-dashboard",
-  "version": "3.9.0",
+  "version": "3.10.0",
   "type": "module",
-  "description": "React 18 dashboard for Session Wrap Backend (Phase 9 - Complete)",
+  "description": "React 18 dashboard for Session Wrap Backend (Phase 10A - Advanced Analytics)",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

@@ -1,9 +1,12 @@
-import { memo } from 'react'
-import { useAnalytics, useWorkspace } from '../hooks'
+import { memo, useMemo } from 'react'
+import { useAnalytics, useWorkspace, useForecasting } from '../hooks'
 import { TrendChart } from './TrendChart'
 import { AgentLeaderboard } from './AgentLeaderboard'
+import { ForecastChart } from './ForecastChart'
+import { AnomalyViewer } from './AnomalyViewer'
+import { ForecastInsights } from './ForecastInsights'
 import { Insight } from '../types'
-import { AlertCircle, CheckCircle2, Zap } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Zap, TrendingUp } from 'lucide-react'
 
 interface KPICardProps {
   title: string
@@ -71,6 +74,14 @@ const AnalyticsDashboardComponent = ({ workspaceId }: AnalyticsDashboardProps) =
   const { currentWorkspace } = useWorkspace()
   const wsId = workspaceId || currentWorkspace?.id
   const { dashboard, insights, agents, isLoading, error, days, setDays } = useAnalytics(wsId || null)
+  const {
+    forecast,
+    anomalies,
+    insights: forecastInsights,
+    isLoading: forecastLoading,
+    metricType,
+    setMetricType
+  } = useForecasting(wsId || null)
 
   if (!wsId) {
     return (
@@ -215,6 +226,83 @@ const AnalyticsDashboardComponent = ({ workspaceId }: AnalyticsDashboardProps) =
             {dashboard.snapshot.total_decisions}
           </p>
         </div>
+      </div>
+
+      {/* Advanced Analytics Section */}
+      <div className="border-t pt-6 mt-6">
+        <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2 mb-6">
+          <TrendingUp size={24} className="text-blue-600" />
+          Advanced Analytics & Forecasting
+        </h2>
+
+        {/* Metric Type Selector */}
+        <div className="flex gap-2 mb-6">
+          <label className="text-sm font-medium text-slate-700 self-center">Metric:</label>
+          <select
+            value={metricType}
+            onChange={(e) => setMetricType(e.target.value)}
+            className="input"
+          >
+            <option value="completed_tasks">Completed Tasks</option>
+            <option value="pending_tasks">Pending Tasks</option>
+            <option value="in_progress_tasks">In Progress Tasks</option>
+            <option value="total_decisions">Total Decisions</option>
+          </select>
+        </div>
+
+        {/* Forecast and Anomalies */}
+        <div className="grid grid-cols-2 gap-6 mb-6">
+          {/* Forecast Chart */}
+          {forecast ? (
+            <div className="card">
+              <ForecastChart
+                predictions={forecast.predictions}
+                metricType={forecast.metricType}
+                trend={forecast.currentTrend}
+                trendStrength={forecast.trendStrength}
+                confidence={forecast.confidenceLevel}
+              />
+            </div>
+          ) : (
+            <div className="card flex items-center justify-center h-96">
+              {forecastLoading ? (
+                <div className="text-slate-600">Loading forecast...</div>
+              ) : (
+                <div className="text-center text-slate-600">
+                  <p>No forecast data available</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Anomaly Detection */}
+          {anomalies ? (
+            <div className="card">
+              <AnomalyViewer
+                anomalies={anomalies.anomalies}
+                totalDataPoints={anomalies.totalDataPoints}
+                threshold={anomalies.threshold}
+              />
+            </div>
+          ) : (
+            <div className="card flex items-center justify-center h-96">
+              {forecastLoading ? (
+                <div className="text-slate-600">Loading anomalies...</div>
+              ) : (
+                <div className="text-center text-slate-600">
+                  <p>No anomaly data available</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Insights */}
+        {forecastInsights.length > 0 && (
+          <div className="card">
+            <ForecastInsights insights={forecastInsights} isLoading={forecastLoading} />
+          </div>
+        )}
       </div>
     </div>
   )

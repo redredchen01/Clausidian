@@ -130,3 +130,47 @@ export interface SessionWrap {
   created_at: string
   updated_at: string
 }
+
+// 預測和異常檢測 (Phase 10A)
+export interface ForecastPoint {
+  period: number
+  value: number
+  lowerBound: number
+  upperBound: number
+}
+
+export interface ForecastData {
+  metricType: string
+  historicalDays: number
+  forecastHorizon: number
+  currentTrend: 'increasing' | 'decreasing'
+  trendStrength: number
+  predictions: ForecastPoint[]
+  confidenceLevel: string
+  uncertainty: number
+}
+
+export interface Anomaly {
+  index: number
+  value: number
+  expectedValue: number
+  deviation: string
+  severity: 'critical' | 'high' | 'medium'
+  zScore: string
+}
+
+export interface AnomalyData {
+  totalDataPoints: number
+  anomaliesDetected: number
+  threshold: number
+  anomalies: Anomaly[]
+}
+
+export interface ForecastInsight {
+  type: 'forecast' | 'anomaly' | 'health'
+  message: string
+  confidence?: string
+  severity?: string
+  anomalyCount?: number
+  recommendation: string
+}
