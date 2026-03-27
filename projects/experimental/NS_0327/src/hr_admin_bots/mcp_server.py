@@ -119,6 +119,24 @@ TOOLS = [
             "required": ["employee_id"],
         },
     },
+    {
+        "name": "hr_detect_anomalies",
+        "description": "Detect anomalous leave patterns for an employee (high frequency, weekend extension, quick resignation).",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"employee_id": {"type": "string"}},
+            "required": ["employee_id"],
+        },
+    },
+    {
+        "name": "hr_monthly_report",
+        "description": "Generate monthly HR summary statistics including leave counts, onboarding, work permits, offboarding, and anomalies.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+        },
+    },
 ]
 
 class MCPServer:
@@ -129,12 +147,15 @@ class MCPServer:
         from hr_admin_bots.shared.auth import EmployeeAuth
         from hr_admin_bots.shared.sheets import SheetsClient
 
+        from hr_admin_bots.smart import SmartAssistant
+
         self.config = Config.from_json(config_path)
         self.sheets = SheetsClient(
             credentials_file=self.config.google_credentials_file,
             sheet_id=self.config.google_sheet_id,
         )
         self.auth = EmployeeAuth(sheets_client=self.sheets)
+        self.smart = SmartAssistant(sheets_client=self.sheets)
 
     # ------------------------------------------------------------------
     # JSON-RPC transport
@@ -378,6 +399,15 @@ class MCPServer:
         }
         self.sheets.append_row("offboarding", row)
         return {"success": True, "employee_id": employee_id, "status": "pending"}
+
+    def _tool_hr_detect_anomalies(self, args: dict) -> Any:
+        employee_id = args.get("employee_id", "").strip()
+        if not employee_id:
+            raise MCPError(-32602, "缺少 employee_id 參數")
+        return self.smart.detect_anomalies(employee_id)
+
+    def _tool_hr_monthly_report(self, _args: dict) -> Any:
+        return self.smart.generate_monthly_summary()
 
     # ------------------------------------------------------------------
     # Internal helpers

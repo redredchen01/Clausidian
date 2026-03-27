@@ -17,6 +17,7 @@ from hr_admin_bots.shared.webhook import WebhookNotifier
 from hr_admin_bots.shared.audit import AuditLogger
 from hr_admin_bots.scheduler import ReminderScheduler
 from hr_admin_bots.health import start_health_server, update_health_status
+from hr_admin_bots.smart import SmartAssistant
 
 logger = logging.getLogger(__name__)
 
@@ -69,6 +70,8 @@ class BotManager:
             webhook_notifier=webhook_notifier,
         )
 
+        self.smart: SmartAssistant = SmartAssistant(sheets_client=self.sheets_client)
+
         self.bots: list[Any] = self._create_bots()
 
     def _create_bots(self) -> list[Any]:
@@ -82,6 +85,9 @@ class BotManager:
             if not bot_config.enabled:
                 logger.info("bot '%s' is disabled, skipping", name)
                 continue
+            extra_kwargs: dict[str, Any] = {}
+            if name == "leave":
+                extra_kwargs["smart"] = self.smart
             instance = bot_cls(
                 name=name,
                 bot_config=bot_config,
@@ -90,6 +96,7 @@ class BotManager:
                 notifier=self.notifier,
                 approval_manager=self.approval_manager,
                 audit_logger=self.audit_logger,
+                **extra_kwargs,
             )
             instances.append(instance)
             logger.info("bot '%s' created", name)

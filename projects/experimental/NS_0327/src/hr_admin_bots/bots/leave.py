@@ -44,8 +44,10 @@ class LeaveBot(BaseBot):
         notifier: Any,
         approval_manager: Any = None,
         audit_logger: Any = None,
+        smart: Any = None,
     ) -> None:
         super().__init__(name, bot_config, sheets_client, auth, notifier, approval_manager, audit_logger)
+        self.smart = smart
 
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         await update.message.reply_text(
@@ -86,19 +88,40 @@ class LeaveBot(BaseBot):
 
         annual_balance = self._get_annual_balance(employee_id)
 
-        keyboard = [
-            [InlineKeyboardButton(f"年假（剩餘 {annual_balance} 天）", callback_data="年假")],
+        # 取得智能建議假別
+        suggested_type = None
+        if self.smart is not None:
+            try:
+                suggested_type = self.smart.suggest_leave_type(employee_id)
+            except Exception:
+                pass
+
+        def _label(lt: str, quota_str: str) -> str:
+            label = f"{lt}（{quota_str}）"
+            if lt == suggested_type:
+                label = f"{label} ✦建議"
+            return label
+
+        # 組建假別按鈕，若有建議則額外在最上方加一個快速鍵
+        keyboard = []
+        if suggested_type:
+            keyboard.append([
+                InlineKeyboardButton(f"★ {suggested_type}（建議）", callback_data=suggested_type)
+            ])
+
+        keyboard += [
+            [InlineKeyboardButton(_label("年假", f"剩餘 {annual_balance} 天"), callback_data="年假")],
             [
-                InlineKeyboardButton("病假（無限額）", callback_data="病假"),
-                InlineKeyboardButton(f"事假（{LEAVE_QUOTA['事假']} 天）", callback_data="事假"),
+                InlineKeyboardButton(_label("病假", "無限額"), callback_data="病假"),
+                InlineKeyboardButton(_label("事假", f"{LEAVE_QUOTA['事假']} 天"), callback_data="事假"),
             ],
             [
-                InlineKeyboardButton(f"喪假（{LEAVE_QUOTA['喪假']} 天）", callback_data="喪假"),
-                InlineKeyboardButton(f"婚假（{LEAVE_QUOTA['婚假']} 天）", callback_data="婚假"),
+                InlineKeyboardButton(_label("喪假", f"{LEAVE_QUOTA['喪假']} 天"), callback_data="喪假"),
+                InlineKeyboardButton(_label("婚假", f"{LEAVE_QUOTA['婚假']} 天"), callback_data="婚假"),
             ],
             [
-                InlineKeyboardButton(f"產假（{LEAVE_QUOTA['產假']} 天）", callback_data="產假"),
-                InlineKeyboardButton(f"陪產假（{LEAVE_QUOTA['陪產假']} 天）", callback_data="陪產假"),
+                InlineKeyboardButton(_label("產假", f"{LEAVE_QUOTA['產假']} 天"), callback_data="產假"),
+                InlineKeyboardButton(_label("陪產假", f"{LEAVE_QUOTA['陪產假']} 天"), callback_data="陪產假"),
             ],
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -163,9 +186,28 @@ class LeaveBot(BaseBot):
         context.user_data["end_date"] = end_date.isoformat()
         context.user_data["days"] = days
 
-        await update.message.reply_text(
-            f"請假天數：{days} 天\n\n請輸入請假原因："
-        )
+        # 嘗試取得建議原因
+        suggested_reason = None
+        if self.smart is not None:
+            try:
+                employee = context.user_data.get("employee", {})
+                employee_id = employee.get("employee_id", "")
+                leave_type = context.user_data.get("leave_type", "")
+                suggested_reason = self.smart.suggest_reason(employee_id, leave_type)
+            except Exception:
+                pass
+
+        if suggested_reason:
+            keyboard = [[InlineKeyboardButton(f"★ {suggested_reason}（建議）", callback_data=f"__reason__{suggested_reason}")]]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            await update.message.reply_text(
+                f"請假天數：{days} 天\n\n請輸入請假原因，或點選以下建議：",
+                reply_markup=reply_markup,
+            )
+        else:
+            await update.message.reply_text(
+                f"請假天數：{days} 天\n\n請輸入請假原因："
+            )
         return INPUT_REASON
 
     async def check_and_confirm(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -535,6 +577,47 @@ class LeaveBot(BaseBot):
             logger.warning("check overlap error: %s", e)
         return False
 
+    async def _handle_suggested_reason(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        """處理使用者點選建議原因按鈕。"""
+        query = update.callback_query
+        await query.answer()
+        reason = query.data.removeprefix("__reason__")
+        context.user_data["reason"] = reason
+
+        employee = context.user_data.get("employee", {})
+        employee_id = employee.get("employee_id", "")
+        leave_type = context.user_data.get("leave_type", "")
+        start_date = context.user_data.get("start_date", "")
+        end_date = context.user_data.get("end_date", "")
+        days = context.user_data.get("days", 0)
+
+        overlap = self._check_overlap(employee_id, start_date, end_date)
+        if overlap:
+            await query.message.reply_text(
+                f"您在 {start_date} 至 {end_date} 期間已有待審或已核准的請假紀錄，"
+                "無法提交重疊申請。\n請重新輸入 /start 或聯絡 HR。"
+            )
+            context.user_data.clear()
+            return ConversationHandler.END
+
+        balance_msg = self._check_balance(employee_id, leave_type, days)
+        if balance_msg:
+            await query.message.reply_text(balance_msg)
+            context.user_data.clear()
+            return ConversationHandler.END
+
+        await query.message.reply_text(
+            f"請假申請摘要：\n\n"
+            f"員工：{employee.get('name', '')}（{employee_id}）\n"
+            f"假別：{leave_type}\n"
+            f"開始日期：{start_date}\n"
+            f"結束日期：{end_date}\n"
+            f"天數：{days} 天\n"
+            f"原因：{reason}\n\n"
+            "請輸入「確認」送出申請，或輸入「取消」中止。"
+        )
+        return CONFIRMING
+
     def build_conversation_handler(self) -> ConversationHandler:
         return ConversationHandler(
             entry_points=[CommandHandler("start", self.start)],
@@ -552,7 +635,8 @@ class LeaveBot(BaseBot):
                     MessageHandler(filters.TEXT & ~filters.COMMAND, self.input_reason)
                 ],
                 INPUT_REASON: [
-                    MessageHandler(filters.TEXT & ~filters.COMMAND, self.check_and_confirm)
+                    CallbackQueryHandler(self._handle_suggested_reason, pattern=r"^__reason__"),
+                    MessageHandler(filters.TEXT & ~filters.COMMAND, self.check_and_confirm),
                 ],
                 CONFIRMING: [
                     MessageHandler(filters.TEXT & ~filters.COMMAND, self.submit)

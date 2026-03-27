@@ -168,6 +168,19 @@ def cmd_status(args: argparse.Namespace) -> None:
 
 
 # ------------------------------------------------------------------
+# Subcommand: report
+# ------------------------------------------------------------------
+
+def cmd_report(args: argparse.Namespace) -> None:
+    from hr_admin_bots.smart import SmartAssistant
+
+    sheets = _make_sheets(args.config)
+    assistant = SmartAssistant(sheets_client=sheets)
+    summary = assistant.generate_monthly_summary()
+    print(json.dumps(summary, ensure_ascii=False, indent=2))
+
+
+# ------------------------------------------------------------------
 # Subcommand: version
 # ------------------------------------------------------------------
 
@@ -227,6 +240,11 @@ def main() -> None:
     p_status.add_argument("employee_id")
     p_status.add_argument("--config", default="config.json")
     p_status.set_defaults(func=cmd_status)
+
+    # report
+    p_report = sub.add_parser("report", help="Print monthly HR summary as JSON")
+    p_report.add_argument("--config", default="config.json")
+    p_report.set_defaults(func=cmd_report)
 
     # version
     p_version = sub.add_parser("version", help="Show version")
