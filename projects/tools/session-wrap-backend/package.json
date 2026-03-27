@@ -1,6 +1,6 @@
 {
   "name": "session-wrap-backend",
-  "version": "1.0.1",
+  "version": "3.8.0",
   "description": "Cloud backend for session-wrap-skill - Claude Code subscription verification",
   "main": "src/index.js",
   "scripts": {
