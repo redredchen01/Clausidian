@@ -248,7 +248,9 @@ function App() {
             )}
 
             {/* Decisions Tab */}
-            {activeTab === 'decisions' && <DecisionTimeline decisions={state.decisions} />}
+            {activeTab === 'decisions' && (
+              <DecisionTimeline decisions={state.decisions} agents={state.sync.active_agents} />
+            )}
 
             {/* Memory Tab */}
             {activeTab === 'memory' && <MemoryStats stats={state.memory} />}
