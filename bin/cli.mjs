@@ -127,6 +127,26 @@ async function main() {
       break;
     }
 
+    case 'read': {
+      const { read } = await import('../src/commands/read.mjs');
+      result = read(resolveVault(flags), positional[0], { section: flags.section });
+      break;
+    }
+
+    case 'delete': {
+      const { deleteNote } = await import('../src/commands/delete.mjs');
+      result = deleteNote(resolveVault(flags), positional[0]);
+      break;
+    }
+
+    case 'recent': {
+      const { recent } = await import('../src/commands/recent.mjs');
+      result = recent(resolveVault(flags), {
+        days: positional[0] ? parseInt(positional[0]) : flags.recent ? parseInt(flags.recent) : 7,
+      });
+      break;
+    }
+
     case 'backlinks': {
       const { backlinks } = await import('../src/commands/backlinks.mjs');
       result = backlinks(resolveVault(flags), positional[0]);
@@ -258,6 +278,9 @@ Commands:
   journal [--date DATE]    Create/open today's journal
   note <title> <type>      Create a note (area/project/resource/idea)
   capture <idea>           Quick idea capture
+  read <note>              Read a note's content
+  recent [days]            Show recently updated notes (default: 7 days)
+  delete <note>            Delete a note and clean up references
   search <keyword>         Full-text search across all notes
   list [type]              List notes with filters
   review                   Generate weekly review

@@ -5,27 +5,46 @@ This is an agent-managed Obsidian vault. You (the AI agent) operate this vault v
 ## Quick Start
 
 ```bash
+# Read a note
+obsidian-agent read "my-project"
+obsidian-agent read "my-project" --section "TODO"
+
 # Check what's in the vault
 obsidian-agent list
+obsidian-agent recent                    # last 7 days
+obsidian-agent stats                     # vault overview
 
-# Create today's journal
-obsidian-agent journal
+# Create
+obsidian-agent journal                   # today's journal
+obsidian-agent note "Title" project --tags "backend,api"
+obsidian-agent capture "Quick idea text"
 
-# Create a new note
-obsidian-agent note "My Project" project --tags "coding"
+# Search & discover
+obsidian-agent search "keyword"          # full-text search
+obsidian-agent backlinks "note-name"     # what links here?
+obsidian-agent orphans                   # unlinked notes
 
-# Capture a quick idea
-obsidian-agent capture "Build a CLI tool for X"
+# Edit existing notes
+obsidian-agent patch "note" --heading "TODO" --append "- [ ] New task"
+obsidian-agent update "note" --status active --summary "Updated"
+obsidian-agent archive "old-note"
+obsidian-agent delete "obsolete-note"
 
-# Search notes
-obsidian-agent search "API"
+# Tags
+obsidian-agent tag list
+obsidian-agent tag rename "old" "new"
 
-# Generate weekly review
-obsidian-agent review
+# Reviews
+obsidian-agent review                    # weekly
+obsidian-agent review monthly
 
-# Rebuild indices
-obsidian-agent sync
+# Maintenance
+obsidian-agent sync                      # rebuild indices
+obsidian-agent health                    # vault health score
+obsidian-agent graph                     # Mermaid knowledge graph
 ```
+
+All commands support `--json` for machine-readable output.
 
 ## Navigation
 
@@ -56,15 +75,6 @@ If you edit files directly instead of using the CLI:
 5. **Build bidirectional links** via the `related` field
 6. **File names**: lowercase with hyphens
 7. **Internal links**: `[[filename]]` (no `.md` extension)
-
-## Retrieval
-
-- By tag: check `_tags.md` or grep `tags:.*keyword`
-- By type: grep `type: project`
-- By status: grep `status: active`
-- By summary: grep `summary:`
-- By relationship: check `_graph.md` or grep `related:`
-- Full text: grep any keyword
 
 ## Environment Variables
 

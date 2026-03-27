@@ -144,6 +144,39 @@ const TOOLS = [
     },
   },
   {
+    name: 'read',
+    description: 'Read a note\'s full content',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        note: { type: 'string', description: 'Note filename (without .md)' },
+        section: { type: 'string', description: 'Optional: read only this heading section' },
+      },
+      required: ['note'],
+    },
+  },
+  {
+    name: 'delete',
+    description: 'Delete a note and clean up references in other notes',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        note: { type: 'string', description: 'Note filename' },
+      },
+      required: ['note'],
+    },
+  },
+  {
+    name: 'recent',
+    description: 'Show recently updated notes',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        days: { type: 'number', description: 'Number of days (default: 7)' },
+      },
+    },
+  },
+  {
     name: 'health',
     description: 'Vault health scoring (completeness, connectivity, freshness, organization)',
     inputSchema: { type: 'object', properties: {} },
@@ -246,6 +279,18 @@ export class McpServer {
           const { graph } = await import('./commands/graph.mjs');
           return graph(this.vaultRoot, { type: args.type });
         }
+        case 'read': {
+          const { read } = await import('./commands/read.mjs');
+          return read(this.vaultRoot, args.note, { section: args.section });
+        }
+        case 'delete': {
+          const { deleteNote } = await import('./commands/delete.mjs');
+          return deleteNote(this.vaultRoot, args.note);
+        }
+        case 'recent': {
+          const { recent } = await import('./commands/recent.mjs');
+          return recent(this.vaultRoot, { days: args.days || 7 });
+        }
         case 'health': {
           const { health } = await import('./commands/health.mjs');
           return health(this.vaultRoot);
@@ -281,7 +326,7 @@ export class McpServer {
           result: {
             protocolVersion: '2024-11-05',
             capabilities: { tools: {} },
-            serverInfo: { name: 'obsidian-agent', version: '0.4.0' },
+            serverInfo: { name: 'obsidian-agent', version: '0.5.0' },
           },
         };
 

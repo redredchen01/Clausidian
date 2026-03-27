@@ -143,6 +143,9 @@ related: ["[[other-note]]", "[[another-note]]"]
 | `journal` | Create/open today's journal entry |
 | `note <title> <type>` | Create a note (area/project/resource/idea) |
 | `capture <idea>` | Quick idea capture to `ideas/` |
+| `read <note>` | Read a note's full content (supports `--section`) |
+| `recent [days]` | Show recently updated notes (default: 7 days) |
+| `delete <note>` | Delete a note and clean up references |
 | `search <keyword>` | Full-text search across all notes |
 | `list [type]` | List notes with filters |
 | `review` | Generate weekly review from journals |

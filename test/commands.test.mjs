@@ -171,6 +171,38 @@ describe('commands (import)', () => {
     assert.equal(result.status, 'already_archived');
   });
 
+  // ── v0.5.0 ───────────────────────────────────────────
+
+  it('read returns note content', async () => {
+    const { read } = await import('../src/commands/read.mjs');
+    const result = read(TMP, 'test-project');
+    assert.ok(result.content.includes('Test Project'));
+    assert.equal(result.type, 'project');
+  });
+
+  it('read with section returns specific heading', async () => {
+    const { read } = await import('../src/commands/read.mjs');
+    const result = read(TMP, 'test-project', { section: 'TODO' });
+    assert.ok(result.content.includes('TODO'));
+  });
+
+  it('recent shows recently updated notes', async () => {
+    const { recent } = await import('../src/commands/recent.mjs');
+    const result = recent(TMP, { days: 1 });
+    assert.ok(result.notes.length >= 1);
+  });
+
+  it('delete removes note and cleans references', async () => {
+    // Create a throwaway note to delete
+    const { note } = await import('../src/commands/note.mjs');
+    note(TMP, 'Throwaway Note', 'idea');
+
+    const { deleteNote } = await import('../src/commands/delete.mjs');
+    const result = deleteNote(TMP, 'throwaway-note');
+    assert.equal(result.status, 'deleted');
+    assert.ok(!existsSync(join(TMP, 'ideas', 'throwaway-note.md')));
+  });
+
   it('stats returns vault statistics', async () => {
     const { stats } = await import('../src/commands/stats.mjs');
     const result = stats(TMP);
