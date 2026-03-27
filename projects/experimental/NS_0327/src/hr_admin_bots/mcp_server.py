@@ -17,6 +17,9 @@ import sys
 from datetime import date
 from typing import Any, Optional
 
+from hr_admin_bots import __version__
+from hr_admin_bots.constants import LEAVE_QUOTA
+
 logger = logging.getLogger(__name__)
 
 TOOLS = [
@@ -118,17 +121,6 @@ TOOLS = [
     },
 ]
 
-# Leave quota constants (mirrors leave.py)
-_LEAVE_QUOTA: dict[str, int] = {
-    "病假": -1,
-    "事假": 10,
-    "喪假": 3,
-    "婚假": 5,
-    "產假": 98,
-    "陪產假": 15,
-}
-
-
 class MCPServer:
     """Minimal MCP server: JSON-RPC 2.0 over stdin/stdout."""
 
@@ -180,7 +172,7 @@ class MCPServer:
         if method == "initialize":
             return {
                 "protocolVersion": "2024-11-05",
-                "serverInfo": {"name": "hr-admin-bots", "version": "0.3.0"},
+                "serverInfo": {"name": "hr-admin-bots", "version": __version__},
                 "capabilities": {"tools": {}},
             }
         if method == "tools/list":
@@ -234,7 +226,7 @@ class MCPServer:
             balance = self._get_annual_balance(employee_id, employee)
             return {"employee_id": employee_id, "leave_type": leave_type, "balance": balance}
 
-        quota = _LEAVE_QUOTA.get(leave_type)
+        quota = LEAVE_QUOTA.get(leave_type)
         if quota is None:
             raise MCPError(-32602, f"不支援的假別：{leave_type}")
 

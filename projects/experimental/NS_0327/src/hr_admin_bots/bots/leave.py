@@ -16,20 +16,11 @@ from telegram.ext import (
 )
 
 from hr_admin_bots.bots.base import BaseBot
+from hr_admin_bots.constants import LEAVE_QUOTA
 
 logger = logging.getLogger(__name__)
 
 WAITING_ID, SELECT_TYPE, INPUT_START, INPUT_END, INPUT_REASON, CONFIRMING = range(6)
-
-# 固定配額（-1 代表無限）
-LEAVE_QUOTA: dict[str, int] = {
-    "病假": -1,
-    "事假": 10,
-    "喪假": 3,
-    "婚假": 5,
-    "產假": 98,
-    "陪產假": 15,
-}
 
 DATE_FORMAT = "%Y-%m-%d"
 
@@ -264,10 +255,8 @@ class LeaveBot(BaseBot):
 
             if self.approval_manager is not None:
                 # 優先送 Telegram 主管核准，否則 fallback email
-                app = update.get_bot()  # type: ignore[attr-defined]
-                # build_application 產出的 app 無法在此取得，改傳 context.bot 的包裝
                 sent_telegram = await self.approval_manager.send_approval_request(
-                    _BotWrapper(update.get_bot()),  # type: ignore[attr-defined]
+                    _BotWrapper(context.bot),
                     employee,
                     request_data,
                     "leave",

@@ -16,6 +16,7 @@ import sys
 from datetime import date
 
 from hr_admin_bots import __version__
+from hr_admin_bots.constants import LEAVE_QUOTA
 
 
 def _make_sheets(config_path: str):
@@ -75,16 +76,6 @@ def cmd_lookup(args: argparse.Namespace) -> None:
 # Subcommand: balance
 # ------------------------------------------------------------------
 
-_LEAVE_QUOTA = {
-    "病假": -1,
-    "事假": 10,
-    "喪假": 3,
-    "婚假": 5,
-    "產假": 98,
-    "陪產假": 15,
-}
-
-
 def _get_used_days(sheets, employee_id: str, leave_type: str) -> int:
     rows = sheets.find_rows("leaves", filters={"employee_id": employee_id, "leave_type": leave_type})
     current_year = str(date.today().year)
@@ -120,7 +111,7 @@ def cmd_balance(args: argparse.Namespace) -> None:
     print("  病假     無限額")
 
     # 其他固定配額
-    for leave_type, quota in _LEAVE_QUOTA.items():
+    for leave_type, quota in LEAVE_QUOTA.items():
         if leave_type == "病假":
             continue
         used = _get_used_days(sheets, args.employee_id, leave_type)

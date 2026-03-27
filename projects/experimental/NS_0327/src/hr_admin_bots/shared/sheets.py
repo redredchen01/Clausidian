@@ -113,8 +113,9 @@ class SheetsClient:
         try:
             col_index = headers.index(col_name) + 1  # gspread is 1-based
         except ValueError:
-            logger.error("Column '%s' not found in worksheet '%s'", col_name, worksheet_name)
-            return
+            raise ValueError(
+                f"Column '{col_name}' not found in worksheet '{worksheet_name}'"
+            )
         # row_index 1 = second sheet row (first data row)
         sheet_row = row_index + 1
         ws.update_cell(sheet_row, col_index, value)

@@ -196,7 +196,7 @@ class TestFindRows:
 # find_rows (used by LeaveBot for balance calculation)
 # ---------------------------------------------------------------------------
 
-class TestFindRows:
+class TestFindRowsBalanceRemoved:
     def test_returns_all_matching_rows(self):
         client = make_client({"leaves": [
             {"employee_id": "E001", "leave_type": "年假", "status": "approved"},
