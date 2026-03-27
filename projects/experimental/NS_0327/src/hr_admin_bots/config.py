@@ -28,6 +28,7 @@ class Config:
     google_credentials_file: str
     smtp: SmtpConfig
     hr_email: str
+    webhooks: list[str] = field(default_factory=list)
 
     @classmethod
     def from_env(cls) -> "Config":
@@ -57,6 +58,7 @@ class Config:
             google_credentials_file=os.environ["HR_GOOGLE_CREDENTIALS_FILE"],
             smtp=smtp,
             hr_email=os.environ["HR_EMAIL"],
+            webhooks=[],
         )
 
     @classmethod
@@ -100,6 +102,7 @@ class Config:
             google_credentials_file=data.get("google_credentials_file") or os.environ["HR_GOOGLE_CREDENTIALS_FILE"],
             smtp=smtp,
             hr_email=data.get("hr_email") or os.environ["HR_EMAIL"],
+            webhooks=data.get("webhooks", []),
         )
 
     def get_bot(self, name: str) -> Optional[BotConfig]:

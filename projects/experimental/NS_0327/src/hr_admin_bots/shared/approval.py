@@ -8,6 +8,8 @@ from telegram.ext import ContextTypes
 
 logger = logging.getLogger(__name__)
 
+# webhook_notifier is injected at runtime (optional) to avoid circular imports
+
 # callback_data 格式："{action}:{request_type}:{row_index}"
 # action: approve | reject
 # request_type: leave
@@ -17,9 +19,10 @@ logger = logging.getLogger(__name__)
 class ApprovalManager:
     """處理 Telegram 主管核准流程。"""
 
-    def __init__(self, sheets_client: Any, notifier: Any) -> None:
+    def __init__(self, sheets_client: Any, notifier: Any, webhook_notifier: Any = None) -> None:
         self.sheets_client = sheets_client
         self.notifier = notifier
+        self.webhook_notifier = webhook_notifier
 
     async def send_approval_request(
         self,
@@ -107,6 +110,20 @@ class ApprovalManager:
             logger.error("Failed to update leave status: %s", e)
             await query.edit_message_text("更新狀態失敗，請聯絡系統管理員。")
             return
+
+        # Fire webhook notification (non-blocking, best-effort)
+        if self.webhook_notifier is not None:
+            try:
+                await self.webhook_notifier.send_async(
+                    "leave_approval",
+                    {
+                        "action": action,
+                        "new_status": new_status,
+                        "row_index": row_index,
+                    },
+                )
+            except Exception as e:
+                logger.warning("Webhook notification failed: %s", e)
 
         # 取得員工資訊以通知
         try:

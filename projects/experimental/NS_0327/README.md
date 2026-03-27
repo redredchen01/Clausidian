@@ -2,6 +2,8 @@
 
 4 個 Telegram Bot 組成的 HR 行政自動化工具包，統一經理器啟動，Google Sheets 作為數據層。
 
+**版本：v0.3.0**
+
 ## Bot 清單
 
 | Bot | 功能 | 流程 |
@@ -23,6 +25,7 @@ pip install -e .
 2. 填入 4 個 Telegram Bot Token（透過 @BotFather 建立）
 3. 填入 Google Sheet ID 和 Service Account 金鑰路徑
 4. 填入 SMTP Email 設定
+5. （選填）填入 Webhook URL 清單
 
 ## Google Sheet 結構
 
@@ -36,17 +39,92 @@ pip install -e .
 | leaves | 請假記錄 |
 | offboarding | 離職記錄 |
 
-## 啟動
+## CLI 指令
 
 ```bash
-# 使用預設 config.json
-python -m hr_admin_bots.manager
+# 啟動所有 Telegram Bot
+hr-admin-bots serve [--config config.json]
 
-# 指定配置檔
-python -m hr_admin_bots.manager --config /path/to/config.json
+# 啟動 MCP Server（供 AI agent 使用）
+hr-admin-bots mcp [--config config.json]
 
-# 或透過安裝後的 CLI
-hr-admin-bots --config config.json
+# 快速員工查詢
+hr-admin-bots lookup <employee_id> [--config config.json]
+
+# 查詢假別餘額
+hr-admin-bots balance <employee_id> [--config config.json]
+
+# 查詢待審申請狀態
+hr-admin-bots status <employee_id> [--config config.json]
+
+# 顯示版本
+hr-admin-bots version
+```
+
+## MCP Server
+
+MCP Server 讓 Claude Code、OpenClaw 等 AI agent 可以直接呼叫 HR 操作。
+
+透過 stdin/stdout JSON-RPC 2.0 協定通訊，無須額外的 MCP 套件。
+
+### 啟動
+
+```bash
+hr-admin-bots mcp --config config.json
+# 或
+python -m hr_admin_bots.mcp_server --config config.json
+```
+
+### 可用工具
+
+| 工具 | 說明 |
+|------|------|
+| `hr_lookup_employee` | 依員工 ID 查詢員工資料 |
+| `hr_check_leave_balance` | 查詢指定假別的剩餘天數 |
+| `hr_apply_leave` | 提交請假申請 |
+| `hr_approve_leave` | 核准或駁回請假申請 |
+| `hr_list_pending` | 列出所有待審申請 |
+| `hr_submit_onboarding` | 提交入職記錄 |
+| `hr_submit_work_permit` | 提交工作證申請 |
+| `hr_submit_offboarding` | 提交離職申請 |
+
+### Claude Code 整合範例（.mcp.json）
+
+```json
+{
+  "mcpServers": {
+    "hr-admin": {
+      "command": "hr-admin-bots",
+      "args": ["mcp", "--config", "/path/to/config.json"]
+    }
+  }
+}
+```
+
+## Webhook 通知
+
+在 `config.json` 加入 `webhooks` 陣列，即可在核准/駁回事件時自動 POST 通知：
+
+```json
+{
+  "webhooks": [
+    "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK",
+    "https://YOUR_TEAM.webhook.office.com/webhookb2/..."
+  ]
+}
+```
+
+Payload 格式：
+
+```json
+{
+  "event_type": "leave_approval",
+  "data": {
+    "action": "approve",
+    "new_status": "approved",
+    "row_index": 5
+  }
+}
 ```
 
 ## 假期類型
@@ -66,4 +144,4 @@ hr-admin-bots --config config.json
 - Python 3.9+
 - python-telegram-bot v20+ (async)
 - gspread + google-auth
-- smtplib (stdlib)
+- smtplib / urllib.request (stdlib)

@@ -13,5 +13,9 @@
     "user": "bot@company.com",
     "password": "YOUR_APP_PASSWORD"
   },
-  "hr_email": "hr@company.com"
+  "hr_email": "hr@company.com",
+  "webhooks": [
+    "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK",
+    "https://YOUR_TEAM.webhook.office.com/webhookb2/..."
+  ]
 }

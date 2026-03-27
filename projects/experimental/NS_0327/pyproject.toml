@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hr-admin-bots"
-version = "0.1.0"
+version = "0.3.0"
 description = "HR Admin Bot Skill Package — Telegram bots for onboarding, work permit, leave, and offboarding"
 requires-python = ">=3.9"
 dependencies = [
@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-hr-admin-bots = "hr_admin_bots.manager:main"
+hr-admin-bots = "hr_admin_bots.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

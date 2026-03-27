@@ -14,6 +14,7 @@ from hr_admin_bots.shared.sheets import SheetsClient
 from hr_admin_bots.shared.auth import EmployeeAuth
 from hr_admin_bots.shared.notifier import EmailNotifier
 from hr_admin_bots.shared.approval import ApprovalManager
+from hr_admin_bots.shared.webhook import WebhookNotifier
 
 logger = logging.getLogger(__name__)
 
@@ -39,9 +40,16 @@ class BotManager:
         )
         self.auth: EmployeeAuth = EmployeeAuth(sheets_client=self.sheets_client)
         self.notifier: EmailNotifier = EmailNotifier(self.config)
+
+        webhook_notifier = None
+        if self.config.webhooks:
+            webhook_notifier = WebhookNotifier(self.config.webhooks)
+            logger.info("webhook notifier configured with %d URL(s)", len(self.config.webhooks))
+
         self.approval_manager: ApprovalManager = ApprovalManager(
             sheets_client=self.sheets_client,
             notifier=self.notifier,
+            webhook_notifier=webhook_notifier,
         )
 
         self.bots: list[Any] = self._create_bots()
