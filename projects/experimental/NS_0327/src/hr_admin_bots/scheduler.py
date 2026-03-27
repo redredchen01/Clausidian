@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import datetime, timedelta
+from datetime import date as date_type, datetime, timedelta
 from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
@@ -72,9 +72,15 @@ class ReminderScheduler:
             if not apply_date_str:
                 continue
             try:
+                # Full datetime string (e.g. from datetime.now().isoformat())
                 apply_date = datetime.fromisoformat(apply_date_str)
             except ValueError:
-                continue
+                try:
+                    # Date-only string (e.g. "2026-04-01") — treat as end of that day
+                    parsed = date_type.fromisoformat(apply_date_str)
+                    apply_date = datetime.combine(parsed, datetime.max.time().replace(microsecond=0))
+                except ValueError:
+                    continue
 
             if now - apply_date <= timedelta(hours=48):
                 continue
@@ -122,9 +128,15 @@ class ReminderScheduler:
             if not submit_date_str:
                 continue
             try:
+                # Full datetime string
                 submit_date = datetime.fromisoformat(submit_date_str)
             except ValueError:
-                continue
+                try:
+                    # Date-only string — treat as end of that day
+                    parsed = date_type.fromisoformat(submit_date_str)
+                    submit_date = datetime.combine(parsed, datetime.max.time().replace(microsecond=0))
+                except ValueError:
+                    continue
 
             if now - submit_date <= timedelta(hours=72):
                 continue

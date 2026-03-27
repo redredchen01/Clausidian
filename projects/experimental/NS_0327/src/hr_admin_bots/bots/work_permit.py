@@ -45,6 +45,19 @@ class WorkPermitBot(BaseBot):
             )
             return WAITING_ID
 
+        # Telegram ID 綁定檢查
+        bound_tid = self.sheets_client.get_telegram_id(employee_id)
+        current_tid = update.effective_user.id
+        if bound_tid is not None and bound_tid != current_tid:
+            await update.message.reply_text(
+                "此員工編號已綁定其他 Telegram 帳號，無法繼續。\n如有疑問請聯絡 HR。"
+            )
+            return WAITING_ID
+        if bound_tid is None:
+            self.sheets_client.bind_telegram_id(employee_id, current_tid)
+            if self.audit_logger:
+                self.audit_logger.log("telegram_bind", f"tg:{current_tid}", employee_id)
+
         # 同一員工同月重複申請檢查
         current_month = date.today().strftime("%Y-%m")
         existing = self.sheets_client.find_row(
