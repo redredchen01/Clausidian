@@ -1,4 +1,4 @@
-# Session Wrap Skill v3.7.0
+# Session Wrap Skill v3.9.0
 
 **Agent-native session management for seamless multi-agent coordination.**
 
@@ -6,11 +6,22 @@ Automatically persist project context, track decisions, and enable agents to sha
 
 Works with Claude Code, Cursor, Windsurf, Cline, Aider, and any AI agent.
 
-## ✨ What's New (v3.7.0)
+## ✨ What's New (v3.9.0)
 
-**Phase 7:** Interactive dashboard with WebSocket sync, task editing, search, and team collaboration
+**Phase 9:** Dashboard Backend API Server — bridges bash agent tools to the React dashboard via REST API.
 
-Transformed from read-only monitoring → full team coordination: real-time WebSocket updates, task CRUD from UI, decision search/filtering, activity feed, inline comments, @mention system.
+- Express server on `:3001` with localhost-only CORS
+- Task CRUD via single-writer model (delegates to `agent-tasks.sh`)
+- Decision search with keyword, agent, and date range filters
+- Memory stats with async directory walk and 30s cache
+- Agent sync status with active detection (30min threshold)
+- 10 automated tests, all passing
+
+### Previous Releases
+
+**v3.8.0 (Phase 8):** Enterprise features — RBAC, analytics, integrations, caching
+
+**v3.7.0 (Phase 7):** Interactive dashboard — WebSocket sync, task editing, search, team collaboration
 
 ### Agent Tools + Automation (7 tools + 3 automation scripts)
 
