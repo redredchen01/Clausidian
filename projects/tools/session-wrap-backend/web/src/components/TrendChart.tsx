@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react'
 import {
   LineChart,
   Line,
@@ -14,7 +15,7 @@ interface TrendChartProps {
   data: AnalyticsTrend[]
 }
 
-export const TrendChart = ({ data }: TrendChartProps) => {
+const TrendChartComponent = ({ data }: TrendChartProps) => {
   if (!data || data.length === 0) {
     return (
       <div className="flex items-center justify-center h-80">
@@ -23,18 +24,19 @@ export const TrendChart = ({ data }: TrendChartProps) => {
     )
   }
 
-  // Format data for Recharts
-  const chartData = data.map((item) => ({
-    date: new Date(item.snapshot_date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric'
-    }),
-    completed: item.completed_tasks,
-    pending: item.pending_tasks,
-    inProgress: item.in_progress_tasks,
-    decisions: item.total_decisions,
-    quality: (item.avg_decision_quality * 100).toFixed(0) // Scale to 0-100 for visibility
-  }))
+  // Memoize chart data transformation
+  const chartData = useMemo(() =>
+    data.map((item) => ({
+      date: new Date(item.snapshot_date).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
+      }),
+      completed: item.completed_tasks,
+      pending: item.pending_tasks,
+      inProgress: item.in_progress_tasks,
+      decisions: item.total_decisions,
+      quality: (item.avg_decision_quality * 100).toFixed(0) // Scale to 0-100 for visibility
+    })), [data])
 
   return (
     <ResponsiveContainer width="100%" height={300}>
@@ -86,3 +88,5 @@ export const TrendChart = ({ data }: TrendChartProps) => {
     </ResponsiveContainer>
   )
 }
+
+export const TrendChart = memo(TrendChartComponent)

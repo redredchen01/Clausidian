@@ -34,6 +34,6 @@ describe('Sidebar Component', () => {
   it('should display version', () => {
     render(<Sidebar />)
 
-    expect(screen.getByText('v3.8.0')).toBeInTheDocument()
+    expect(screen.getByText('v3.9.0')).toBeInTheDocument()
   })
 })

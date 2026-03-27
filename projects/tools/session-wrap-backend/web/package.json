@@ -1,8 +1,8 @@
 {
   "name": "session-wrap-dashboard",
-  "version": "3.8.0",
+  "version": "3.9.0",
   "type": "module",
-  "description": "React 18 dashboard for Session Wrap Backend (Phase 9)",
+  "description": "React 18 dashboard for Session Wrap Backend (Phase 9 - Complete)",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -11,7 +11,10 @@
     "type-check": "tsc --noEmit",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
     "axios": "^1.6.0",
@@ -23,6 +26,7 @@
     "zustand": "^4.4.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.40.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^20.10.0",

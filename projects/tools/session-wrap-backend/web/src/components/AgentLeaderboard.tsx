@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { AgentPerformance } from '../types'
 import { TrendingUp } from 'lucide-react'
 
@@ -5,7 +6,7 @@ interface AgentLeaderboardProps {
   agents: AgentPerformance[]
 }
 
-export const AgentLeaderboard = ({ agents }: AgentLeaderboardProps) => {
+const AgentLeaderboardComponent = ({ agents }: AgentLeaderboardProps) => {
   if (!agents || agents.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -79,3 +80,5 @@ export const AgentLeaderboard = ({ agents }: AgentLeaderboardProps) => {
     </div>
   )
 }
+
+export const AgentLeaderboard = memo(AgentLeaderboardComponent)

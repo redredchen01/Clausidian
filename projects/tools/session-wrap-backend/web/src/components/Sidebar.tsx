@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   Home,
@@ -17,7 +18,7 @@ const navigationItems = [
   { path: '/settings', label: 'Settings', icon: Settings }
 ]
 
-export const Sidebar = () => {
+const SidebarComponent = () => {
   const location = useLocation()
 
   return (
@@ -52,8 +53,10 @@ export const Sidebar = () => {
 
       {/* Footer */}
       <div className="border-t border-slate-700 pt-4 text-xs text-slate-400">
-        <p>v3.8.0</p>
+        <p>v3.9.0</p>
       </div>
     </aside>
   )
 }
+
+export const Sidebar = memo(SidebarComponent)

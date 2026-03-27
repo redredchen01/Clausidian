@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { useAuth, useWorkspace } from '../hooks'
 import { LogOut, User } from 'lucide-react'
 
@@ -5,7 +6,7 @@ interface HeaderProps {
   title?: string
 }
 
-export const Header = ({ title = 'Dashboard' }: HeaderProps) => {
+const HeaderComponent = ({ title = 'Dashboard' }: HeaderProps) => {
   const { user, logout } = useAuth()
   const { currentWorkspace, workspaces, setCurrentWorkspace } = useWorkspace()
 
@@ -57,3 +58,5 @@ export const Header = ({ title = 'Dashboard' }: HeaderProps) => {
     </header>
   )
 }
+
+export const Header = memo(HeaderComponent)

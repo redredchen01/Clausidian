@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const path = require('path');
 const { initDB } = require('./db/init');
 const authRoutes = require('./routes/auth');
 const wrapRoutes = require('./routes/wraps');
@@ -16,7 +17,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:3000').split(',').map(s => s.trim());
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://localhost:3001').split(',').map(s => s.trim());
 app.use(cors({
   origin: allowedOrigins,
   credentials: true
@@ -44,6 +45,14 @@ app.use('/api', integrationsRoutes);
 
 // Error handling
 app.use(errorHandler);
+
+// Serve React static files
+app.use(express.static(path.join(__dirname, '../web/dist')));
+
+// SPA fallback: serve index.html for non-API routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../web/dist/index.html'));
+});
 
 // Initialize DB and start server
 async function start() {
