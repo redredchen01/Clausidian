@@ -313,6 +313,21 @@ async function main() {
       break;
     }
 
+    case 'research': {
+      const { research } = await import('../src/commands/research.mjs');
+      const topic = positional.join(' ');
+      if (!topic) {
+        console.error('Usage: obsidian-agent research <topic> [--lang <language>] [--days <n>] [--limit <n>]');
+        process.exit(1);
+      }
+      result = research(resolveVault(flags), topic, {
+        lang: flags.lang,
+        days: flags.days ? parseInt(flags.days) : 90,
+        limit: flags.limit ? parseInt(flags.limit) : 10,
+      });
+      break;
+    }
+
     case 'serve': {
       const { McpServer } = await import('../src/mcp-server.mjs');
       const server = new McpServer(resolveVault(flags));
@@ -392,6 +407,7 @@ Commands:
   thread <topic>           Trace how a topic evolved over time
   suggest                  Intelligent daily action suggestions
   context <note>           Assemble full context around a note
+  research <topic>         Automated tech research via GitHub CLI
   serve                    Start MCP server (stdio transport)
   hook <event>             Handle agent hook events
 
@@ -416,6 +432,8 @@ Flags:
   --all                    All active projects (for digest)
   --days <n>               Lookback period in days (for digest/thread/suggest/context)
   --output file            Write context to journal file (for context)
+  --lang <language>        Filter by programming language (for research)
+  --limit <n>              Max repos to fetch (default: 10, for research)
 
 Hook events:
   session-stop             Append session summary to journal
@@ -439,7 +457,7 @@ Examples:
     }
 
     default: {
-      const cmds = ['init','journal','note','capture','search','list','review','sync','read','delete','recent','backlinks','update','archive','stats','graph','orphans','patch','tag','watch','health','stale','cluster','digest','thread','suggest','context','setup','serve','hook','version','help'];
+      const cmds = ['init','journal','note','capture','search','list','review','sync','read','delete','recent','backlinks','update','archive','stats','graph','orphans','patch','tag','watch','health','stale','cluster','digest','thread','suggest','context','research','setup','serve','hook','version','help'];
       const similar = cmds.filter(c => c.startsWith(command?.slice(0, 2) || '') || levenshtein(c, command) <= 2);
       console.error(`Unknown command: ${command}`);
       if (similar.length) console.error(`Did you mean: ${similar.join(', ')}?`);

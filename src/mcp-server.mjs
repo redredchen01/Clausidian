@@ -278,6 +278,20 @@ const TOOLS = [
       required: ['note'],
     },
   },
+  {
+    name: 'research',
+    description: 'Automated tech research via GitHub CLI — search repos, issues, emerging trends',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        topic: { type: 'string', description: 'Technology or topic to research' },
+        lang: { type: 'string', description: 'Filter by programming language' },
+        days: { type: 'number', description: 'Lookback for emerging repos in days (default: 90)' },
+        limit: { type: 'number', description: 'Max repos to fetch (default: 10)' },
+      },
+      required: ['topic'],
+    },
+  },
 ];
 
 export class McpServer {
@@ -430,6 +444,14 @@ export class McpServer {
           return context(this.vaultRoot, args.note, {
             days: args.days || 30,
             output: args.output,
+          });
+        }
+        case 'research': {
+          const { research } = await import('./commands/research.mjs');
+          return research(this.vaultRoot, args.topic, {
+            lang: args.lang,
+            days: args.days || 90,
+            limit: args.limit || 10,
           });
         }
         default:
