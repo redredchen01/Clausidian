@@ -209,6 +209,39 @@ const TOOLS = [
       required: ['old_tag', 'new_tag'],
     },
   },
+  {
+    name: 'stale',
+    description: 'Find stale notes and generate a prioritized triage plan',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        threshold: { type: 'number', description: 'Days without update to consider stale (default: 30)' },
+      },
+    },
+  },
+  {
+    name: 'cluster',
+    description: 'Discover topic clusters via tag co-occurrence and suggest missing links',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        auto_link: { type: 'boolean', description: 'Automatically add suggested related links (default: false)' },
+        min_size: { type: 'number', description: 'Minimum cluster size to report (default: 2)' },
+      },
+    },
+  },
+  {
+    name: 'digest',
+    description: 'Generate a project status digest from journals, backlinks, and related notes',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project: { type: 'string', description: 'Project note name (omit for --all mode)' },
+        all: { type: 'boolean', description: 'Generate digest for all active projects (default: false)' },
+        days: { type: 'number', description: 'Lookback period in days (default: 7)' },
+      },
+    },
+  },
 ];
 
 export class McpServer {
@@ -323,6 +356,25 @@ export class McpServer {
         case 'tag_rename': {
           const { tagRename } = await import('./commands/tag.mjs');
           return tagRename(this.vaultRoot, args.old_tag, args.new_tag);
+        }
+        case 'stale': {
+          const { stale } = await import('./commands/stale.mjs');
+          return stale(this.vaultRoot, { threshold: args.threshold || 30 });
+        }
+        case 'cluster': {
+          const { cluster } = await import('./commands/cluster.mjs');
+          return cluster(this.vaultRoot, {
+            autoLink: args.auto_link || false,
+            minSize: args.min_size || 2,
+          });
+        }
+        case 'digest': {
+          const { digest } = await import('./commands/digest.mjs');
+          return digest(this.vaultRoot, {
+            project: args.project,
+            all: args.all || false,
+            days: args.days || 7,
+          });
         }
         default:
           throw new Error(`Unknown tool: ${name}`);

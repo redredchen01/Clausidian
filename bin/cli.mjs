@@ -248,6 +248,34 @@ async function main() {
       break;
     }
 
+    case 'stale': {
+      const { stale } = await import('../src/commands/stale.mjs');
+      result = stale(resolveVault(flags), {
+        threshold: flags.threshold ? parseInt(flags.threshold) : 30,
+      });
+      break;
+    }
+
+    case 'cluster': {
+      const { cluster } = await import('../src/commands/cluster.mjs');
+      result = cluster(resolveVault(flags), {
+        autoLink: flags['auto-link'] === true,
+        minSize: flags['min-size'] ? parseInt(flags['min-size']) : 2,
+      });
+      break;
+    }
+
+    case 'digest': {
+      const { digest } = await import('../src/commands/digest.mjs');
+      result = digest(resolveVault(flags), {
+        project: positional[0],
+        all: flags.all === true,
+        days: flags.days ? parseInt(flags.days) : 7,
+        date: flags.date,
+      });
+      break;
+    }
+
     case 'serve': {
       const { McpServer } = await import('../src/mcp-server.mjs');
       const server = new McpServer(resolveVault(flags));
@@ -320,6 +348,10 @@ Commands:
   setup [vault-path]       Install MCP server + /obsidian skill for Claude Code
   watch                    Auto-rebuild indices on file changes
   health                   Vault health scoring report
+  stale                    Find stale notes and generate triage plan
+  cluster                  Discover topic clusters and suggest missing links
+  digest <project>         Generate project status digest
+  digest --all             Dashboard for all active projects
   serve                    Start MCP server (stdio transport)
   hook <event>             Handle agent hook events
 
@@ -338,6 +370,11 @@ Flags:
   --heading <name>         Target heading (for patch)
   --append <text>          Append to section (for patch)
   --prepend <text>         Prepend to section (for patch)
+  --threshold <days>       Days to consider stale (default: 30, for stale)
+  --auto-link              Auto-add suggested links (for cluster)
+  --min-size <n>           Minimum cluster size (default: 2, for cluster)
+  --all                    All active projects (for digest)
+  --days <n>               Lookback period in days (default: 7, for digest)
 
 Hook events:
   session-stop             Append session summary to journal
@@ -361,7 +398,7 @@ Examples:
     }
 
     default: {
-      const cmds = ['init','journal','note','capture','search','list','review','sync','read','delete','recent','backlinks','update','archive','stats','graph','orphans','patch','tag','watch','health','setup','serve','hook','version','help'];
+      const cmds = ['init','journal','note','capture','search','list','review','sync','read','delete','recent','backlinks','update','archive','stats','graph','orphans','patch','tag','watch','health','stale','cluster','digest','setup','serve','hook','version','help'];
       const similar = cmds.filter(c => c.startsWith(command?.slice(0, 2) || '') || levenshtein(c, command) <= 2);
       console.error(`Unknown command: ${command}`);
       if (similar.length) console.error(`Did you mean: ${similar.join(', ')}?`);
