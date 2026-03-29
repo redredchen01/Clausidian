@@ -276,6 +276,43 @@ async function main() {
       break;
     }
 
+    case 'thread': {
+      const { thread } = await import('../src/commands/thread.mjs');
+      const topic = positional[0];
+      if (!topic) {
+        console.error('Usage: obsidian-agent thread <topic>');
+        console.error('Topic can be a note name, tag, or keyword.');
+        process.exit(1);
+      }
+      result = thread(resolveVault(flags), topic, {
+        days: flags.days ? parseInt(flags.days) : undefined,
+      });
+      break;
+    }
+
+    case 'suggest': {
+      const { suggest } = await import('../src/commands/suggest.mjs');
+      result = suggest(resolveVault(flags), {
+        date: flags.date,
+        days: flags.days ? parseInt(flags.days) : 7,
+      });
+      break;
+    }
+
+    case 'context': {
+      const { context } = await import('../src/commands/context.mjs');
+      const noteName = positional[0];
+      if (!noteName) {
+        console.error('Usage: obsidian-agent context <note-name>');
+        process.exit(1);
+      }
+      result = context(resolveVault(flags), noteName, {
+        days: flags.days ? parseInt(flags.days) : 30,
+        output: flags.output,
+      });
+      break;
+    }
+
     case 'serve': {
       const { McpServer } = await import('../src/mcp-server.mjs');
       const server = new McpServer(resolveVault(flags));
@@ -352,6 +389,9 @@ Commands:
   cluster                  Discover topic clusters and suggest missing links
   digest <project>         Generate project status digest
   digest --all             Dashboard for all active projects
+  thread <topic>           Trace how a topic evolved over time
+  suggest                  Intelligent daily action suggestions
+  context <note>           Assemble full context around a note
   serve                    Start MCP server (stdio transport)
   hook <event>             Handle agent hook events
 
@@ -374,7 +414,8 @@ Flags:
   --auto-link              Auto-add suggested links (for cluster)
   --min-size <n>           Minimum cluster size (default: 2, for cluster)
   --all                    All active projects (for digest)
-  --days <n>               Lookback period in days (default: 7, for digest)
+  --days <n>               Lookback period in days (for digest/thread/suggest/context)
+  --output file            Write context to journal file (for context)
 
 Hook events:
   session-stop             Append session summary to journal
@@ -398,7 +439,7 @@ Examples:
     }
 
     default: {
-      const cmds = ['init','journal','note','capture','search','list','review','sync','read','delete','recent','backlinks','update','archive','stats','graph','orphans','patch','tag','watch','health','stale','cluster','digest','setup','serve','hook','version','help'];
+      const cmds = ['init','journal','note','capture','search','list','review','sync','read','delete','recent','backlinks','update','archive','stats','graph','orphans','patch','tag','watch','health','stale','cluster','digest','thread','suggest','context','setup','serve','hook','version','help'];
       const similar = cmds.filter(c => c.startsWith(command?.slice(0, 2) || '') || levenshtein(c, command) <= 2);
       console.error(`Unknown command: ${command}`);
       if (similar.length) console.error(`Did you mean: ${similar.join(', ')}?`);

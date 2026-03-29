@@ -242,6 +242,42 @@ const TOOLS = [
       },
     },
   },
+  {
+    name: 'thread',
+    description: 'Trace how a topic evolved over time — chronological timeline of events',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        topic: { type: 'string', description: 'Topic to trace (note name, tag, or keyword)' },
+        days: { type: 'number', description: 'Limit to last N days (default: all time)' },
+      },
+      required: ['topic'],
+    },
+  },
+  {
+    name: 'suggest',
+    description: 'Intelligent daily action suggestions based on momentum, staleness, and carry-overs',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        date: { type: 'string', description: 'Date in YYYY-MM-DD (default: today)' },
+        days: { type: 'number', description: 'Lookback period in days (default: 7)' },
+      },
+    },
+  },
+  {
+    name: 'context',
+    description: 'Assemble full context around a note — backlinks, related, cluster, journal mentions',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        note: { type: 'string', description: 'Note name to gather context for' },
+        days: { type: 'number', description: 'Journal lookback in days (default: 30)' },
+        output: { type: 'string', enum: ['file', 'inline'], description: 'Output mode: "file" writes to journal (default: inline)' },
+      },
+      required: ['note'],
+    },
+  },
 ];
 
 export class McpServer {
@@ -374,6 +410,26 @@ export class McpServer {
             project: args.project,
             all: args.all || false,
             days: args.days || 7,
+          });
+        }
+        case 'thread': {
+          const { thread } = await import('./commands/thread.mjs');
+          return thread(this.vaultRoot, args.topic, {
+            days: args.days,
+          });
+        }
+        case 'suggest': {
+          const { suggest } = await import('./commands/suggest.mjs');
+          return suggest(this.vaultRoot, {
+            date: args.date,
+            days: args.days || 7,
+          });
+        }
+        case 'context': {
+          const { context } = await import('./commands/context.mjs');
+          return context(this.vaultRoot, args.note, {
+            days: args.days || 30,
+            output: args.output,
           });
         }
         default:
