@@ -23,8 +23,9 @@ export function note(vaultRoot, title, type, { tags = [], goal = '', summary = '
   const dir = vault.typeDir(type);
 
   if (vault.exists(dir, `${filename}.md`)) {
-    console.log(`Note already exists: ${dir}/${filename}.md`);
-    return { status: 'exists', file: `${dir}/${filename}.md` };
+    const np = vault.notePath(dir, filename);
+    console.log(`Note already exists: ${np}`);
+    return { status: 'exists', file: np };
   }
 
   // Find related notes
@@ -62,8 +63,7 @@ export function note(vaultRoot, title, type, { tags = [], goal = '', summary = '
 
   // Update reverse links on related notes
   for (const rel of related) {
-    const relPath = `${rel.dir}/${rel.file}.md`;
-    const relContent = vault.read(relPath);
+    const relContent = vault.read(rel.dir, `${rel.file}.md`);
     if (relContent && !relContent.includes(`[[${filename}]]`)) {
       const updated = relContent.replace(
         /related: \[(.*)]/,
@@ -73,11 +73,12 @@ export function note(vaultRoot, title, type, { tags = [], goal = '', summary = '
         }
       );
       if (updated !== relContent) {
-        vault.write(relPath, updated.replace(/updated: "\d{4}-\d{2}-\d{2}"/, `updated: "${todayStr()}"`));
+        vault.write(rel.dir, `${rel.file}.md`, updated.replace(/updated: "\d{4}-\d{2}-\d{2}"/, `updated: "${todayStr()}"`));
       }
     }
   }
 
-  console.log(`Created ${dir}/${filename}.md (${relatedLinks.length} related notes linked)`);
-  return { status: 'created', file: `${dir}/${filename}.md`, related: relatedLinks.length };
+  const np = vault.notePath(dir, filename);
+  console.log(`Created ${np} (${relatedLinks.length} related notes linked)`);
+  return { status: 'created', file: np, related: relatedLinks.length };
 }

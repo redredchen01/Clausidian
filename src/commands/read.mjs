@@ -15,9 +15,10 @@ export function read(vaultRoot, noteName, { section } = {}) {
     throw new Error(`Note not found: ${noteName}`);
   }
 
+  const np = vault.notePath(note.dir, note.file);
   const content = vault.read(note.dir, `${note.file}.md`);
   if (!content) {
-    throw new Error(`Cannot read: ${note.dir}/${note.file}.md`);
+    throw new Error(`Cannot read: ${np}`);
   }
 
   if (section) {
@@ -48,15 +49,9 @@ export function read(vaultRoot, noteName, { section } = {}) {
 
     const sectionContent = lines.slice(startIdx, endIdx).join('\n').trim();
     console.log(sectionContent);
-    return { file: `${note.dir}/${note.file}.md`, section: headingText, content: sectionContent };
+    return { file: np, section: headingText, content: sectionContent };
   }
 
   console.log(content);
-  return {
-    file: `${note.dir}/${note.file}.md`,
-    title: note.title,
-    type: note.type,
-    tags: note.tags,
-    content,
-  };
+  return { file: np, title: note.title, type: note.type, tags: note.tags, content };
 }

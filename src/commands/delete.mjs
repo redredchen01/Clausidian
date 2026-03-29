@@ -28,8 +28,7 @@ export function deleteNote(vaultRoot, noteName) {
     if (other.file === noteName) continue;
     if (!other.related.includes(noteName)) continue;
 
-    const otherPath = `${other.dir}/${other.file}.md`;
-    let content = vault.read(otherPath);
+    let content = vault.read(other.dir, `${other.file}.md`);
     if (!content) continue;
 
     // Remove from related array
@@ -39,7 +38,7 @@ export function deleteNote(vaultRoot, noteName) {
       : '[]';
     content = content.replace(/related: \[.*\]/, `related: ${relatedStr}`);
     content = content.replace(/updated: "\d{4}-\d{2}-\d{2}"/, `updated: "${todayStr()}"`);
-    vault.write(otherPath, content);
+    vault.write(other.dir, `${other.file}.md`, content);
     cleaned++;
   }
 
@@ -50,6 +49,7 @@ export function deleteNote(vaultRoot, noteName) {
   // Rebuild indices
   idx.sync();
 
-  console.log(`Deleted ${note.dir}/${note.file}.md (cleaned ${cleaned} reference(s))`);
-  return { status: 'deleted', file: `${note.dir}/${note.file}.md`, cleaned };
+  const np = vault.notePath(note.dir, note.file);
+  console.log(`Deleted ${np} (cleaned ${cleaned} reference(s))`);
+  return { status: 'deleted', file: np, cleaned };
 }

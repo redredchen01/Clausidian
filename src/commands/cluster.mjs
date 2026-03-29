@@ -150,7 +150,7 @@ export function cluster(vaultRoot, { autoLink = false, minSize = 2 } = {}) {
         if (!noteA || !noteB) continue;
 
         // Add B to A's related
-        const contentA = vault.read(`${noteA.dir}/${noteA.file}.md`);
+        const contentA = vault.read(noteA.dir, `${noteA.file}.md`);
         if (contentA && !contentA.includes(`[[${link.to}]]`)) {
           const updatedA = contentA.replace(
             /related: \[(.*)]/,
@@ -159,11 +159,11 @@ export function cluster(vaultRoot, { autoLink = false, minSize = 2 } = {}) {
               return `related: [${existing}"[[${link.to}]]"]`;
             }
           ).replace(/updated: "\d{4}-\d{2}-\d{2}"/, `updated: "${today}"`);
-          vault.write(`${noteA.dir}/${noteA.file}.md`, updatedA);
+          vault.write(noteA.dir, `${noteA.file}.md`, updatedA);
         }
 
         // Add A to B's related
-        const contentB = vault.read(`${noteB.dir}/${noteB.file}.md`);
+        const contentB = vault.read(noteB.dir, `${noteB.file}.md`);
         if (contentB && !contentB.includes(`[[${link.from}]]`)) {
           const updatedB = contentB.replace(
             /related: \[(.*)]/,
@@ -172,7 +172,7 @@ export function cluster(vaultRoot, { autoLink = false, minSize = 2 } = {}) {
               return `related: [${existing}"[[${link.from}]]"]`;
             }
           ).replace(/updated: "\d{4}-\d{2}-\d{2}"/, `updated: "${today}"`);
-          vault.write(`${noteB.dir}/${noteB.file}.md`, updatedB);
+          vault.write(noteB.dir, `${noteB.file}.md`, updatedB);
         }
 
         linkedCount++;

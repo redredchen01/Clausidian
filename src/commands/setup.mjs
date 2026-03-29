@@ -48,13 +48,34 @@ export function setup(vaultPath) {
   writeFileSync(mcpPath, JSON.stringify(mcpConfig, null, 2) + '\n');
   results.push(`MCP server configured: obsidian-agent serve --vault "${vault}"`);
 
-  // 4. Set OA_VAULT in shell profile (suggest, don't force)
-  const shellNote = `export OA_VAULT="${vault}"`;
+  // 4. Platform-aware shell profile suggestion
+  const isWin = process.platform === 'win32';
+  const isMac = process.platform === 'darwin';
+
+  let shellHint;
+  if (isWin) {
+    shellHint = [
+      'PowerShell (add to $PROFILE):',
+      `  $env:OA_VAULT = "${vault}"`,
+      '',
+      'Or CMD (System Environment Variables):',
+      `  setx OA_VAULT "${vault}"`,
+    ].join('\n');
+  } else if (isMac) {
+    shellHint = [
+      'Add to ~/.zshrc (default macOS shell):',
+      `  export OA_VAULT="${vault}"`,
+    ].join('\n');
+  } else {
+    shellHint = [
+      'Add to ~/.bashrc or ~/.zshrc:',
+      `  export OA_VAULT="${vault}"`,
+    ].join('\n');
+  }
 
   console.log('\nobsidian-agent setup complete!\n');
   for (const r of results) console.log(`  ✓ ${r}`);
-  console.log(`\nTo set OA_VAULT permanently, add to your shell profile:`);
-  console.log(`  ${shellNote}\n`);
+  console.log(`\nTo set OA_VAULT permanently:\n${shellHint}\n`);
   console.log('Next steps:');
   console.log('  1. Restart Claude Code (to load MCP server)');
   console.log('  2. Type /obsidian in any project to manage your vault');

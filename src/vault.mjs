@@ -23,6 +23,11 @@ export class Vault {
     return join(this.root, ...segments);
   }
 
+  /** Vault-relative display path — always uses `/` for cross-platform consistency */
+  notePath(dir, file) {
+    return `${dir}/${file}.md`;
+  }
+
   exists(...segments) {
     return existsSync(this.path(...segments));
   }
@@ -162,8 +167,7 @@ export class Vault {
   // ── Update frontmatter fields on a note ──────────────
 
   updateNote(dir, filename, updates) {
-    const filePath = `${dir}/${filename}.md`;
-    let content = this.read(filePath);
+    let content = this.read(dir, `${filename}.md`);
     if (!content) return null;
     for (const [key, val] of Object.entries(updates)) {
       const strVal = Array.isArray(val) ? `[${val.join(', ')}]` : `"${val}"`;
@@ -172,7 +176,7 @@ export class Vault {
         content = content.replace(regex, `$1 ${strVal}`);
       }
     }
-    this.write(filePath, content);
+    this.write(dir, `${filename}.md`, content);
     return true;
   }
 

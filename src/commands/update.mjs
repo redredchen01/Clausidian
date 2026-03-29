@@ -33,6 +33,7 @@ export function update(vaultRoot, noteName, { status, tags, summary, tag } = {})
   idx.rebuildTags();
 
   const changed = Object.keys(updates).filter(k => k !== 'updated').join(', ') || 'updated';
-  console.log(`Updated ${note.dir}/${note.file}.md (${changed})`);
-  return { status: 'updated', file: `${note.dir}/${note.file}.md`, changes: updates };
+  const np = vault.notePath(note.dir, note.file);
+  console.log(`Updated ${np} (${changed})`);
+  return { status: 'updated', file: np, changes: updates };
 }

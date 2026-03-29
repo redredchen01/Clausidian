@@ -34,7 +34,7 @@ function extractMentions(content, projectName, projectTitle) {
 
 function buildSingleDigest(vault, projectNote, startDate, endDate, today) {
   const fm = projectNote;
-  const fullContent = vault.read(`${fm.dir}/${fm.file}.md`);
+  const fullContent = vault.read(fm.dir, `${fm.file}.md`);
   const body = vault.extractBody(fullContent || '');
   const todos = extractTodos(body);
 

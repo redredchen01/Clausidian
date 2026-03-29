@@ -16,10 +16,10 @@ export function patch(vaultRoot, noteName, { heading, append, prepend, replace }
     throw new Error(`Note not found: ${noteName}`);
   }
 
-  const filePath = `${note.dir}/${note.file}.md`;
-  let content = vault.read(filePath);
+  const np = vault.notePath(note.dir, note.file);
+  let content = vault.read(note.dir, `${note.file}.md`);
   if (!content) {
-    throw new Error(`Cannot read: ${filePath}`);
+    throw new Error(`Cannot read: ${np}`);
   }
 
   // Find heading and its content boundaries
@@ -81,9 +81,9 @@ export function patch(vaultRoot, noteName, { heading, append, prepend, replace }
 
   // Update the `updated` field
   const final = newContent.replace(/updated: "\d{4}-\d{2}-\d{2}"/, `updated: "${todayStr()}"`);
-  vault.write(filePath, final);
+  vault.write(note.dir, `${note.file}.md`, final);
 
   const op = replace !== undefined ? 'replaced' : append ? 'appended' : 'prepended';
-  console.log(`Patched ${note.dir}/${note.file}.md → ${op} to "${headingText}"`);
-  return { status: 'patched', file: filePath, heading: headingText, operation: op };
+  console.log(`Patched ${np} → ${op} to "${headingText}"`);
+  return { status: 'patched', file: np, heading: headingText, operation: op };
 }

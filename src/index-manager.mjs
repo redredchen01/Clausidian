@@ -60,8 +60,7 @@ export class IndexManager {
   // ── Update directory _index.md ───────────────────────
 
   updateDirIndex(dir, file, summary) {
-    const indexPath = `${dir}/_index.md`;
-    let content = this.vault.read(indexPath);
+    let content = this.vault.read(dir, '_index.md');
     if (!content) {
       content = `---\ntitle: ${dir} index\ntype: index\nupdated: ${todayStr()}\n---\n\n# ${dir}\n\n| File | Summary |\n|------|---------|\n`;
     }
@@ -72,7 +71,7 @@ export class IndexManager {
         `$1| [[${file}]] | ${summary} |\n`
       );
     }
-    this.vault.write(indexPath, content);
+    this.vault.write(dir, '_index.md', content);
   }
 
   // ── Sync all indices (single scan) ──────────────────

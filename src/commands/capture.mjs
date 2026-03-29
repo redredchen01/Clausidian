@@ -16,7 +16,7 @@ export function capture(vaultRoot, ideaText) {
   const filename = title.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-').replace(/(^-|-$)/g, '') || 'untitled-idea';
 
   if (vault.exists('ideas', `${filename}.md`)) {
-    console.log(`Idea already exists: ideas/${filename}.md`);
+    console.log(`Idea already exists: ${vault.notePath('ideas', filename)}`);
     return { status: 'exists' };
   }
 
@@ -37,6 +37,7 @@ export function capture(vaultRoot, ideaText) {
   idx.updateDirIndex('ideas', filename, title);
   idx.sync();
 
-  console.log(`Captured: ideas/${filename}.md`);
-  return { status: 'created', file: `ideas/${filename}.md` };
+  const np = vault.notePath('ideas', filename);
+  console.log(`Captured: ${np}`);
+  return { status: 'created', file: np };
 }

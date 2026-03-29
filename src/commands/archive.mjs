@@ -19,7 +19,7 @@ export function archive(vaultRoot, noteName) {
   }
 
   if (note.status === 'archived') {
-    console.log(`Already archived: ${note.dir}/${note.file}.md`);
+    console.log(`Already archived: ${vault.notePath(note.dir, note.file)}`);
     return { status: 'already_archived' };
   }
 
@@ -29,6 +29,7 @@ export function archive(vaultRoot, noteName) {
   });
   idx.rebuildTags();
 
-  console.log(`Archived ${note.dir}/${note.file}.md`);
-  return { status: 'archived', file: `${note.dir}/${note.file}.md` };
+  const np = vault.notePath(note.dir, note.file);
+  console.log(`Archived ${np}`);
+  return { status: 'archived', file: np };
 }

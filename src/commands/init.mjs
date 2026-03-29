@@ -38,6 +38,12 @@ node_modules/
 `);
   }
 
+  // Create .gitattributes for consistent line endings across platforms
+  const gitattrsPath = join(root, '.gitattributes');
+  if (!existsSync(gitattrsPath)) {
+    writeFileSync(gitattrsPath, '* text=auto\n*.md text eol=lf\n');
+  }
+
   // Create directories
   const dirs = ['areas', 'projects', 'resources', 'journal', 'ideas'];
   for (const dir of dirs) {
