@@ -2,8 +2,9 @@
  * Vault — core operations for reading/writing Obsidian notes
  */
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'fs';
-import { resolve, join, dirname } from 'path';
+import { resolve, join, dirname, basename } from 'path';
 import { SimilarityEngine } from './similarity-engine.mjs';
+import { IncrementalTracker } from './incremental-tracker.mjs';
 
 const DEFAULT_DIRS = ['areas', 'projects', 'resources', 'journal', 'ideas'];
 
@@ -14,6 +15,7 @@ export class Vault {
     this._notesCache = null;
     this._notesCacheWithBody = null;
     this.searchCache = searchCache;
+    this.tracker = new IncrementalTracker();
   }
 
   _detectDirs() {
