@@ -3,10 +3,12 @@
  */
 import { todayStr, prevDate, nextDate } from './dates.mjs';
 import { SimilarityEngine } from './similarity-engine.mjs';
+import { PersistentCache } from './persistent-cache.mjs';
 
 export class IndexManager {
   constructor(vault) {
     this.vault = vault;
+    this.cache = new PersistentCache();
   }
 
   // ── Rebuild _tags.md ─────────────────────────────────
@@ -68,15 +70,44 @@ export class IndexManager {
       }
     }
 
-    // ── TF-IDF weighted link suggestions (using SimilarityEngine) ──
-    // Enable incremental mode if there are dirty files
-    const incrementalOptions = { ...options };
-    if (this.vault.tracker.hasDirty()) {
-      incrementalOptions.incremental = true;
-      incrementalOptions.dirtySet = this.vault.tracker.getDirtySet();
+    // ── TF-IDF weighted link suggestions (using SimilarityEngine + persistent cache) ──
+    // Compute cache key from vault state
+    const mostRecentNote = notes.reduce((acc, n) => {
+      if (!acc) return n;
+      const accTime = acc.modified ? new Date(acc.modified).getTime() : 0;
+      const nTime = n.modified ? new Date(n.modified).getTime() : 0;
+      return nTime > accTime ? n : acc;
+    }, null);
+    const cacheKey = {
+      noteCount: notes.length,
+      lastModified: mostRecentNote?.modified || new Date().toISOString()
+    };
+
+    // Check persistent cache first (skip if dirty files exist)
+    let suggested = [];
+    if (!this.vault.tracker.hasDirty()) {
+      const cached = this.cache.load(cacheKey);
+      if (cached) {
+        suggested = cached.suggested || [];
+      }
     }
-    const engine = new SimilarityEngine(this.vault, { includeBody: true, maxResults: 25 });
-    const suggested = engine.scorePairs(notes, incrementalOptions);
+
+    // If not cached, compute using SimilarityEngine
+    if (suggested.length === 0) {
+      const incrementalOptions = { ...options };
+      if (this.vault.tracker.hasDirty()) {
+        incrementalOptions.incremental = true;
+        incrementalOptions.dirtySet = this.vault.tracker.getDirtySet();
+      }
+      const engine = new SimilarityEngine(this.vault, { includeBody: true, maxResults: 25 });
+      suggested = engine.scorePairs(notes, incrementalOptions);
+
+      // Save to persistent cache (only on full rebuild, not incremental)
+      if (!this.vault.tracker.hasDirty()) {
+        this.cache.save(cacheKey, { suggested });
+      }
+    }
+
     // Clear dirty set after rebuild
     this.vault.tracker.clearDirty();
 
