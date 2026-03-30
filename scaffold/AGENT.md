@@ -77,6 +77,20 @@ obsidian-agent changelog --days 14       # recent changes
 obsidian-agent daily                     # daily dashboard
 obsidian-agent suggest                   # improvement suggestions
 
+# Smart & semantic search (v1.3+)
+obsidian-agent smart-search "API design" # BM25 ranked search
+obsidian-agent embed-search "how to..."  # semantic via Ollama/OpenAI
+obsidian-agent embed-status              # check embedding providers
+
+# Canvas & Bases (v1.3+)
+obsidian-agent canvas create "board"     # create .canvas file
+obsidian-agent canvas add-node "board" --type text --text "Note"
+obsidian-agent canvas add-edge "board" --from id1 --to id2
+obsidian-agent canvas read "board"
+obsidian-agent base create "tracker"     # create .base file
+obsidian-agent base query "tracker"      # query notes with filters
+obsidian-agent base read "tracker"
+
 # Maintenance
 obsidian-agent sync                      # rebuild indices
 obsidian-agent health                    # vault health score
@@ -84,6 +98,7 @@ obsidian-agent graph                     # Mermaid knowledge graph
 obsidian-agent broken-links              # find broken [[links]]
 obsidian-agent duplicates                # find similar notes
 obsidian-agent search "pattern" --regex  # regex search
+obsidian-agent bridge-status             # Obsidian CLI bridge info
 ```
 
 All commands support `--json` for machine-readable output.
@@ -122,3 +137,5 @@ If you edit files directly instead of using the CLI:
 
 - `OA_VAULT` — Vault path (so you don't need `--vault` every time)
 - `OA_TIMEZONE` — Timezone for dates (default: UTC)
+- `OA_NO_OFFICIAL_CLI` — Disable Obsidian CLI bridge (set to 1)
+- `OA_OPENAI_KEY` — OpenAI API key for embedding search

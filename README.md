@@ -480,7 +480,7 @@ Run as an [MCP](https://modelcontextprotocol.io/) server for AI assistants (Clau
 }
 ```
 
-Exposes 44 tools: journal, note, capture, search, list, read, recent, delete, backlinks, update, archive, patch, stats, orphans, graph, health, sync, tag_list, tag_rename, rename, move, merge, duplicates, broken_links, batch_update, batch_tag, batch_archive, export, neighbors, random, focus, and more.
+Exposes 55+ tools including: journal, note, capture, search, smart_search, embed_search, list, read, recent, delete, backlinks, update, archive, patch, stats, orphans, graph, health, sync, tag_list, tag_rename, rename, move, merge, duplicates, broken_links, batch_update, batch_tag, batch_archive, export, neighbors, random, focus, canvas (create/read/add-node/add-edge), base (create/read/query), embed_status, bridge_status, and more.
 
 ## Vault Health
 

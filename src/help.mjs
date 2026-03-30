@@ -1,9 +1,9 @@
 /**
- * Help text for CLI
+ * Help text for CLI — v1.5.0
  */
 export function printHelp() {
   console.log(`
-obsidian-agent — AI agent toolkit for Obsidian vaults
+obsidian-agent — AI agent toolkit for Obsidian vaults (v1.5)
 
 Commands:
   init <path>              Initialize a new agent-friendly vault
@@ -14,6 +14,9 @@ Commands:
   recent [days]            Show recently updated notes (default: 7 days)
   delete <note>            Delete a note and clean up references
   search <keyword>         Full-text search (supports --regex)
+  smart-search <query>     BM25 ranked search (better relevance)
+  embed-search <query>     Semantic search via embeddings (Ollama/OpenAI)
+  embed-status             Show embedding provider status
   list [type]              List notes with filters
   review                   Generate weekly review
   review monthly           Generate monthly review
@@ -57,11 +60,21 @@ Commands:
   random [count]           Pick random note(s) for review
   focus                    Suggest what to work on next
 
+  canvas create <name>     Create a JSON Canvas (.canvas) file
+  canvas read <name>       Read and display canvas structure
+  canvas add-node <name>   Add a node (text/file/link/group)
+  canvas add-edge <name>   Add an edge between canvas nodes
+
+  base create <name>       Create an Obsidian Base (.base) file
+  base read <name>         Read and parse a .base file
+  base query <name>        Query vault notes using base filters
+
   setup [vault-path]       Install MCP server + skill
   watch                    Auto-rebuild indices on file changes
   health                   Vault health scoring report
   serve                    Start MCP server (stdio transport)
   hook <event>             Handle agent hook events
+  bridge-status            Show Obsidian CLI bridge status
 
 Flags:
   --vault <path>           Vault root (default: cwd or $OA_VAULT)
@@ -77,5 +90,13 @@ Flags:
   --add <tag>              For batch tag (add tag)
   --remove <tag>           For batch tag (remove tag)
   --json                   Output as JSON (machine-readable)
+  --no-bridge              Skip Obsidian CLI bridge for this command
+  --provider <name>        Embedding provider (ollama/openai/off)
+
+Environment:
+  OA_VAULT                 Default vault path
+  OA_TIMEZONE              Timezone for dates (default: UTC)
+  OA_NO_OFFICIAL_CLI       Disable Obsidian CLI bridge (set to 1)
+  OA_OPENAI_KEY            OpenAI API key for embedding search
 `);
 }
