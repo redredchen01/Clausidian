@@ -77,6 +77,34 @@ obsidian-agent tag rename "old-tag" "new-tag"
 
 # Rebuild indices
 obsidian-agent sync
+
+# Rename a note (updates all references)
+obsidian-agent rename "build-api" "API Gateway"
+
+# Move note to a different type
+obsidian-agent move "my-idea" project
+
+# Merge two notes
+obsidian-agent merge "draft-api" "build-api"
+
+# Find duplicate notes
+obsidian-agent duplicates --threshold 0.4
+
+# Find broken links
+obsidian-agent broken-links
+
+# Batch operations
+obsidian-agent batch tag --type idea --add "needs-review"
+obsidian-agent batch archive --tag "deprecated"
+obsidian-agent batch update --type project --set-status active
+
+# Export / Import
+obsidian-agent export vault-backup.json
+obsidian-agent export --format markdown --type project
+obsidian-agent import notes.json
+
+# Regex search
+obsidian-agent search "API.*v[23]" --regex
 ```
 
 ## Vault Structure
@@ -166,6 +194,16 @@ related: ["[[other-note]]", "[[another-note]]"]
 | `tag list` | List all tags with counts |
 | `tag rename <old> <new>` | Rename a tag across the vault |
 | `patch <note>` | Edit a section by heading (`--heading`, `--append/--prepend/--replace`) |
+| `rename <note> <title>` | Rename a note and update all references |
+| `move <note> <type>` | Move note to a different type/directory |
+| `merge <source> <target>` | Merge source note into target (body + tags + refs) |
+| `duplicates` | Find potentially duplicate notes by similarity |
+| `broken-links` | Find broken `[[wikilinks]]` pointing to non-existent notes |
+| `batch update` | Batch update matching notes (`--set-status`, `--set-summary`) |
+| `batch tag` | Batch add/remove tags (`--add`, `--remove`) |
+| `batch archive` | Batch archive matching notes |
+| `export [output]` | Export notes to JSON or markdown (`--format json\|markdown`) |
+| `import <file>` | Import notes from JSON or markdown file |
 | `health` | Vault health scoring (completeness, connectivity, freshness, organization) |
 | `setup [vault-path]` | Install MCP server + `/obsidian` skill for Claude Code |
 | `watch` | Auto-rebuild indices on file changes |
@@ -186,6 +224,12 @@ related: ["[[other-note]]", "[[another-note]]"]
 | `--month <MM>` | Month for monthly review (1-12) |
 | `--summary <text>` | Set note summary (for update) |
 | `--tags <a,b,c>` | Set tags (for note/update) |
+| `--regex` | Treat search keyword as regex pattern |
+| `--threshold <0-1>` | Duplicate similarity threshold (default: 0.5) |
+| `--format <json\|md>` | Export format (default: json) |
+| `--set-status <status>` | New status for batch update |
+| `--add <tag>` | Tag to add (batch tag) |
+| `--remove <tag>` | Tag to remove (batch tag) |
 
 ## Fuzzy Note Lookup
 
@@ -205,7 +249,7 @@ obsidian-agent read vector          # finds "vector-search"
 obsidian-agent read "Build API"     # finds "build-api"
 ```
 
-Works with: `read`, `delete`, `update`, `archive`, `patch`, `backlinks`.
+Works with: `read`, `delete`, `update`, `archive`, `patch`, `backlinks`, `rename`, `move`, `merge`.
 
 ## Search Relevance
 
@@ -221,6 +265,7 @@ Search results are ranked by relevance score:
 
 ```bash
 obsidian-agent search "API"         # title matches appear first
+obsidian-agent search "API.*v2" --regex   # regex pattern matching
 ```
 
 ## JSON Output
@@ -274,7 +319,7 @@ Run as an [MCP](https://modelcontextprotocol.io/) server for AI assistants (Clau
 }
 ```
 
-Exposes 19 tools: journal, note, capture, search, list, read, recent, delete, backlinks, update, archive, patch, stats, orphans, graph, health, sync, tag_list, tag_rename.
+Exposes 29 tools: journal, note, capture, search, list, read, recent, delete, backlinks, update, archive, patch, stats, orphans, graph, health, sync, tag_list, tag_rename, rename, move, merge, duplicates, broken_links, batch_update, batch_tag, batch_archive, export.
 
 ## Vault Health
 

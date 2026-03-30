@@ -198,4 +198,21 @@ related: []
     const after = vault.scanNotes();
     assert.ok(after.length > before.length);
   });
+
+  // ── v0.7.0 ──────────────────────────────────────────
+
+  it('search with regex finds patterns', () => {
+    const results = vault.search('Build.*API', { regex: true });
+    assert.ok(results.length >= 1);
+    assert.equal(results[0].file, 'build-api');
+  });
+
+  it('search with regex filters by type', () => {
+    const results = vault.search('.*', { regex: true, type: 'project' });
+    assert.ok(results.every(r => r.type === 'project'));
+  });
+
+  it('search with invalid regex throws', () => {
+    assert.throws(() => vault.search('[invalid', { regex: true }), /Invalid regex/);
+  });
 });

@@ -56,8 +56,18 @@ description: |
 | 重建索引 | `sync` | `{}` |
 | 标签列表 | `tag_list` | `{}` |
 | 重命名标签 | `tag_rename` | `{old_tag, new_tag}` |
+| 重命名笔记 | `rename` | `{note, new_title}` — 更新所有引用 |
+| 搬移笔记 | `move` | `{note, new_type}` — 换类型/目录 |
+| 合并笔记 | `merge` | `{source, target}` — body+tags 合并，引用重定向 |
+| 查重复 | `duplicates` | `{threshold?: 0.5}` — 相似度检测 |
+| 查坏链接 | `broken_links` | `{}` — 找不存在的 [[link]] |
+| 批量更新 | `batch_update` | `{type?, tag?, status?, set_status?, set_summary?}` |
+| 批量加标签 | `batch_tag` | `{type?, tag?, add?, remove?}` |
+| 批量归档 | `batch_archive` | `{type?, tag?, status?}` |
+| 导出笔记 | `export` | `{type?, tag?, format?: "json", output?}` |
 | 周回顾 | **CLI:** `obsidian-agent review` | |
 | 月回顾 | **CLI:** `obsidian-agent review monthly` | |
+| 导入笔记 | **CLI:** `obsidian-agent import <file>` | |
 
 ## 工作流模式
 
@@ -119,9 +129,27 @@ description: |
 ```
 1. health()                            — 健康分数
 2. orphans()                           — 孤岛笔记
-3. stats()                             — 统计概览
-4. tag_list()                          — 标签检查
-5. 建议: 链接孤岛、更新过期笔记、合并重复标签
+3. broken_links()                      — 坏链接
+4. duplicates()                        — 重复检测
+5. stats()                             — 统计概览
+6. tag_list()                          — 标签检查
+7. 建议: 链接孤岛、修复坏链、合并重复笔记/标签
+```
+
+### 8. 批量操作
+
+```
+1. batch_tag({type: "idea", add: "needs-review"})   — 给所有 idea 加标签
+2. batch_archive({tag: "deprecated"})                — 批量归档
+3. batch_update({type: "project", set_status: "active"}) — 批量状态
+```
+
+### 9. 重构笔记
+
+```
+1. rename({note: "old-name", new_title: "New Name"}) — 重命名+更新引用
+2. move({note: "my-idea", new_type: "project"})      — idea 升级为 project
+3. merge({source: "draft", target: "main-note"})     — 合并草稿到主笔记
 ```
 
 ## 写作规范

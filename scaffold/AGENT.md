@@ -34,6 +34,20 @@ obsidian-agent delete "obsolete-note"
 obsidian-agent tag list
 obsidian-agent tag rename "old" "new"
 
+# Rename / Move / Merge
+obsidian-agent rename "note" "New Title"  # rename + update refs
+obsidian-agent move "note" project        # change type/directory
+obsidian-agent merge "source" "target"    # combine two notes
+
+# Batch operations
+obsidian-agent batch tag --type idea --add "review"
+obsidian-agent batch archive --tag "deprecated"
+obsidian-agent batch update --type project --set-status active
+
+# Export / Import
+obsidian-agent export backup.json
+obsidian-agent import notes.json
+
 # Reviews
 obsidian-agent review                    # weekly
 obsidian-agent review monthly
@@ -42,6 +56,9 @@ obsidian-agent review monthly
 obsidian-agent sync                      # rebuild indices
 obsidian-agent health                    # vault health score
 obsidian-agent graph                     # Mermaid knowledge graph
+obsidian-agent broken-links              # find broken [[links]]
+obsidian-agent duplicates                # find similar notes
+obsidian-agent search "pattern" --regex  # regex search
 ```
 
 All commands support `--json` for machine-readable output.
