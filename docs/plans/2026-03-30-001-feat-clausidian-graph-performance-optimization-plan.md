@@ -1,7 +1,7 @@
 ---
 title: feat: Clausidian 图谱重建性能全面优化
 type: feat
-status: active
+status: completed
 date: 2026-03-30
 origin: null
 ---

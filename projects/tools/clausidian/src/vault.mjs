@@ -3,6 +3,7 @@
  */
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'fs';
 import { resolve, join, dirname } from 'path';
+import { spawnSync } from 'node:child_process';
 import { SimilarityEngine } from './similarity-engine.mjs';
 
 const DEFAULT_DIRS = ['areas', 'projects', 'resources', 'journal', 'ideas'];
@@ -133,6 +134,18 @@ export class Vault {
     }
   }
 
+  // ── ripgrep pre-filter (optional, zero-dependency) ──
+
+  _rgPrefilter(keyword, regex) {
+    const args = ['--files-with-matches', '--glob', '*.md'];
+    if (!regex) args.push('--fixed-strings');
+    args.push(keyword, this.root);
+    const result = spawnSync('rg', args, { encoding: 'utf8', timeout: 5000 });
+    if (result.error || result.status === null) return null; // rg not available
+    if (result.status === 1) return new Set();               // no matches
+    return new Set(result.stdout.trim().split('\n').filter(Boolean));
+  }
+
   // ── Search notes by keyword (relevance-scored) ─────
 
   search(keyword, { type, tag, status, regex = false } = {}) {
@@ -142,7 +155,22 @@ export class Vault {
       if (cached) return cached;
     }
 
-    const notes = this.scanNotes({ includeBody: true });
+    // Use ripgrep to pre-filter matching files when available
+    const rgFiles = this._rgPrefilter(keyword, regex);
+    const useRg = rgFiles !== null;
+
+    // Scan metadata only; load body on-demand for rg-matched files
+    const notes = this.scanNotes({ includeBody: !useRg });
+    if (useRg) {
+      for (const n of notes) {
+        const filePath = this.path(n.subdir || n.dir, `${n.file}.md`);
+        if (rgFiles.has(filePath)) {
+          const content = this.read(n.subdir || n.dir, `${n.file}.md`);
+          n.body = content ? this.extractBody(content) : '';
+        }
+      }
+    }
+
     const results = [];
 
     // Build matcher: regex mode or plain keyword
