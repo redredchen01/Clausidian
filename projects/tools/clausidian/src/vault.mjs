@@ -196,9 +196,10 @@ export class Vault {
   // ── Search notes by keyword (relevance-scored) ─────
 
   search(keyword, { type, tag, status, regex = false } = {}) {
-    // Check cache if available
-    if (this.searchCache) {
-      const cached = this.searchCache.get(keyword, { type, tag, status, regex });
+    // Check ClusterCache first for vault-version-aware caching
+    const opts = { type, tag, status, regex };
+    if (this._clusterCache) {
+      const cached = this._clusterCache.get(keyword, opts);
       if (cached) return cached;
     }
 
@@ -236,9 +237,9 @@ export class Vault {
     }
     const sorted = results.sort((a, b) => b._score - a._score).map(({ _score, ...rest }) => rest);
 
-    // Cache the results if cache is available
-    if (this.searchCache) {
-      this.searchCache.set(keyword, { type, tag, status, regex }, sorted);
+    // Cache the results using ClusterCache
+    if (this._clusterCache) {
+      this._clusterCache.set(keyword, opts, sorted);
     }
 
     return sorted;
