@@ -847,6 +847,42 @@ const COMMANDS = [
       return smartSearch(root, query, { type: flags.type, tag: flags.tag, status: flags.status, limit: flags.limit });
     },
   },
+  // ── Embed Search ──
+  {
+    name: 'embed-search',
+    description: 'Semantic search using embeddings (Ollama or OpenAI, falls back to BM25)',
+    usage: 'embed-search <query>',
+    mcpName: 'embed_search',
+    mcpSchema: {
+      query: { type: 'string', description: 'Search query (natural language)' },
+      type: { type: 'string', description: 'Filter by note type' },
+      tag: { type: 'string', description: 'Filter by tag' },
+      provider: { type: 'string', enum: ['auto', 'ollama', 'openai', 'off'], description: 'Embedding provider (default: auto-detect)' },
+      limit: { type: 'number', description: 'Max results (default: 20)' },
+    },
+    mcpRequired: ['query'],
+    async run(root, flags, pos) {
+      const { embedSearch } = await import('./commands/embed-search.mjs');
+      const query = flags.query || pos.join(' ');
+      if (!query) throw new Error('Usage: obsidian-agent embed-search <query>');
+      return embedSearch(root, query, flags);
+    },
+  },
+  {
+    name: 'embed-status',
+    description: 'Show embedding provider status (Ollama, OpenAI)',
+    usage: 'embed-status',
+    mcpName: 'embed_status',
+    mcpSchema: {},
+    async run() {
+      const { embedStatus } = await import('./commands/embed-search.mjs');
+      const s = embedStatus();
+      console.log(`Ollama: ${s.ollama}`);
+      console.log(`OpenAI: ${s.openai}`);
+      console.log(`Active: ${s.active}`);
+      return s;
+    },
+  },
   // ── Bridge ──
   {
     name: 'bridge-status',

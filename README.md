@@ -270,6 +270,13 @@ related: ["[[other-note]]", "[[another-note]]"]
 | `serve` | Start MCP server (stdio transport) |
 | `hook <event>` | Handle agent hook events |
 | `bridge-status` | Show Obsidian CLI bridge status |
+| `smart-search <query>` | BM25 ranked search (better relevance than keyword) |
+| `canvas create <name>` | Create a JSON Canvas (.canvas) file |
+| `canvas read <name>` | Read and display canvas structure |
+| `canvas add-node <name>` | Add a node (text/file/link/group) to a canvas |
+| `canvas add-edge <name>` | Add an edge between canvas nodes |
+| `embed-search <query>` | Semantic search via Ollama/OpenAI embeddings (optional) |
+| `embed-status` | Show embedding provider status |
 
 ### Flags
 
@@ -333,6 +340,64 @@ Search results are ranked by relevance score:
 ```bash
 obsidian-agent search "API"         # title matches appear first
 obsidian-agent search "API.*v2" --regex   # regex pattern matching
+```
+
+## BM25 Smart Search (v1.3+)
+
+`smart-search` uses the BM25 algorithm (same as Elasticsearch/Lucene) for significantly better search results than keyword matching:
+
+```bash
+obsidian-agent smart-search "API design patterns"   # multi-word queries work naturally
+obsidian-agent smart-search "REST endpoints" --type project  # with filters
+```
+
+**How it works:**
+- Builds an inverted index across all notes
+- Field weighting: title (3×), tags (2×), summary (2×), body (1×)
+- English stemming: "designing" matches "design", "designed", "designs"
+- Stop word removal (English + Chinese)
+- Document length normalization — short and long notes compete fairly
+
+Use `search` for exact keyword/regex matching, `smart-search` for natural language queries.
+
+## JSON Canvas (v1.3+)
+
+Read and write [JSON Canvas](https://jsoncanvas.org) (`.canvas`) files — Obsidian's visual whiteboard format:
+
+```bash
+obsidian-agent canvas create my-board          # create empty canvas
+obsidian-agent canvas add-node my-board --type text --text "Hello"
+obsidian-agent canvas add-node my-board --type file --file "projects/api.md"
+obsidian-agent canvas add-node my-board --type link --url "https://example.com"
+obsidian-agent canvas add-edge my-board --from node1 --to node2 --label "depends on"
+obsidian-agent canvas read my-board            # display structure
+```
+
+Supports all node types (text, file, link, group) and edges with labels and colors.
+
+## Embedding Search (v1.4+, Optional)
+
+For true semantic search, `embed-search` uses external embedding providers — zero npm dependencies, just native `fetch`:
+
+```bash
+obsidian-agent embed-search "how to design good APIs"  # auto-detects provider
+obsidian-agent embed-status                             # check what's available
+```
+
+**Provider detection order:**
+1. **Ollama** (local, offline) — detects `localhost:11434`, uses `nomic-embed-text`
+2. **OpenAI** — reads `OA_OPENAI_KEY` or `OPENAI_API_KEY` env var
+3. **BM25 fallback** — if no provider available, falls back to `smart-search`
+
+Embeddings are cached in `.obsidian-agent/embeddings.json` with incremental updates — only changed notes are re-embedded.
+
+```bash
+# Use specific provider
+obsidian-agent embed-search "query" --provider ollama
+obsidian-agent embed-search "query" --provider openai
+
+# Disable embedding, force BM25
+obsidian-agent embed-search "query" --provider off
 ```
 
 ## JSON Output
