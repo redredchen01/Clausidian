@@ -22,6 +22,66 @@ function extractSection(content, heading) {
     .filter(l => l.startsWith('- ') && l !== '-' && !l.includes('no activity'));
 }
 
+// A1: Scan journal entries for recurring topics across multiple days
+function generatePromotionSuggestions(vault, dates) {
+  const topicDays = {}; // topic -> Set of dates it appeared
+  const stuckPlans = {}; // plan -> consecutive days count
+
+  for (const d of dates) {
+    const content = vault.read('journal', `${d}.md`);
+    if (!content) continue;
+
+    const ideas = [
+      ...extractSection(content, '想法'),
+      ...extractSection(content, 'Ideas'),
+    ];
+    const issues = [
+      ...extractSection(content, '問題與風險'),
+      ...extractSection(content, '问题与风险'),
+      ...extractSection(content, 'Issues'),
+    ];
+    const plans = [
+      ...extractSection(content, '明日計劃'),
+      ...extractSection(content, '明日计划'),
+      ...extractSection(content, 'Tomorrow'),
+    ];
+
+    // Track topics from ideas and issues
+    for (const item of [...ideas, ...issues]) {
+      const key = item.replace(/^- /, '').trim().toLowerCase();
+      if (!key) continue;
+      if (!topicDays[key]) topicDays[key] = new Set();
+      topicDays[key].add(d);
+    }
+
+    // Track plans that repeat
+    for (const item of plans) {
+      const key = item.replace(/^- \[.\] /, '').replace(/^- /, '').trim().toLowerCase();
+      if (!key) continue;
+      if (!stuckPlans[key]) stuckPlans[key] = new Set();
+      stuckPlans[key].add(d);
+    }
+  }
+
+  const suggestions = [];
+
+  // Topics appearing in 2+ days → suggest promotion
+  for (const [topic, daySet] of Object.entries(topicDays)) {
+    if (daySet.size >= 2) {
+      suggestions.push(`- 🔄 「${topic}」出現 ${daySet.size} 天 → 建議升格至 projects/ 或 resources/`);
+    }
+  }
+
+  // Plans stuck for 3+ days → warn
+  for (const [plan, daySet] of Object.entries(stuckPlans)) {
+    if (daySet.size >= 3) {
+      suggestions.push(`- ⚠️ 「${plan}」連續 ${daySet.size} 天未完成 → 需要拆分或重新評估`);
+    }
+  }
+
+  return suggestions;
+}
+
 export function review(vaultRoot, { date } = {}) {
   const vault = new Vault(vaultRoot);
   const tpl = new TemplateEngine(vaultRoot);
@@ -160,13 +220,19 @@ ${plansStr}
     content = injectSection(content, 'Active Projects', activeProjectsStr);
   }
 
+  // A1: Generate promotion suggestions
+  const promotions = generatePromotionSuggestions(vault, dates);
+  if (promotions.length) {
+    content += `\n## 升格建議（自動生成）\n\n${promotions.join('\n')}\n`;
+  }
+
   const reviewFile = `${week}-review`;
   vault.write('journal', `${reviewFile}.md`, content);
   idx.updateDirIndex('journal', reviewFile, `${year} Week ${weekNum} Review`);
   idx.rebuildTags();
 
-  console.log(`Created journal/${reviewFile}.md (${unique(allCompleted).length} items, ${updatedThisWeek.length} notes updated)`);
-  return { status: 'created', file: `journal/${reviewFile}.md` };
+  console.log(`Created journal/${reviewFile}.md (${unique(allCompleted).length} items, ${updatedThisWeek.length} notes updated, ${promotions.length} promotion suggestions)`);
+  return { status: 'created', file: `journal/${reviewFile}.md`, promotions: promotions.length };
 }
 
 // ── Monthly Review ──────────────────────────────────

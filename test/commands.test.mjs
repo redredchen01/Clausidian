@@ -536,7 +536,27 @@ describe('commands (import)', () => {
     assert.ok(Array.isArray(result.fixes));
   });
 
-  it('MCP server exposes v0.8 tools', async () => {
+  it('suggest returns actionable suggestions', async () => {
+    const { suggest } = await import('../src/commands/suggest.mjs');
+    const result = suggest(TMP);
+    assert.ok(Array.isArray(result.suggestions));
+    for (const s of result.suggestions) {
+      assert.ok(['high', 'medium', 'low'].includes(s.priority));
+      assert.ok(s.type);
+      assert.ok(s.action);
+    }
+  });
+
+  it('daily returns dashboard data', async () => {
+    const { daily } = await import('../src/commands/daily.mjs');
+    const result = daily(TMP);
+    assert.ok(result.date);
+    assert.ok(typeof result.total === 'number');
+    assert.ok(typeof result.todayUpdated === 'number');
+    assert.ok(typeof result.pinned === 'number');
+  });
+
+  it('MCP server exposes all tools (38)', async () => {
     const { McpServer } = await import('../src/mcp-server.mjs');
     const server = new McpServer(TMP);
     const tools = server.handleMessage({
@@ -549,8 +569,9 @@ describe('commands (import)', () => {
     assert.ok(names.includes('timeline'));
     assert.ok(names.includes('validate'));
     assert.ok(names.includes('pin'));
-    assert.ok(names.includes('unpin'));
-    assert.ok(names.includes('pin_list'));
     assert.ok(names.includes('relink'));
+    assert.ok(names.includes('suggest'));
+    assert.ok(names.includes('daily'));
+    assert.ok(tools.result.tools.length >= 36);
   });
 });

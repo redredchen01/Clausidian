@@ -53,8 +53,37 @@ export class IndexManager {
         content += `| [[${note.file}]] | [[${nextDate(note.file)}]] | nav-next |\n`;
       }
     }
+    // A5: Suggested links — note pairs sharing 2+ tags but no related link
+    const nonJournal = notes.filter(n => n.dir !== 'journal' && n.tags.length > 0);
+    const existingLinks = new Set();
+    for (const n of nonJournal) {
+      for (const rel of n.related) {
+        existingLinks.add(`${n.file}→${rel}`);
+        existingLinks.add(`${rel}→${n.file}`);
+      }
+    }
+    const suggested = [];
+    for (let i = 0; i < nonJournal.length; i++) {
+      for (let j = i + 1; j < nonJournal.length; j++) {
+        const a = nonJournal[i], b = nonJournal[j];
+        const shared = a.tags.filter(t => b.tags.includes(t));
+        if (shared.length >= 2 && !existingLinks.has(`${a.file}→${b.file}`)) {
+          suggested.push({ a: a.file, b: b.file, shared });
+        }
+      }
+    }
+    if (suggested.length) {
+      content += `\n## Suggested Links\n\nNote pairs sharing 2+ tags but no related link:\n\n| Note A | Note B | Shared Tags |\n|--------|--------|-------------|\n`;
+      for (const link of suggested.slice(0, 20)) {
+        content += `| [[${link.a}]] | [[${link.b}]] | ${link.shared.join(', ')} |\n`;
+      }
+    }
+
     this.vault.write('_graph.md', content);
-    return { relationships: content.split('\n').filter(l => l.startsWith('|') && !l.startsWith('| Source') && !l.startsWith('|--')).length };
+    return {
+      relationships: content.split('\n').filter(l => l.startsWith('|') && !l.startsWith('| Source') && !l.startsWith('| Note A') && !l.startsWith('|--')).length,
+      suggestedLinks: suggested.length,
+    };
   }
 
   // ── Update directory _index.md ───────────────────────

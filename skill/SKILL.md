@@ -65,6 +65,13 @@ description: |
 | 批量加标签 | `batch_tag` | `{type?, tag?, add?, remove?}` |
 | 批量归档 | `batch_archive` | `{type?, tag?, status?}` |
 | 导出笔记 | `export` | `{type?, tag?, format?: "json", output?}` |
+| 智能连结 | `link` | `{dry_run?: false, threshold?: 0.3}` — 自动发现并建立缺失链接 |
+| 活动时间线 | `timeline` | `{days?: 30, type?, limit?: 50}` — 按时间排列的活动 |
+| 校验笔记 | `validate` | `{}` — 检查 frontmatter 完整性 |
+| 钉选笔记 | `pin` | `{note}` — 标记为收藏 |
+| 取消钉选 | `unpin` | `{note}` |
+| 钉选列表 | `pin_list` | `{}` — 所有收藏笔记 |
+| 修复坏链 | `relink` | `{dry_run?: false}` — fuzzy match 修复 |
 | 周回顾 | **CLI:** `obsidian-agent review` | |
 | 月回顾 | **CLI:** `obsidian-agent review monthly` | |
 | 导入笔记 | **CLI:** `obsidian-agent import <file>` | |
@@ -150,6 +157,18 @@ description: |
 1. rename({note: "old-name", new_title: "New Name"}) — 重命名+更新引用
 2. move({note: "my-idea", new_type: "project"})      — idea 升级为 project
 3. merge({source: "draft", target: "main-note"})     — 合并草稿到主笔记
+```
+
+### 10. 知识库健康检查
+
+```
+1. validate()          — 找出 frontmatter 问题
+2. broken_links()      — 坏链接
+3. relink({dry_run: true})  — 预览修复方案
+4. relink()            — 自动修复
+5. link({dry_run: true})    — 预览缺失链接
+6. link()              — 建立链接
+7. health()            — 综合健康分
 ```
 
 ## 写作规范

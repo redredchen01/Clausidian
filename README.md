@@ -105,6 +105,24 @@ obsidian-agent import notes.json
 
 # Regex search
 obsidian-agent search "API.*v[23]" --regex
+
+# Smart linking
+obsidian-agent link --dry-run          # preview missing links
+obsidian-agent link                    # create bidirectional links
+
+# Activity timeline
+obsidian-agent timeline --days 7
+obsidian-agent timeline --type project
+
+# Vault quality
+obsidian-agent validate
+obsidian-agent relink --dry-run        # preview broken link fixes
+obsidian-agent relink                  # auto-fix broken links
+
+# Pin favorites
+obsidian-agent pin "important-note"
+obsidian-agent pin list
+obsidian-agent unpin "important-note"
 ```
 
 ## Vault Structure
@@ -204,6 +222,13 @@ related: ["[[other-note]]", "[[another-note]]"]
 | `batch archive` | Batch archive matching notes |
 | `export [output]` | Export notes to JSON or markdown (`--format json\|markdown`) |
 | `import <file>` | Import notes from JSON or markdown file |
+| `link` | Auto-link related but unlinked notes (`--dry-run`, `--threshold`) |
+| `timeline` | Chronological activity feed (`--days`, `--type`, `--limit`) |
+| `validate` | Check frontmatter completeness and find issues |
+| `pin <note>` | Pin a note as favorite |
+| `unpin <note>` | Unpin a note |
+| `pin list` | Show all pinned notes |
+| `relink` | Fix broken links with closest matches (`--dry-run`) |
 | `health` | Vault health scoring (completeness, connectivity, freshness, organization) |
 | `setup [vault-path]` | Install MCP server + `/obsidian` skill for Claude Code |
 | `watch` | Auto-rebuild indices on file changes |
@@ -230,6 +255,9 @@ related: ["[[other-note]]", "[[another-note]]"]
 | `--set-status <status>` | New status for batch update |
 | `--add <tag>` | Tag to add (batch tag) |
 | `--remove <tag>` | Tag to remove (batch tag) |
+| `--dry-run` | Preview changes without applying (for link, relink) |
+| `--days <N>` | Days to look back for timeline (default: 30) |
+| `--limit <N>` | Max entries for timeline (default: 50) |
 
 ## Fuzzy Note Lookup
 
@@ -249,7 +277,7 @@ obsidian-agent read vector          # finds "vector-search"
 obsidian-agent read "Build API"     # finds "build-api"
 ```
 
-Works with: `read`, `delete`, `update`, `archive`, `patch`, `backlinks`, `rename`, `move`, `merge`.
+Works with: `read`, `delete`, `update`, `archive`, `patch`, `backlinks`, `rename`, `move`, `merge`, `pin`, `unpin`.
 
 ## Search Relevance
 
@@ -319,7 +347,7 @@ Run as an [MCP](https://modelcontextprotocol.io/) server for AI assistants (Clau
 }
 ```
 
-Exposes 29 tools: journal, note, capture, search, list, read, recent, delete, backlinks, update, archive, patch, stats, orphans, graph, health, sync, tag_list, tag_rename, rename, move, merge, duplicates, broken_links, batch_update, batch_tag, batch_archive, export.
+Exposes 36 tools: journal, note, capture, search, list, read, recent, delete, backlinks, update, archive, patch, stats, orphans, graph, health, sync, tag_list, tag_rename, rename, move, merge, duplicates, broken_links, batch_update, batch_tag, batch_archive, export.
 
 ## Vault Health
 

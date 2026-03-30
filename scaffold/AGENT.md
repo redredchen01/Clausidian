@@ -52,6 +52,19 @@ obsidian-agent import notes.json
 obsidian-agent review                    # weekly
 obsidian-agent review monthly
 
+# Smart linking & quality
+obsidian-agent link --dry-run            # preview missing links
+obsidian-agent link                      # auto-link related notes
+obsidian-agent validate                  # check frontmatter issues
+obsidian-agent relink --dry-run          # preview broken link fixes
+obsidian-agent relink                    # auto-fix broken links
+obsidian-agent timeline --days 7         # recent activity feed
+
+# Pin favorites
+obsidian-agent pin "important-note"
+obsidian-agent pin list
+obsidian-agent unpin "important-note"
+
 # Maintenance
 obsidian-agent sync                      # rebuild indices
 obsidian-agent health                    # vault health score

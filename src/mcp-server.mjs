@@ -52,6 +52,8 @@ const TOOLS = [
   { name: 'unpin', description: 'Unpin a note', inputSchema: { type: 'object', properties: { note: { type: 'string' } }, required: ['note'] } },
   { name: 'pin_list', description: 'Show all pinned notes', inputSchema: { type: 'object', properties: {} } },
   { name: 'relink', description: 'Fix broken links with closest matches', inputSchema: { type: 'object', properties: { dry_run: { type: 'boolean', description: 'Preview only' } } } },
+  { name: 'suggest', description: 'Actionable vault improvement suggestions', inputSchema: { type: 'object', properties: { limit: { type: 'number', description: 'Max suggestions (default: 10)' } } } },
+  { name: 'daily', description: 'Daily dashboard (journal status, activity, pinned, projects)', inputSchema: { type: 'object', properties: {} } },
 ];
 
 // ── Dispatch table ───────────────────────────────────
@@ -94,6 +96,8 @@ const DISPATCH = {
   async unpin(root, a) { const { unpin } = await import('./commands/pin.mjs'); return unpin(root, a.note); },
   async pin_list(root) { const { listPinned } = await import('./commands/pin.mjs'); return listPinned(root); },
   async relink(root, a) { const { relink } = await import('./commands/relink.mjs'); return relink(root, { dryRun: a.dry_run }); },
+  async suggest(root, a) { const { suggest } = await import('./commands/suggest.mjs'); return suggest(root, { limit: a.limit }); },
+  async daily(root) { const { daily } = await import('./commands/daily.mjs'); return daily(root); },
 };
 
 // ── Server class ─────────────────────────────────────

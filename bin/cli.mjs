@@ -337,6 +337,20 @@ async function main() {
       break;
     }
 
+    case 'suggest': {
+      const { suggest } = await import('../src/commands/suggest.mjs');
+      result = suggest(resolveVault(flags), {
+        limit: flags.limit ? parseInt(flags.limit) : undefined,
+      });
+      break;
+    }
+
+    case 'daily': {
+      const { daily } = await import('../src/commands/daily.mjs');
+      result = daily(resolveVault(flags));
+      break;
+    }
+
     // ── existing utility commands ────────────────────
 
     case 'setup': {
@@ -445,6 +459,8 @@ Commands:
   unpin <note>             Unpin a note
   pin list                 Show all pinned notes
   relink                   Fix broken links with closest matches
+  suggest                  Actionable vault improvement suggestions
+  daily                    Daily dashboard (journal, activity, pinned)
 
   setup [vault-path]       Install MCP server + skill
   watch                    Auto-rebuild indices on file changes
@@ -476,7 +492,7 @@ Flags:
         'recent','backlinks','update','archive','stats','graph','orphans','patch','tag',
         'watch','health','setup','serve','hook','version','help',
         'rename','move','merge','duplicates','broken-links','batch','export','import',
-        'link','timeline','validate','pin','unpin','relink',
+        'link','timeline','validate','pin','unpin','relink','suggest','daily',
       ];
       const similar = cmds.filter(c => c.startsWith(command?.slice(0, 2) || '') || levenshtein(c, command) <= 2);
       console.error(`Unknown command: ${command}`);

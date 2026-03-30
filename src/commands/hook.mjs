@@ -36,6 +36,30 @@ function getGitCommits(scanRoot, date) {
   return commits;
 }
 
+// ── A4: Tag conclusions and resolved issues in journal ──
+
+function tagConclusions(content) {
+  const ideasMatch = content.match(/## (想法|Ideas)\n([\s\S]*?)(?=\n## |---|\n$)/);
+  const issuesMatch = content.match(/## (問題與風險|问题与风险|Issues)\n([\s\S]*?)(?=\n## |---|\n$)/);
+
+  const hasConclusion = ideasMatch && ideasMatch[2].split('\n')
+    .filter(l => l.startsWith('- '))
+    .some(l => !l.includes('？') && !l.includes('?') && !l.includes('待驗證') && !l.includes('待确认') && l.length > 10);
+
+  const hasResolved = issuesMatch && issuesMatch[2].split('\n')
+    .filter(l => l.startsWith('- '))
+    .some(l => l.includes('✅') || l.includes('已解決') || l.includes('已修復') || l.includes('resolved'));
+
+  const tagsMatch = content.match(/tags:\s*\[(.+)\]/);
+  if (tagsMatch) {
+    const tags = tagsMatch[1].split(',').map(t => t.trim());
+    if (hasConclusion && !tags.includes('conclusion')) tags.push('conclusion');
+    if (hasResolved && !tags.includes('resolved')) tags.push('resolved');
+    content = content.replace(/tags:\s*\[.+\]/, `tags: [${tags.join(', ')}]`);
+  }
+  return content;
+}
+
 // ── session-stop: append session summary to today's journal ──
 
 export function sessionStop(vaultRoot, { scanRoot } = {}) {
@@ -62,7 +86,9 @@ export function sessionStop(vaultRoot, { scanRoot } = {}) {
   if (existing) {
     const timestamp = new Date().toLocaleTimeString('en-US', { hour12: false });
     const appendLine = `\n- [${timestamp}] ${sessionNote}`;
-    const updated = existing.replace(/## (今日[記记]錄|Records)\n/, `## $1\n${appendLine}\n`);
+    let updated = existing.replace(/## (今日[記记]錄|Records)\n/, `## $1\n${appendLine}\n`);
+    // A4: Tag conclusions and resolved issues
+    updated = tagConclusions(updated);
     vault.write('journal', `${date}.md`, updated);
     console.log(JSON.stringify({ status: 'appended', date }));
   } else {

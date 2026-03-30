@@ -1,7 +1,109 @@
 /**
  * health — vault health scoring across 4 dimensions
  */
+import { readdirSync, existsSync } from 'fs';
 import { Vault } from '../vault.mjs';
+import { IndexManager } from '../index-manager.mjs';
+
+// A2: Scan ideas/ and assign temperature based on recency and journal mentions
+function ideaTemperatures(vault, notes) {
+  const now = new Date();
+  const fourteenDaysAgo = new Date(now - 14 * 86400000).toISOString().slice(0, 10);
+  const thirtyDaysAgo = new Date(now - 30 * 86400000).toISOString().slice(0, 10);
+
+  // Collect all journal body text from last 30 days for mention scanning
+  const recentJournalText = [];
+  const journalDir = vault.path('journal');
+  if (existsSync(journalDir)) {
+    for (const file of readdirSync(journalDir)) {
+      if (!file.match(/^\d{4}-\d{2}-\d{2}\.md$/)) continue;
+      const d = file.replace('.md', '');
+      if (d < thirtyDaysAgo) continue;
+      const content = vault.read('journal', file);
+      if (content) recentJournalText.push(content.toLowerCase());
+    }
+  }
+
+  const ideas = notes.filter(n => n.dir === 'ideas');
+  const results = [];
+
+  for (const idea of ideas) {
+    const created = idea.created || '';
+    const updated = idea.updated || '';
+    const latestDate = updated || created;
+    const mentioned = recentJournalText.some(t =>
+      t.includes(`[[${idea.file}]]`.toLowerCase()) || t.includes(idea.title.toLowerCase())
+    );
+
+    let temp, icon;
+    if (mentioned) {
+      temp = 'active'; icon = '🔥';
+    } else if (latestDate >= fourteenDaysAgo) {
+      temp = 'new'; icon = '🆕';
+    } else if (latestDate < thirtyDaysAgo) {
+      temp = 'suggest-archive'; icon = '💀';
+    } else {
+      temp = 'frozen'; icon = '🧊';
+    }
+
+    results.push({ file: idea.file, title: idea.title, temp, icon, updated: latestDate });
+  }
+
+  return results;
+}
+
+// A2: Update ideas/_index.md with temperature column
+function updateIdeasIndex(vault, temperatures) {
+  if (!temperatures.length) return;
+  const idx = new IndexManager(vault);
+  const today = new Date().toISOString().slice(0, 10);
+
+  let content = `---\ntitle: ideas index\ntype: index\nupdated: ${today}\n---\n\n# ideas\n\n| File | Temperature | Summary |\n|------|-------------|--------|\n`;
+  for (const t of temperatures) {
+    content += `| [[${t.file}]] | ${t.icon} ${t.temp} | ${t.updated || '-'} |\n`;
+  }
+  vault.write('ideas/_index.md', content);
+}
+
+// A3: Resource staleness + project/idea archive suggestions
+function stalenessReport(vault, notes) {
+  const now = new Date();
+  const sixtyDaysAgo = new Date(now - 60 * 86400000).toISOString().slice(0, 10);
+  const thirtyDaysAgo = new Date(now - 30 * 86400000).toISOString().slice(0, 10);
+
+  // Collect recent journal text for mention scanning
+  const recentJournalText = [];
+  const journalDir = vault.path('journal');
+  if (existsSync(journalDir)) {
+    for (const file of readdirSync(journalDir)) {
+      if (!file.match(/^\d{4}-\d{2}-\d{2}\.md$/)) continue;
+      const d = file.replace('.md', '');
+      if (d < thirtyDaysAgo) continue;
+      const content = vault.read('journal', file);
+      if (content) recentJournalText.push(content.toLowerCase());
+    }
+  }
+
+  const isMentioned = (note) => recentJournalText.some(t =>
+    t.includes(`[[${note.file}]]`.toLowerCase()) || t.includes(note.title.toLowerCase())
+  );
+
+  const staleResources = notes
+    .filter(n => n.dir === 'resources' && n.updated && n.updated < sixtyDaysAgo)
+    .map(n => ({ file: n.file, updated: n.updated, reason: '60+ days since updated' }));
+
+  const staleProjects = notes
+    .filter(n => n.dir === 'projects' && n.status === 'active' && !isMentioned(n))
+    .filter(n => (n.updated || '') < thirtyDaysAgo)
+    .map(n => ({ file: n.file, updated: n.updated, reason: 'active but 30+ days no mention' }));
+
+  const deadIdeas = notes
+    .filter(n => n.dir === 'ideas' && !isMentioned(n))
+    .filter(n => (n.updated || n.created || '') < thirtyDaysAgo)
+    .map(n => ({ file: n.file, updated: n.updated || n.created, reason: '30+ days, never mentioned' }));
+
+  return { staleResources, staleProjects, deadIdeas };
+}
 
 export function health(vaultRoot) {
   const vault = new Vault(vaultRoot);
@@ -93,6 +195,42 @@ export function health(vaultRoot) {
     console.log(`\nIncomplete: ${completenessIssues.slice(0, 5).join(', ')}${completenessIssues.length > 5 ? ` (+${completenessIssues.length - 5} more)` : ''}`);
   }
 
+  // A2: Idea lifecycle temperatures
+  const temps = ideaTemperatures(vault, notes);
+  if (temps.length) {
+    console.log(`\n── Idea Temperatures ──`);
+    for (const t of temps) {
+      console.log(`  ${t.icon} [[${t.file}]] (${t.temp})`);
+    }
+    updateIdeasIndex(vault, temps);
+    console.log(`  → ideas/_index.md updated`);
+  }
+
+  // A3: Staleness report
+  const staleness = stalenessReport(vault, notes);
+  const allStale = [...staleness.staleResources, ...staleness.staleProjects, ...staleness.deadIdeas];
+  if (allStale.length) {
+    console.log(`\n── KB Staleness Report ──`);
+    if (staleness.staleResources.length) {
+      console.log(`  Stale resources (60+ days):`);
+      for (const r of staleness.staleResources.slice(0, 5)) {
+        console.log(`    ⏰ [[${r.file}]] — last updated ${r.updated}`);
+      }
+    }
+    if (staleness.staleProjects.length) {
+      console.log(`  Inactive projects (active but 30+ days no mention):`);
+      for (const p of staleness.staleProjects.slice(0, 5)) {
+        console.log(`    📦 [[${p.file}]] → suggest archive`);
+      }
+    }
+    if (staleness.deadIdeas.length) {
+      console.log(`  Dead ideas (30+ days, never mentioned):`);
+      for (const i of staleness.deadIdeas.slice(0, 5)) {
+        console.log(`    💀 [[${i.file}]] → suggest archive`);
+      }
+    }
+  }
+
   return {
     overall, grade,
     scores: { completeness, connectivity, freshness, organization },
@@ -100,5 +238,7 @@ export function health(vaultRoot) {
     orphans: vault.orphans().length,
     staleCount: stale,
     incompleteCount: completenessIssues.length,
+    ideaTemperatures: temps,
+    staleness,
   };
 }
