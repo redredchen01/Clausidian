@@ -1,5 +1,5 @@
 #!/bin/bash
-# Daily Obsidian automation: create journal + backfill missing + health check + auto-commit
+# Daily Obsidian automation: create journal + backfill + calendar sync + health check + auto-commit
 set -e
 
 VAULT='/Users/dex/YD 2026/obsidian'
@@ -11,13 +11,16 @@ clausidian journal --vault "$VAULT" 2>/dev/null || true
 # 2. Backfill any missing journals from yesterday
 clausidian hook daily-backfill --vault "$VAULT" 2>/dev/null || true
 
-# 3. Sync indices (includes A5: suggested links)
+# 3. Sync Google Calendar events to journal
+clausidian bridge gcal --vault "$VAULT" 2>/dev/null || true
+
+# 4. Sync indices (includes A5: suggested links)
 clausidian sync --vault "$VAULT" 2>/dev/null || true
 
-# 4. A2: Idea lifecycle temperature tracking
+# 5. A2: Idea lifecycle temperature tracking
 clausidian health --vault "$VAULT" --json 2>/dev/null | grep -q '"grade"' && true
 
-# 5. Auto-commit if there are changes
+# 6. Auto-commit if there are changes
 cd "$VAULT"
 if [ -n "$(git status --porcelain)" ]; then
     git add -A
