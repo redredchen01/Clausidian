@@ -28,7 +28,7 @@ Backend API (Express.js + PostgreSQL)
 ### 1. Start Backend Locally
 
 ```bash
-cd session-wrap-backend
+cd ~/YD\ 2026/projects/tools/session-wrap-backend
 
 # Install dependencies
 npm install
@@ -62,7 +62,7 @@ export AIDER_TOKEN=sk_...
 
 ```bash
 # From YD 2026 directory
-source .zshrc-wrap
+source ~/YD\ 2026/.zshrc-wrap
 
 # Login to cloud
 wrap login
