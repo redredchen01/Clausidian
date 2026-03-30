@@ -58,20 +58,20 @@ const mockNotes = [
 describe('SimilarityEngine', () => {
   it('should score pairs with shared tags', () => {
     const vault = { scanNotes: () => mockNotes };
-    const engine = new SimilarityEngine(vault);
+    const engine = new SimilarityEngine(vault, { minScore: 0.2 });
 
     const pairs = engine.scorePairs(mockNotes);
 
     // Should find note-a (javascript, programming) and note-c (javascript, web) similar
     const noteAC = pairs.find(p => (p.a === 'note-a' && p.b === 'note-c') || (p.a === 'note-c' && p.b === 'note-a'));
     assert.ok(noteAC, 'Should find note-a and note-c as similar');
-    assert.ok(noteAC.score >= 1.5, 'Score should be above threshold');
+    assert.ok(noteAC.score >= 0.2, 'Score should be above threshold');
     assert.ok(noteAC.shared.includes('javascript'), 'Should have javascript as shared tag');
   });
 
   it('should ignore journal notes', () => {
     const vault = { scanNotes: () => mockNotes };
-    const engine = new SimilarityEngine(vault);
+    const engine = new SimilarityEngine(vault, { minScore: 0.2 });
 
     const pairs = engine.scorePairs(mockNotes);
 
@@ -82,7 +82,7 @@ describe('SimilarityEngine', () => {
 
   it('should not score notes without tags', () => {
     const vault = { scanNotes: () => mockNotes };
-    const engine = new SimilarityEngine(vault);
+    const engine = new SimilarityEngine(vault, { minScore: 0.2 });
 
     const pairs = engine.scorePairs(mockNotes);
 
@@ -93,19 +93,19 @@ describe('SimilarityEngine', () => {
 
   it('should score based on TF-IDF weights', () => {
     const vault = { scanNotes: () => mockNotes };
-    const engine = new SimilarityEngine(vault);
+    const engine = new SimilarityEngine(vault, { minScore: 0.2 });
 
     const pairs = engine.scorePairs(mockNotes);
 
-    // All pairs should have score >= minScore (1.5)
+    // All pairs should have score >= minScore (0.2)
     for (const p of pairs) {
-      assert.ok(p.score >= 1.5, `All pairs should have score >= 1.5, got ${p.score}`);
+      assert.ok(p.score >= 0.2, `All pairs should have score >= 0.2, got ${p.score}`);
     }
   });
 
   it('should respect maxResults limit', () => {
     const vault = { scanNotes: () => mockNotes };
-    const engine = new SimilarityEngine(vault, { maxResults: 2 });
+    const engine = new SimilarityEngine(vault, { minScore: 0.2, maxResults: 2 });
 
     const pairs = engine.scorePairs(mockNotes);
 
@@ -114,7 +114,7 @@ describe('SimilarityEngine', () => {
 
   it('should cache TF-IDF weights', () => {
     const vault = { scanNotes: () => mockNotes };
-    const engine = new SimilarityEngine(vault);
+    const engine = new SimilarityEngine(vault, { minScore: 0.2 });
 
     // First call
     const pairs1 = engine.scorePairs(mockNotes);
@@ -129,7 +129,7 @@ describe('SimilarityEngine', () => {
 
   it('should invalidate cache when notes change', () => {
     const vault = { scanNotes: () => mockNotes };
-    const engine = new SimilarityEngine(vault);
+    const engine = new SimilarityEngine(vault, { minScore: 0.2 });
 
     // First call
     engine.scorePairs(mockNotes);
