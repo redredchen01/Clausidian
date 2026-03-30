@@ -1,7 +1,10 @@
 /**
  * launchd — install/uninstall macOS LaunchAgents for automated vault maintenance
  *
- * Agents installed:
+ * NOTE: Deprecated in favor of com.dex.obsidian-* system which uses scripts in
+ * /Users/dex/YD 2026/scripts/obsidian-*.sh (daily/weekly/monthly)
+ *
+ * Legacy agents (preserved for reference):
  *   - com.clausidian.daily-backfill  (daily at 23:30)
  *   - com.clausidian.weekly-review   (Sunday at 20:00)
  */
@@ -192,4 +195,16 @@ export function launchdStatus() {
   }
 
   return { status: 'ok', agents };
+}
+
+// ── Router for registry ──
+export function launchd(vaultRoot, cmd, flags) {
+  if (cmd === 'install') {
+    return launchdInstall(vaultRoot, flags);
+  } else if (cmd === 'uninstall') {
+    return launchdUninstall();
+  } else if (cmd === 'status') {
+    return launchdStatus();
+  }
+  throw new Error(`Unknown launchd command: ${cmd}\nAvailable: install, uninstall, status`);
 }
