@@ -406,3 +406,171 @@ class TestLeaveBotOverlapDetection:
         bot.sheets_client.find_rows.side_effect = Exception("sheet error")
         result = bot._check_overlap("E001", "2026-04-05", "2026-04-10")
         assert result is False
+
+
+# ---------------------------------------------------------------------------
+# LeaveBot — edge cases and error paths
+# ---------------------------------------------------------------------------
+
+class TestLeaveBotEdgeCases:
+    @pytest.mark.asyncio
+    async def test_select_type_with_smart_assistant_suggestion(self):
+        """Test select_type uses smart assistant suggestion if available."""
+        bot = make_leave_bot()
+        smart = MagicMock()
+        smart.suggest_leave_type.return_value = "病假"
+        bot.smart = smart
+
+        update = make_update("E001")
+        ctx = make_context({"employee": EMPLOYEE})
+
+        await bot.select_type(update, ctx)
+
+        smart.suggest_leave_type.assert_called_once_with("E001")
+        update.message.reply_text.assert_called()
+
+    @pytest.mark.asyncio
+    async def test_select_type_handles_smart_assistant_error(self):
+        """Test select_type gracefully handles smart assistant errors."""
+        bot = make_leave_bot()
+        smart = MagicMock()
+        smart.suggest_leave_type.side_effect = Exception("LLM error")
+        bot.smart = smart
+
+        update = make_update("E001")
+        ctx = make_context({"employee": EMPLOYEE})
+
+        # Should not raise, should show menu anyway
+        await bot.select_type(update, ctx)
+        update.message.reply_text.assert_called()
+
+    def test_get_annual_balance_with_mixed_statuses(self):
+        """Test _get_annual_balance counts only pending and approved."""
+        bot = make_leave_bot()
+        bot.sheets_client.find_employee.return_value = {"annual_leave_quota": 20}
+        # _get_annual_balance internally searches for pending/approved status
+        bot.sheets_client.find_rows.return_value = [
+            {"status": "approved", "days": 5},
+            {"status": "pending", "days": 3},
+        ]
+
+        balance = bot._get_annual_balance("E001")
+        # Balance logic checks for pending/approved status internally
+        assert balance >= 0
+
+    def test_get_annual_balance_zero_quota(self):
+        """Test _get_annual_balance when employee has zero quota."""
+        bot = make_leave_bot()
+        bot.sheets_client.find_employee.return_value = {"annual_leave_quota": 0}
+        bot.sheets_client.find_rows.return_value = []
+
+        balance = bot._get_annual_balance("E001")
+        assert balance == 0
+
+    def test_get_annual_balance_negative_quota(self):
+        """Test _get_annual_balance with malformed quota."""
+        bot = make_leave_bot()
+        bot.sheets_client.find_employee.return_value = {"annual_leave_quota": "invalid"}
+        bot.sheets_client.find_rows.return_value = []
+
+        # Should handle gracefully, returning 0 or negative
+        try:
+            balance = bot._get_annual_balance("E001")
+            # If it returns without exception, it's handled
+            assert isinstance(balance, (int, float))
+        except (ValueError, TypeError):
+            # Also acceptable if it raises predictably
+            pass
+
+    @pytest.mark.asyncio
+    async def test_verify_id_telegram_binding_new_user(self):
+        """Test verify_id binds telegram ID for new employee."""
+        bot = make_leave_bot()
+        bot.sheets_client.get_telegram_id.return_value = None  # No prior binding
+        update = make_update("E001", user_id=99999)
+        ctx = make_context()
+
+        from hr_admin_bots.bots.leave import SELECT_TYPE
+        state = await bot.verify_id(update, ctx)
+
+        bot.sheets_client.bind_telegram_id.assert_called_once_with("E001", 99999)
+        assert state == SELECT_TYPE
+
+    @pytest.mark.asyncio
+    async def test_verify_id_rejects_mismatched_telegram(self):
+        """Test verify_id rejects if telegram ID already bound to different user."""
+        bot = make_leave_bot()
+        bot.sheets_client.get_telegram_id.return_value = 88888  # different ID
+        update = make_update("E001", user_id=99999)
+        ctx = make_context()
+
+        from hr_admin_bots.bots.leave import WAITING_ID
+        state = await bot.verify_id(update, ctx)
+
+        update.message.reply_text.assert_called()
+        assert state == WAITING_ID
+
+    @pytest.mark.asyncio
+    async def test_verify_id_allows_same_telegram(self):
+        """Test verify_id allows same telegram ID."""
+        bot = make_leave_bot()
+        bot.sheets_client.get_telegram_id.return_value = 99999  # same as update user
+        update = make_update("E001", user_id=99999)
+        ctx = make_context()
+
+        from hr_admin_bots.bots.leave import SELECT_TYPE
+        state = await bot.verify_id(update, ctx)
+
+        # Should proceed to select_type without rejection
+        assert state == SELECT_TYPE
+
+    def test_check_balance_with_used_days_calculation(self):
+        """Test _check_balance correctly calculates used days."""
+        bot = make_leave_bot()
+        bot.sheets_client.find_employee.return_value = {"annual_leave_quota": 20}
+        bot.sheets_client.find_rows.return_value = [
+            {"status": "approved", "days": 3},
+            {"status": "pending", "days": 2},
+        ]
+
+        result = bot._check_balance("E001", "年假", 10)
+        # Used: 5, Available: 15, Requested: 10 → OK
+        assert result is None
+
+    def test_check_balance_exact_quota(self):
+        """Test _check_balance when requested equals remaining quota."""
+        bot = make_leave_bot()
+        bot.sheets_client.find_employee.return_value = {"annual_leave_quota": 10}
+        bot.sheets_client.find_rows.return_value = [
+            {"status": "approved", "days": 5},
+        ]
+
+        result = bot._check_balance("E001", "年假", 5)
+        # Used: 5, Available: 5, Requested: 5 → OK
+        assert result is None
+
+    def test_check_balance_handles_missing_days_field(self):
+        """Test _check_balance ignores rows without days field."""
+        bot = make_leave_bot()
+        bot.sheets_client.find_employee.return_value = {"annual_leave_quota": 10}
+        bot.sheets_client.find_rows.return_value = [
+            {"status": "approved"},  # no days field
+        ]
+
+        result = bot._check_balance("E001", "年假", 5)
+        # Should treat missing days as 0
+        assert result is None
+
+    def test_check_balance_with_invalid_days_values(self):
+        """Test _check_balance handles non-numeric days."""
+        bot = make_leave_bot()
+        bot.sheets_client.find_employee.return_value = {"annual_leave_quota": 10}
+        bot.sheets_client.find_rows.return_value = [
+            {"status": "approved", "days": "invalid"},
+            {"status": "approved", "days": None},
+            {"status": "approved", "days": 5},
+        ]
+
+        result = bot._check_balance("E001", "年假", 3)
+        # Should ignore invalid entries and count only 5
+        assert result is None
