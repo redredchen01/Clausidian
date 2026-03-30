@@ -7,6 +7,7 @@ import { todayStr } from '../dates.mjs';
 
 export function agenda(vaultRoot, { days = 7, all = false } = {}) {
   const vault = new Vault(vaultRoot);
+  // Always load body to find TODO items
   const notes = vault.scanNotes({ includeBody: true });
   const today = todayStr();
   const items = [];
