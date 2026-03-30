@@ -232,12 +232,17 @@ export function noteCreated(vaultRoot, payload = {}) {
 
     const suggestions = scored.slice(0, 5);
     if (suggestions.length > 0) {
-      console.log(JSON.stringify({
+      const result = {
         status: 'created',
         event: 'note-created',
         note: noteName,
         suggestions: suggestions.map(s => ({ note: s.file, score: Math.round(s.score * 10) / 10, tags: s.shared }))
-      }));
+      };
+      console.log(JSON.stringify(result));
+
+      // Notify if important (has suggestions)
+      const suggestionText = suggestions.map(s => `• [[${s.file}]] (${s.shared.join(', ')})`).join('\n');
+      notify('📝 新筆記建立', `<b>${noteName}</b>\n\n建議關聯:\n${suggestionText}`);
     } else {
       console.log(JSON.stringify({ status: 'created', event: 'note-created', note: noteName, suggestions: [] }));
     }
