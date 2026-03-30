@@ -12,6 +12,7 @@ import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { Vault } from './vault.mjs';
 import { getMcpTools, getMcpDispatch } from './registry.mjs';
+import { SearchCache } from './search-cache.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PKG_VERSION = JSON.parse(readFileSync(resolve(__dirname, '..', 'package.json'), 'utf8')).version;
@@ -19,6 +20,13 @@ const PKG_VERSION = JSON.parse(readFileSync(resolve(__dirname, '..', 'package.js
 // Tools and dispatch from registry — no manual duplication
 const TOOLS = getMcpTools();
 const DISPATCH = getMcpDispatch();
+
+// Tools that modify vault state — invalidate cache on these only
+const WRITE_TOOLS = new Set([
+  'note', 'journal', 'capture', 'update', 'patch', 'delete',
+  'archive', 'rename', 'move', 'merge', 'relink', 'import', 'sync',
+  'batch_tag', 'batch_update', 'batch_archive',
+]);
 
 // ── MCP Resources ──────────────────────────────────────
 
@@ -93,6 +101,7 @@ export class McpServer {
   constructor(vaultRoot) {
     this.vaultRoot = vaultRoot;
     this._vault = null;
+    this._searchCache = new SearchCache();
   }
 
   get vault() {
@@ -101,21 +110,39 @@ export class McpServer {
   }
 
   async handleToolCall(name, args) {
-    this.vault.invalidateCache();
+    // Only invalidate cache for write operations
+    if (WRITE_TOOLS.has(name)) {
+      this.vault.invalidateCache();
+      this._searchCache.clear();
+    }
 
     const handler = DISPATCH[name];
     if (!handler) throw new Error(`Unknown tool: ${name}`);
+
+    // Try search cache for read-only search tools
+    if ((name === 'search' || name === 'embed-search' || name === 'smart-search') && !WRITE_TOOLS.has(name)) {
+      const cached = this._searchCache.get(args.keyword, args);
+      if (cached) return cached;
+    }
 
     const origLog = console.log;
     const origError = console.error;
     console.log = () => {};
     console.error = () => {};
+    let result;
     try {
-      return await handler(this.vaultRoot, args);
+      result = await handler(this.vaultRoot, args);
     } finally {
       console.log = origLog;
       console.error = origError;
     }
+
+    // Cache search results
+    if ((name === 'search' || name === 'embed-search' || name === 'smart-search') && !WRITE_TOOLS.has(name)) {
+      this._searchCache.set(args.keyword, args, result);
+    }
+
+    return result;
   }
 
   readResource(uri) {

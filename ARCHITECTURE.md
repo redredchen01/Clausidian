@@ -68,7 +68,7 @@ clausidian/
 ├── CHANGELOG.md
 ├── ARCHITECTURE.md (this file)
 ├── CONTRIBUTING.md
-└── .github/workflows/       # CI/CD pipeline (coming in v2.5.0)
+└── .github/workflows/       # CI/CD pipeline (test, lint, publish)
 ```
 
 ## Data Flow

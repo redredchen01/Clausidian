@@ -1,0 +1,12 @@
+.git
+.github
+.gitignore
+*.md
+*.sh
+scripts/
+test/
+node_modules/
+.npm
+.env
+.env.local
+.DS_Store

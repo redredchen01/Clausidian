@@ -2,7 +2,7 @@
 
 /**
  * clausidian CLI — AI agent toolkit for Obsidian vaults
- * v1.1.0 — registry-based dispatch
+ * v2.6.0 — registry-based dispatch, MCP server, 55+ commands
  */
 
 import { getCommand, getCommandNames } from '../src/registry.mjs';

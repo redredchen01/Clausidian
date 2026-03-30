@@ -359,9 +359,13 @@ const COMMANDS = [
     name: 'import',
     description: 'Import notes from JSON or markdown',
     usage: 'import <file>',
+    mcpSchema: {
+      file: { type: 'string', description: 'JSON or markdown file to import' },
+    },
+    mcpRequired: ['file'],
     async run(root, flags, pos) {
       const { importNotes } = await import('./commands/import.mjs');
-      return importNotes(root, pos[0]);
+      return importNotes(root, flags.file || pos[0]);
     },
   },
 
@@ -428,8 +432,14 @@ const COMMANDS = [
     name: 'review',
     description: 'Generate weekly or monthly review',
     usage: 'review [monthly]',
+    mcpSchema: {
+      monthly: { type: 'boolean', description: 'Generate monthly review instead of weekly' },
+      date: { type: 'string', description: 'Review date in YYYY-MM-DD format' },
+      year: { type: 'number', description: 'Year for monthly review' },
+      month: { type: 'number', description: 'Month (1-12) for monthly review' },
+    },
     async run(root, flags, pos) {
-      if (pos[0] === 'monthly') {
+      if (flags.monthly || pos[0] === 'monthly') {
         const { monthlyReview } = await import('./commands/review.mjs');
         return monthlyReview(root, {
           year: flags.year ? parseInt(flags.year) : undefined,
@@ -824,6 +834,52 @@ const COMMANDS = [
     async run(root, flags, pos) {
       const { launchd } = await import('./commands/launchd.mjs');
       return launchd(root, pos[0], flags);
+    },
+  },
+  {
+    name: 'embed-search',
+    description: 'Semantic search using embeddings (Ollama or OpenAI)',
+    usage: 'embed-search <query>',
+    mcpSchema: {
+      query: { type: 'string', description: 'Search query' },
+      provider: { type: 'string', enum: ['ollama', 'openai', 'off'], description: 'Embedding provider (auto-detected if not specified)' },
+      model: { type: 'string', description: 'Model name for embeddings' },
+      apiKey: { type: 'string', description: 'OpenAI API key (or set OA_OPENAI_KEY env)' },
+      limit: { type: 'number', description: 'Max results (default: 10)' },
+      threshold: { type: 'number', description: 'Min cosine similarity (0-1, default: 0.7)' },
+    },
+    mcpRequired: ['query'],
+    async run(root, flags, pos) {
+      const { embedSearch } = await import('./commands/embed-search.mjs');
+      return embedSearch(root, flags.query || pos[0], {
+        provider: flags.provider,
+        model: flags.model,
+        apiKey: flags.apiKey,
+        limit: flags.limit ? parseInt(flags.limit) : undefined,
+        threshold: flags.threshold ? parseFloat(flags.threshold) : undefined,
+      });
+    },
+  },
+  {
+    name: 'smart-search',
+    description: 'BM25 ranked search across vault notes',
+    usage: 'smart-search <query>',
+    mcpSchema: {
+      query: { type: 'string', description: 'Search query' },
+      type: { type: 'string', enum: ['area', 'project', 'resource', 'idea'], description: 'Filter by note type' },
+      tag: { type: 'string', description: 'Filter by tag' },
+      status: { type: 'string', description: 'Filter by status' },
+      limit: { type: 'number', description: 'Max results (default: 20)' },
+    },
+    mcpRequired: ['query'],
+    async run(root, flags, pos) {
+      const { smartSearch } = await import('./commands/smart-search.mjs');
+      return smartSearch(root, flags.query || pos[0], {
+        type: flags.type,
+        tag: flags.tag,
+        status: flags.status,
+        limit: flags.limit ? parseInt(flags.limit) : undefined,
+      });
     },
   },
 ];

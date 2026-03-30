@@ -31,7 +31,7 @@ jobs:
             health.sh \
             verify.sh \
             scripts/test-all.sh \
-            scripts/pre-commit || true
+            scripts/pre-commit
 
   syntax-check:
     runs-on: ubuntu-latest

@@ -6,29 +6,3 @@
     }
   }
 }
-
-/*
-  配置說明：
-
-  1. 將 REPLACE_WITH_YOUR_VAULT_PATH 替換為你的 vault 路徑，例如：
-     - macOS/Linux: "/Users/username/my-vault" 或 "$HOME/my-vault"
-     - Windows: "C:\\Users\\username\\my-vault"
-
-  2. 常見路徑示例：
-     - iCloud Drive: "/Users/username/Library/Mobile Documents/com~apple~CloudDocs/my-vault"
-     - Dropbox: "/Users/username/Dropbox/my-vault"
-     - 本地: "/Users/username/obsidian-vault"
-
-  3. 添加到正確位置：
-     編輯 ~/.claude/.mcp.json，將此整個 mcpServers 塊添加到已有的 "mcpServers" 對象中
-
-  4. 驗證配置：
-     - 重啟 Claude Code
-     - 在任何項目目錄執行: /obsidian health
-     - 如果輸出 vault 統計，說明配置成功
-
-  5. 故障排查：
-     - 權限不足: 確保用戶有訪問 vault 目錄的權限
-     - 路徑錯誤: 使用 echo $HOME 確認路徑，避免使用 ~ (使用完整路徑)
-     - MCP 未加載: 檢查 Claude Code 輸出日誌是否有 clausidian 連接錯誤
-*/

@@ -2,6 +2,46 @@
 
 All notable changes to the clausidian project are documented in this file. Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2.6.0] — 2026-03-30
+
+### Added
+- **embed-search command** — Semantic search using embeddings (Ollama or OpenAI)
+- **smart-search command** — BM25 ranked search (now exposed as MCP tool)
+- **mcpSchema for import command** — Can now be triggered via MCP
+- **mcpSchema for review command** — Can now be triggered via MCP
+- **6 new scaffold slash commands** — update, sync, health, stats, tag-list, batch
+
+### Changed
+- **Performance fix**: Cache invalidation now conditional on write operations only (read-only tools skip cache clear)
+- **SearchCache** wired into search path for 5-min TTL result caching
+- Improved MCP configuration documentation (mcp-config-example.README.md)
+
+### Infrastructure
+- **Dockerfile** — Containerized deployment (node:18-alpine, MCP server ready)
+- **CI/CD improvements** — npm caching, enforced ShellCheck failures
+- Cleaned up mcp-config-example.json (removed invalid JavaScript comments)
+
+## [2.5.1] — 2026-03-30
+
+### Added
+- **lib/common.sh** — Shared shell library (212 lines), eliminates 85 lines of duplication
+- **Shell script refactoring** — All shells now use common functions
+- **.editorconfig** — Unified code style across all file types
+- **.prettierrc.json** — JavaScript/TypeScript formatting with 100-column width
+- **.github/workflows/shell-lint.yml** — Automated ShellCheck + syntax validation
+- **SCRIPT_STYLE.md** — 12-part shell scripting best practices guide
+- **GitHub release v2.5.1** — npm publication at v2.5.1
+
+### Changed
+- install.sh, setup.sh, health.sh, verify.sh refactored to use lib/common.sh
+- All scripts now enforce `set -o pipefail` for better error handling
+- Improved logging with color-coded output across all shell scripts
+
+### Tested
+- 18-item automated test suite (100% pass rate)
+- Shell syntax validation with bash -n
+- GitHub Actions CI/CD matrix (3 OS × 3 Node versions = 9 jobs)
+
 ## [2.5.0] — 2026-03-30
 
 ### Added
@@ -27,14 +67,15 @@ All notable changes to the clausidian project are documented in this file. Forma
 
 ## [Unreleased]
 
-### Planned for v2.6.0+
+### Planned for v2.7.0+
 - Smart template generation from vault analysis
-- Search result caching for improved performance
 - Incremental index updates support
 - Large vault support (>10,000 files)
 - Batch operation parallelization
 - Performance benchmarking suite
 - Pre-commit hook configuration
+- Extended MCP resources (per-note URIs, live stats)
+- Advanced embedding models (text-embedding-3-large, custom models)
 
 ## [2.0.0] — 2026-03-30
 
