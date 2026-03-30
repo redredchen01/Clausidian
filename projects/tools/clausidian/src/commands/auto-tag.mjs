@@ -1,36 +1,11 @@
 /**
  * auto-tag — suggest TF-IDF based tags for notes with empty tags
  *
- * Reuses TF-IDF logic from hook.mjs:noteCreated
  * Supports --dry-run to preview suggestions without writing
  */
 import { Vault } from '../vault.mjs';
 import { IndexManager } from '../index-manager.mjs';
-
-// TF-IDF scoring — copied from hook.mjs
-function scoreRelatedness(note1, note2, tagIDF) {
-  let score = 0;
-  const shared = [];
-
-  for (const t of note1.tags) {
-    if (note2.tags.includes(t)) {
-      score += tagIDF[t] || 1;
-      shared.push(t);
-    }
-  }
-
-  if (note1.body && note2.body) {
-    const words1 = new Set((note1.body.toLowerCase().match(/[a-z\u4e00-\u9fff]{3,}/g) || []).slice(0, 50));
-    const words2 = new Set((note2.body.toLowerCase().match(/[a-z\u4e00-\u9fff]{3,}/g) || []).slice(0, 50));
-    let overlap = 0;
-    for (const w of words1) {
-      if (words2.has(w)) overlap++;
-    }
-    score += Math.min(overlap * 0.1, 2);
-  }
-
-  return { score, shared };
-}
+import { buildTagIDF, scoreRelatedness } from '../scoring.mjs';
 
 export function autoTag(vaultRoot, options = {}) {
   const vault = new Vault(vaultRoot);
@@ -48,15 +23,7 @@ export function autoTag(vaultRoot, options = {}) {
     }
 
     // Build tag IDF from tagged notes
-    const tagged = allNotes.filter(n => n.dir !== 'journal' && n.tags.length > 0);
-    const tagDF = {};
-    for (const n of tagged) {
-      for (const t of n.tags) tagDF[t] = (tagDF[t] || 0) + 1;
-    }
-    const tagIDF = {};
-    for (const [tag, df] of Object.entries(tagDF)) {
-      tagIDF[tag] = Math.log((tagged.length || 1) / df);
-    }
+    const tagIDF = buildTagIDF(allNotes, 'journal');
 
     // Process each untagged note
     const suggestions = [];
