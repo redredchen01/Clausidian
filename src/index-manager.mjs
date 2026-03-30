@@ -214,6 +214,7 @@ export class IndexManager {
 
     // ── Cluster detection (Union-Find on related links) with caching ──
     const allNotes = notes.filter(n => n.dir !== 'journal');
+    const allNotesMap = new Map(allNotes.map(n => [n.file, n])); // O(1) lookup instead of O(n)
     const vaultVersion = this._getVaultVersion();
     
     // Attempt to use cached cluster assignments
@@ -249,7 +250,7 @@ export class IndexManager {
             // Label by the most-connected node
             const connCount = {};
             for (const file of c) {
-              const n = allNotes.find(x => x.file === file);
+              const n = allNotesMap.get(file);
               connCount[file] = n ? n.related.length : 0;
             }
             const hub = c.sort((a, b) => (connCount[b] || 0) - (connCount[a] || 0))[0];
@@ -304,7 +305,7 @@ export class IndexManager {
         // Label by the most-connected node
         const connCount = {};
         for (const file of c) {
-          const n = allNotes.find(x => x.file === file);
+          const n = allNotesMap.get(file);
           connCount[file] = n ? n.related.length : 0;
         }
         const hub = c.sort((a, b) => (connCount[b] || 0) - (connCount[a] || 0))[0];
