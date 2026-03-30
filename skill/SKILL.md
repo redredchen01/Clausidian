@@ -1,6 +1,6 @@
 ---
 name: obsidian
-version: 1.0.0
+version: 2.5.0
 description: |
   Obsidian 知识库管理 — 通过 MCP 工具操作 PARA 结构 vault。
   Use when: "记笔记", "写日记", "搜知识库", "记录想法", "obsidian",
