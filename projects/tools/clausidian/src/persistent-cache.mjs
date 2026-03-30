@@ -6,9 +6,8 @@
  * Cache is invalidated when note count or important timestamps change.
  */
 
-import { writeFileSync, readFileSync, existsSync, unlinkSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync, unlinkSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
-import { mkdirSync } from 'fs';
 
 export class PersistentCache {
   constructor(cacheDir = '.clausidian/cache') {

@@ -1,13 +1,14 @@
 /**
  * Vault — core operations for reading/writing Obsidian notes
  */
-import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, statSync } from 'fs';
 import { resolve, join, dirname, basename } from 'path';
 import crypto from 'crypto';
 import { SimilarityEngine } from './similarity-engine.mjs';
 import { IncrementalTracker } from './incremental-tracker.mjs';
 import { SearchCache } from './search-cache.mjs';
 import { ClusterCache } from './cluster-cache.mjs';
+import { CacheCoordinator } from './cache-coordinator.mjs';
 
 const DEFAULT_DIRS = ['areas', 'projects', 'resources', 'journal', 'ideas'];
 
@@ -17,18 +18,18 @@ export class Vault {
     this.dirs = dirs || this._detectDirs() || DEFAULT_DIRS;
     this._notesCache = null;
     this._notesCacheWithBody = null;
-    this.tracker = new IncrementalTracker();
-
-    // Initialize SearchCache and ClusterCache
-    this._searchCache = searchCache || new SearchCache(this, { ttl: 5 * 60 * 1000 });
-    this._clusterCache = new ClusterCache(this);
     this._vaultVersion = this._computeVaultVersion();
 
-    // Track dirty notes for selective invalidation
-    this._dirtyNotes = new Set();
+    // Create SearchCache first (needed by ClusterCache)
+    this._searchCache = searchCache || new SearchCache(this, { ttl: 5 * 60 * 1000 });
+    this.searchCache = this._searchCache;  // Legacy reference
 
-    // Keep legacy searchCache reference for backward compatibility
-    this.searchCache = this._searchCache;
+    // Initialize unified cache coordinator (manages all cache layers)
+    this.cacheCoordinator = new CacheCoordinator(this);
+
+    // Keep legacy references for backward compatibility
+    this.tracker = this.cacheCoordinator.tracker;
+    this._clusterCache = this.cacheCoordinator.clusterCache;
 
     // Load cache from disk asynchronously (non-blocking)
     const cacheFilePath = this.path('.clausidian', 'cache.json');
@@ -57,8 +58,8 @@ export class Vault {
       const graphPath = this.path('_graph.md');
 
       if (existsSync(tagsPath) && existsSync(graphPath)) {
-        const stats1 = require('fs').statSync(tagsPath);
-        const stats2 = require('fs').statSync(graphPath);
+        const stats1 = statSync(tagsPath);
+        const stats2 = statSync(graphPath);
         const combined = `${stats1.mtime.getTime()}|${stats2.mtime.getTime()}`;
         return crypto.createHash('sha256').update(combined).digest('hex');
       }
@@ -69,19 +70,14 @@ export class Vault {
   }
 
   invalidateCache() {
+    // Clear in-memory note cache
     this._notesCache = null;
     this._notesCacheWithBody = null;
 
-    // Invalidate search caches
-    if (this._searchCache) {
-      this._searchCache.invalidate();
-    }
-    if (this._clusterCache) {
-      this._clusterCache.invalidate(this._dirtyNotes);
-    }
+    // Delegate to cache coordinator (unified invalidation)
+    this.cacheCoordinator.fullInvalidate();
 
-    // Reset dirty notes after invalidation
-    this._dirtyNotes.clear();
+    // Update vault version
     this._vaultVersion = this._computeVaultVersion();
   }
 
@@ -109,13 +105,18 @@ export class Vault {
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
     writeFileSync(p, content);
 
-    // Track dirty note for selective invalidation
+    // Clear in-memory note cache
+    this._notesCache = null;
+    this._notesCacheWithBody = null;
+
+    // Mark dirty and invalidate through cache coordinator
     if (args.length > 0) {
       const fileName = args[args.length - 1];
-      this._dirtyNotes.add(fileName);
+      this.cacheCoordinator.markDirtyAndInvalidate(fileName, 'all');
     }
 
-    this.invalidateCache();
+    // Update vault version
+    this._vaultVersion = this._computeVaultVersion();
   }
 
   // ── Frontmatter parsing ──────────────────────────────
