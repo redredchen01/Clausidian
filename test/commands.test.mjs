@@ -321,4 +321,150 @@ describe('commands (import)', () => {
     });
     assert.ok(response.result.content[0].text.includes('total'));
   });
+
+  // ── v0.7 new commands ────────────────────────────
+
+  it('rename renames note and updates references', async () => {
+    const { note } = await import('../src/commands/note.mjs');
+    note(TMP, 'Rename Target', 'idea', { tags: ['test'] });
+    note(TMP, 'Rename Linker', 'idea');
+
+    // Manually add a reference
+    const { Vault } = await import('../src/vault.mjs');
+    const vault = new Vault(TMP);
+    let content = vault.read('ideas', 'rename-linker.md');
+    content = content.replace('related: []', 'related: ["[[rename-target]]"]');
+    vault.write('ideas', 'rename-linker.md', content);
+
+    const { rename } = await import('../src/commands/rename.mjs');
+    const result = rename(TMP, 'rename-target', 'Renamed Note');
+    assert.equal(result.status, 'renamed');
+    assert.ok(existsSync(join(TMP, 'ideas', 'renamed-note.md')));
+    assert.ok(!existsSync(join(TMP, 'ideas', 'rename-target.md')));
+
+    // Check reference was updated
+    vault.invalidateCache();
+    const linker = vault.read('ideas', 'rename-linker.md');
+    assert.ok(linker.includes('[[renamed-note]]'));
+    assert.ok(!linker.includes('[[rename-target]]'));
+  });
+
+  it('move moves note to different type', async () => {
+    const { note } = await import('../src/commands/note.mjs');
+    note(TMP, 'Move Test', 'idea');
+
+    const { move } = await import('../src/commands/move.mjs');
+    const result = move(TMP, 'move-test', 'project');
+    assert.equal(result.status, 'moved');
+    assert.ok(existsSync(join(TMP, 'projects', 'move-test.md')));
+    assert.ok(!existsSync(join(TMP, 'ideas', 'move-test.md')));
+
+    // Check type was updated in frontmatter
+    const content = readFileSync(join(TMP, 'projects', 'move-test.md'), 'utf8');
+    assert.ok(content.includes('type: project'));
+  });
+
+  it('merge combines notes and redirects references', async () => {
+    const { note } = await import('../src/commands/note.mjs');
+    note(TMP, 'Merge Source', 'idea', { tags: ['source-tag'] });
+    note(TMP, 'Merge Target', 'idea', { tags: ['target-tag'] });
+
+    const { merge } = await import('../src/commands/merge.mjs');
+    const result = merge(TMP, 'merge-source', 'merge-target');
+    assert.equal(result.status, 'merged');
+    assert.ok(!existsSync(join(TMP, 'ideas', 'merge-source.md')));
+    assert.ok(existsSync(join(TMP, 'ideas', 'merge-target.md')));
+
+    const content = readFileSync(join(TMP, 'ideas', 'merge-target.md'), 'utf8');
+    assert.ok(content.includes('Merged from: merge-source'));
+  });
+
+  it('duplicates finds similar notes', async () => {
+    const { note } = await import('../src/commands/note.mjs');
+    note(TMP, 'API Design Guide', 'resource', { tags: ['api'] });
+    note(TMP, 'API Design Reference', 'resource', { tags: ['api'] });
+
+    const { duplicates } = await import('../src/commands/duplicates.mjs');
+    const result = duplicates(TMP, { threshold: 0.3 });
+    assert.ok(Array.isArray(result.pairs));
+  });
+
+  it('broken-links finds broken wikilinks', async () => {
+    const { Vault } = await import('../src/vault.mjs');
+    const vault = new Vault(TMP);
+    let content = vault.read('resources', 'api-design-guide.md');
+    // Replace entire related line (may already have auto-linked entries)
+    content = content.replace(/^related: .*$/m, 'related: ["[[non-existent-note]]"]');
+    vault.write('resources', 'api-design-guide.md', content);
+
+    const { brokenLinks } = await import('../src/commands/broken-links.mjs');
+    const result = brokenLinks(TMP);
+    assert.ok(result.broken.length > 0);
+    assert.ok(result.broken.some(b => b.target === 'non-existent-note'));
+  });
+
+  it('batch tag adds tags to matching notes', async () => {
+    const { batchTag } = await import('../src/commands/batch.mjs');
+    const result = batchTag(TMP, { type: 'resource', add: 'batch-added' });
+    assert.ok(result.updated > 0);
+
+    const { Vault } = await import('../src/vault.mjs');
+    const vault = new Vault(TMP);
+    const notes = vault.scanNotes();
+    const resources = notes.filter(n => n.type === 'resource');
+    assert.ok(resources.every(n => n.tags.includes('batch-added')));
+  });
+
+  it('batch archive archives matching notes', async () => {
+    const { batchArchive } = await import('../src/commands/batch.mjs');
+    const result = batchArchive(TMP, { tag: 'batch-added' });
+    assert.ok(result.archived > 0);
+  });
+
+  it('export exports notes to JSON', async () => {
+    const { exportNotes } = await import('../src/commands/export.mjs');
+    const outPath = join(TMP, 'test-export.json');
+    const result = exportNotes(TMP, { format: 'json', output: outPath });
+    assert.ok(result.exported > 0);
+    assert.ok(existsSync(outPath));
+    const data = JSON.parse(readFileSync(outPath, 'utf8'));
+    assert.ok(Array.isArray(data));
+  });
+
+  it('import imports notes from JSON', async () => {
+    const { writeFileSync } = await import('fs');
+    const importPath = join(TMP, 'test-import.json');
+    writeFileSync(importPath, JSON.stringify([
+      { title: 'Imported Note', type: 'idea', tags: ['imported'], body: 'Test body' },
+    ]));
+
+    const { importNotes } = await import('../src/commands/import.mjs');
+    const result = importNotes(TMP, importPath);
+    assert.equal(result.imported, 1);
+    assert.ok(existsSync(join(TMP, 'ideas', 'imported-note.md')));
+  });
+
+  it('search with regex finds patterns', async () => {
+    const { search } = await import('../src/commands/search.mjs');
+    const result = search(TMP, 'API.*Guide', { regex: true });
+    assert.ok(result.results.length > 0);
+  });
+
+  it('MCP server exposes v0.7 tools', async () => {
+    const { McpServer } = await import('../src/mcp-server.mjs');
+    const server = new McpServer(TMP);
+    const tools = server.handleMessage({
+      jsonrpc: '2.0', id: 10,
+      method: 'tools/list',
+      params: {},
+    });
+    const names = tools.result.tools.map(t => t.name);
+    assert.ok(names.includes('rename'));
+    assert.ok(names.includes('move'));
+    assert.ok(names.includes('merge'));
+    assert.ok(names.includes('duplicates'));
+    assert.ok(names.includes('broken_links'));
+    assert.ok(names.includes('batch_tag'));
+    assert.ok(names.includes('export'));
+  });
 });

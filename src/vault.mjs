@@ -111,20 +111,34 @@ export class Vault {
 
   // ── Search notes by keyword (relevance-scored) ─────
 
-  search(keyword, { type, tag, status } = {}) {
+  search(keyword, { type, tag, status, regex = false } = {}) {
     const notes = this.scanNotes({ includeBody: true });
-    const kw = keyword.toLowerCase();
     const results = [];
+
+    // Build matcher: regex mode or plain keyword
+    let matcher;
+    if (regex) {
+      try {
+        const re = new RegExp(keyword, 'i');
+        matcher = (text) => re.test(text);
+      } catch {
+        throw new Error(`Invalid regex: ${keyword}`);
+      }
+    } else {
+      const kw = keyword.toLowerCase();
+      matcher = (text) => text.toLowerCase().includes(kw);
+    }
+
     for (const n of notes) {
       if (type && n.type !== type) continue;
       if (tag && !n.tags.includes(tag)) continue;
       if (status && n.status !== status) continue;
       let score = 0;
-      if (n.title.toLowerCase().includes(kw)) score += 10;
-      if (n.file.toLowerCase().includes(kw)) score += 8;
-      if (n.tags.some(t => t.toLowerCase().includes(kw))) score += 5;
-      if (n.summary.toLowerCase().includes(kw)) score += 3;
-      if ((n.body || '').toLowerCase().includes(kw)) score += 1;
+      if (matcher(n.title)) score += 10;
+      if (matcher(n.file)) score += 8;
+      if (n.tags.some(t => matcher(t))) score += 5;
+      if (matcher(n.summary)) score += 3;
+      if (matcher(n.body || '')) score += 1;
       if (score > 0) {
         const { body, ...rest } = n;
         results.push({ ...rest, _score: score });

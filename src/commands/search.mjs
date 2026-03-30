@@ -3,14 +3,14 @@
  */
 import { Vault } from '../vault.mjs';
 
-export function search(vaultRoot, keyword, { type, tag, status } = {}) {
+export function search(vaultRoot, keyword, { type, tag, status, regex } = {}) {
   const vault = new Vault(vaultRoot);
 
   if (!keyword) {
-    throw new Error('Usage: obsidian-agent search <keyword> [--type TYPE] [--tag TAG] [--status STATUS]');
+    throw new Error('Usage: obsidian-agent search <keyword> [--type TYPE] [--tag TAG] [--status STATUS] [--regex]');
   }
 
-  const results = vault.search(keyword, { type, tag, status });
+  const results = vault.search(keyword, { type, tag, status, regex });
 
   if (!results.length) {
     console.log(`No results for "${keyword}"`);

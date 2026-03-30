@@ -2,17 +2,6 @@
 
 /**
  * obsidian-agent CLI — AI agent toolkit for Obsidian vaults
- *
- * Usage:
- *   obsidian-agent init <path>              Initialize a new vault
- *   obsidian-agent journal [--date DATE]    Create/open today's journal
- *   obsidian-agent note <title> <type>      Create a note (area/project/resource/idea)
- *   obsidian-agent capture <idea>           Quick idea capture
- *   obsidian-agent search <keyword>         Search notes
- *   obsidian-agent list [type]              List notes
- *   obsidian-agent review                   Generate weekly review
- *   obsidian-agent sync                     Rebuild indices
- *   obsidian-agent hook <event>             Handle agent hook events
  */
 
 const args = process.argv.slice(2);
@@ -29,7 +18,6 @@ function levenshtein(a, b) {
   return dp[m][n];
 }
 
-// Parse flags (supports --flag value and --flag=value)
 function parseFlags(args) {
   const flags = {};
   const positional = [];
@@ -49,7 +37,6 @@ function parseFlags(args) {
   return { flags, positional };
 }
 
-// Resolve vault root: --vault flag, OA_VAULT env, or cwd
 function resolveVault(flags) {
   return flags.vault || process.env.OA_VAULT || process.cwd();
 }
@@ -57,8 +44,6 @@ function resolveVault(flags) {
 async function main() {
   const { flags, positional } = parseFlags(args.slice(1));
   const jsonMode = flags.json === true;
-
-  // In JSON mode, suppress console.log and capture return values
   const origLog = console.log;
   if (jsonMode) console.log = () => {};
 
@@ -83,7 +68,6 @@ async function main() {
       const type = positional[1];
       if (!title || !type) {
         console.error('Usage: obsidian-agent note <title> <type>');
-        console.error('Types: area, project, resource, idea');
         process.exit(1);
       }
       const tags = flags.tags ? flags.tags.split(',') : [];
@@ -94,10 +78,7 @@ async function main() {
     case 'capture': {
       const { capture } = await import('../src/commands/capture.mjs');
       const idea = positional.join(' ');
-      if (!idea) {
-        console.error('Usage: obsidian-agent capture <idea text>');
-        process.exit(1);
-      }
+      if (!idea) { console.error('Usage: obsidian-agent capture <idea text>'); process.exit(1); }
       result = capture(resolveVault(flags), idea);
       break;
     }
@@ -105,9 +86,8 @@ async function main() {
     case 'search': {
       const { search } = await import('../src/commands/search.mjs');
       result = search(resolveVault(flags), positional[0], {
-        type: flags.type,
-        tag: flags.tag,
-        status: flags.status,
+        type: flags.type, tag: flags.tag, status: flags.status,
+        regex: flags.regex === true,
       });
       break;
     }
@@ -115,9 +95,7 @@ async function main() {
     case 'list': {
       const { list } = await import('../src/commands/list.mjs');
       result = list(resolveVault(flags), {
-        type: positional[0],
-        tag: flags.tag,
-        status: flags.status,
+        type: positional[0], tag: flags.tag, status: flags.status,
         recent: flags.recent ? parseInt(flags.recent) : undefined,
       });
       break;
@@ -172,10 +150,7 @@ async function main() {
     case 'update': {
       const { update } = await import('../src/commands/update.mjs');
       result = update(resolveVault(flags), positional[0], {
-        status: flags.status,
-        tags: flags.tags,
-        tag: flags.tag,
-        summary: flags.summary,
+        status: flags.status, tags: flags.tags, tag: flags.tag, summary: flags.summary,
       });
       break;
     }
@@ -207,10 +182,7 @@ async function main() {
     case 'patch': {
       const { patch } = await import('../src/commands/patch.mjs');
       result = patch(resolveVault(flags), positional[0], {
-        heading: flags.heading,
-        append: flags.append,
-        prepend: flags.prepend,
-        replace: flags.replace,
+        heading: flags.heading, append: flags.append, prepend: flags.prepend, replace: flags.replace,
       });
       break;
     }
@@ -230,6 +202,95 @@ async function main() {
       break;
     }
 
+    // ── v0.7 new commands ────────────────────────────
+
+    case 'rename': {
+      const { rename } = await import('../src/commands/rename.mjs');
+      if (!positional[0] || !positional[1]) {
+        console.error('Usage: obsidian-agent rename <note-name> <new-title>');
+        process.exit(1);
+      }
+      result = rename(resolveVault(flags), positional[0], positional[1]);
+      break;
+    }
+
+    case 'move': {
+      const { move } = await import('../src/commands/move.mjs');
+      if (!positional[0] || !positional[1]) {
+        console.error('Usage: obsidian-agent move <note-name> <new-type>');
+        process.exit(1);
+      }
+      result = move(resolveVault(flags), positional[0], positional[1]);
+      break;
+    }
+
+    case 'merge': {
+      const { merge } = await import('../src/commands/merge.mjs');
+      if (!positional[0] || !positional[1]) {
+        console.error('Usage: obsidian-agent merge <source-note> <target-note>');
+        process.exit(1);
+      }
+      result = merge(resolveVault(flags), positional[0], positional[1]);
+      break;
+    }
+
+    case 'duplicates': {
+      const { duplicates } = await import('../src/commands/duplicates.mjs');
+      result = duplicates(resolveVault(flags), {
+        threshold: flags.threshold ? parseFloat(flags.threshold) : undefined,
+      });
+      break;
+    }
+
+    case 'broken-links': {
+      const { brokenLinks } = await import('../src/commands/broken-links.mjs');
+      result = brokenLinks(resolveVault(flags));
+      break;
+    }
+
+    case 'batch': {
+      const subcmd = positional[0];
+      if (subcmd === 'update') {
+        const { batchUpdate } = await import('../src/commands/batch.mjs');
+        result = batchUpdate(resolveVault(flags), {
+          type: flags.type, tag: flags.tag, status: flags.status,
+          setStatus: flags['set-status'], setSummary: flags['set-summary'],
+        });
+      } else if (subcmd === 'tag') {
+        const { batchTag } = await import('../src/commands/batch.mjs');
+        result = batchTag(resolveVault(flags), {
+          type: flags.type, tag: flags.tag, status: flags.status,
+          add: flags.add, remove: flags.remove,
+        });
+      } else if (subcmd === 'archive') {
+        const { batchArchive } = await import('../src/commands/batch.mjs');
+        result = batchArchive(resolveVault(flags), {
+          type: flags.type, tag: flags.tag, status: flags.status,
+        });
+      } else {
+        console.error('Usage: obsidian-agent batch <update|tag|archive> [--type TYPE] [--tag TAG]');
+        process.exit(1);
+      }
+      break;
+    }
+
+    case 'export': {
+      const { exportNotes } = await import('../src/commands/export.mjs');
+      result = exportNotes(resolveVault(flags), {
+        type: flags.type, tag: flags.tag, status: flags.status,
+        format: flags.format, output: positional[0],
+      });
+      break;
+    }
+
+    case 'import': {
+      const { importNotes } = await import('../src/commands/import.mjs');
+      result = importNotes(resolveVault(flags), positional[0]);
+      break;
+    }
+
+    // ── existing utility commands ────────────────────
+
     case 'setup': {
       const { setup } = await import('../src/commands/setup.mjs');
       result = setup(positional[0]);
@@ -239,7 +300,7 @@ async function main() {
     case 'watch': {
       const { watch } = await import('../src/commands/watch.mjs');
       result = watch(resolveVault(flags));
-      return; // Keeps running
+      return;
     }
 
     case 'health': {
@@ -252,7 +313,7 @@ async function main() {
       const { McpServer } = await import('../src/mcp-server.mjs');
       const server = new McpServer(resolveVault(flags));
       server.start();
-      return; // Don't exit — server runs indefinitely
+      return;
     }
 
     case 'hook': {
@@ -264,9 +325,7 @@ async function main() {
       } else if (event === 'daily-backfill') {
         const { dailyBackfill } = await import('../src/commands/hook.mjs');
         dailyBackfill(vaultRoot, {
-          date: flags.date,
-          scanRoot: flags['scan-root'],
-          force: flags.force === true,
+          date: flags.date, scanRoot: flags['scan-root'], force: flags.force === true,
         });
       } else {
         console.error(`Unknown hook event: ${event}`);
@@ -303,7 +362,7 @@ Commands:
   read <note>              Read a note's content
   recent [days]            Show recently updated notes (default: 7 days)
   delete <note>            Delete a note and clean up references
-  search <keyword>         Full-text search across all notes
+  search <keyword>         Full-text search (supports --regex)
   list [type]              List notes with filters
   review                   Generate weekly review
   review monthly           Generate monthly review
@@ -317,7 +376,21 @@ Commands:
   patch <note>             Edit a section by heading
   tag list                 List all tags with counts
   tag rename <old> <new>   Rename a tag across the vault
-  setup [vault-path]       Install MCP server + /obsidian skill for Claude Code
+
+  rename <note> <title>    Rename a note and update all references
+  move <note> <type>       Move note to a different type/directory
+  merge <source> <target>  Merge source note into target
+  duplicates               Find potentially duplicate notes
+  broken-links             Find broken [[wikilinks]]
+
+  batch update [filters]   Batch update notes (--set-status, --set-summary)
+  batch tag [filters]      Batch add/remove tags (--add, --remove)
+  batch archive [filters]  Batch archive matching notes
+
+  export [output]          Export notes (--format json|markdown)
+  import <file>            Import notes from JSON or markdown
+
+  setup [vault-path]       Install MCP server + skill
   watch                    Auto-rebuild indices on file changes
   health                   Vault health scoring report
   serve                    Start MCP server (stdio transport)
@@ -330,38 +403,24 @@ Flags:
   --status <status>        Filter by status
   --recent <days>          Show notes updated in last N days
   --date <YYYY-MM-DD>      Specify date for journal/review
-  --year <YYYY>            Year for monthly review
-  --month <MM>             Month for monthly review (1-12)
-  --summary <text>         Set note summary
-  --tags <a,b,c>           Set tags
+  --regex                  Treat search keyword as regex
+  --threshold <0-1>        Duplicate similarity threshold (default: 0.5)
+  --format <json|md>       Export format (default: json)
+  --set-status <status>    For batch update
+  --add <tag>              For batch tag (add tag)
+  --remove <tag>           For batch tag (remove tag)
   --json                   Output as JSON (machine-readable)
-  --heading <name>         Target heading (for patch)
-  --append <text>          Append to section (for patch)
-  --prepend <text>         Prepend to section (for patch)
-
-Hook events:
-  session-stop             Append session summary to journal
-  daily-backfill           Create journal from git history
-
-Environment:
-  OA_VAULT                 Default vault path
-  OA_TIMEZONE              Timezone for dates (default: UTC)
-
-Examples:
-  obsidian-agent init ~/my-vault
-  obsidian-agent journal
-  obsidian-agent note "Learn Rust" project --tags "coding,learning"
-  obsidian-agent capture "Use Rust to rewrite the bottleneck module"
-  obsidian-agent search "API" --type resource
-  obsidian-agent list project --status active
-  obsidian-agent review
-  obsidian-agent sync
 `);
       break;
     }
 
     default: {
-      const cmds = ['init','journal','note','capture','search','list','review','sync','read','delete','recent','backlinks','update','archive','stats','graph','orphans','patch','tag','watch','health','setup','serve','hook','version','help'];
+      const cmds = [
+        'init','journal','note','capture','search','list','review','sync','read','delete',
+        'recent','backlinks','update','archive','stats','graph','orphans','patch','tag',
+        'watch','health','setup','serve','hook','version','help',
+        'rename','move','merge','duplicates','broken-links','batch','export','import',
+      ];
       const similar = cmds.filter(c => c.startsWith(command?.slice(0, 2) || '') || levenshtein(c, command) <= 2);
       console.error(`Unknown command: ${command}`);
       if (similar.length) console.error(`Did you mean: ${similar.join(', ')}?`);
@@ -370,7 +429,6 @@ Examples:
     }
   }
 
-  // JSON output mode
   if (jsonMode && result !== undefined) {
     console.log = origLog;
     console.log(JSON.stringify(result, null, 2));
