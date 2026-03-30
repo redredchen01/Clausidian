@@ -804,6 +804,20 @@ const COMMANDS = [
     },
   },
   {
+    name: 'smart-suggest',
+    description: 'AI-powered context-aware suggestions for vault improvements',
+    usage: 'smart-suggest [--limit N] [--type TYPE] [--days N]',
+    mcpSchema: {
+      limit: { type: 'number', description: 'Number of suggestions (default: 10)' },
+      type: { type: 'string', enum: ['area', 'project', 'resource', 'idea'], description: 'Filter by note type' },
+      days: { type: 'number', description: 'Look back N days (default: 7)' },
+    },
+    async run(root, flags, pos) {
+      const SmartSuggest = await import('./commands/smart-suggest.mjs');
+      return SmartSuggest.default.run(root, flags, pos);
+    },
+  },
+  {
     name: 'launchd',
     description: 'Install/uninstall macOS LaunchAgents for automated vault maintenance',
     usage: 'launchd <install|uninstall|status>',
