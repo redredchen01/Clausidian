@@ -77,6 +77,9 @@ description: |
 | 字数统计 | `count` | `{type?}` — 按类型统计字数/行数 |
 | 待办事项 | `agenda` | `{days?: 7, all?: false}` — 从日志和项目提取未完成 TODO |
 | 变更日志 | `changelog` | `{days?: 7}` — 按日期分组的变更记录 |
+| 图谱探索 | `neighbors` | `{note, depth?: 2}` — N 跳内的关联笔记 |
+| 随机笔记 | `random` | `{count?: 1, type?, status?}` — 偶遇式发现 |
+| 聚焦建议 | `focus` | `{}` — 按优先级建议下一步工作 |
 | 周回顾 | **CLI:** `obsidian-agent review` | |
 | 月回顾 | **CLI:** `obsidian-agent review monthly` | |
 | 导入笔记 | **CLI:** `obsidian-agent import <file>` | |

@@ -140,6 +140,16 @@ obsidian-agent agenda --all
 
 # Vault changelog
 obsidian-agent changelog --days 14
+
+# Graph exploration
+obsidian-agent neighbors "my-project" --depth 3
+
+# Serendipity
+obsidian-agent random 3
+obsidian-agent random --type idea
+
+# What to work on
+obsidian-agent focus
 ```
 
 ## Vault Structure
@@ -251,6 +261,9 @@ related: ["[[other-note]]", "[[another-note]]"]
 | `count` | Word/line/note count statistics (`--type`) |
 | `agenda` | Pending TODO items from journals & projects (`--days`, `--all`) |
 | `changelog [output]` | Generate vault changelog from recent activity (`--days`) |
+| `neighbors <note>` | Show connected notes within N hops (`--depth`) |
+| `random [count]` | Pick random note(s) for serendipitous review |
+| `focus` | Suggest what to work on next (pinned > momentum > stale > ideas) |
 | `health` | Vault health scoring (completeness, connectivity, freshness, organization) |
 | `setup [vault-path]` | Install MCP server + `/obsidian` skill for Claude Code |
 | `watch` | Auto-rebuild indices on file changes |
@@ -278,6 +291,7 @@ related: ["[[other-note]]", "[[another-note]]"]
 | `--add <tag>` | Tag to add (batch tag) |
 | `--remove <tag>` | Tag to remove (batch tag) |
 | `--all` | Scan all notes for agenda (not just recent) |
+| `--depth <N>` | Max hops for neighbors (default: 2) |
 | `--dry-run` | Preview changes without applying (for link, relink) |
 | `--days <N>` | Days to look back for timeline (default: 30) |
 | `--limit <N>` | Max entries for timeline (default: 50) |
@@ -370,7 +384,7 @@ Run as an [MCP](https://modelcontextprotocol.io/) server for AI assistants (Clau
 }
 ```
 
-Exposes 41 tools: journal, note, capture, search, list, read, recent, delete, backlinks, update, archive, patch, stats, orphans, graph, health, sync, tag_list, tag_rename, rename, move, merge, duplicates, broken_links, batch_update, batch_tag, batch_archive, export.
+Exposes 44 tools: journal, note, capture, search, list, read, recent, delete, backlinks, update, archive, patch, stats, orphans, graph, health, sync, tag_list, tag_rename, rename, move, merge, duplicates, broken_links, batch_update, batch_tag, batch_archive, export, neighbors, random, focus, and more.
 
 ## Vault Health
 
