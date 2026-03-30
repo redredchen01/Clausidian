@@ -6,11 +6,10 @@ import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
 import { VaultRegistry } from '../src/vault-registry.mjs';
 
 test('VaultRegistry', async (t) => {
-  let tmpDir, registryPath, vaultPath1, vaultPath2;
+  let tmpDir, vaultPath1, vaultPath2;
 
   t.before(() => {
     tmpDir = mkdtempSync(join(tmpdir(), 'vault-registry-test-'));
-    registryPath = join(tmpDir, 'vaults.json');
     vaultPath1 = join(tmpDir, 'vault1');
     vaultPath2 = join(tmpDir, 'vault2');
     mkdirSync(vaultPath1, { recursive: true });
@@ -26,14 +25,16 @@ test('VaultRegistry', async (t) => {
   });
 
   await t.test('load creates empty registry if file missing', async () => {
-    const registry = new VaultRegistry(registryPath);
+    const path = join(tmpDir, 'empty-registry.json');
+    const registry = new VaultRegistry(path);
     await registry.load();
     assert.equal(registry.vaults.length, 0);
     assert.equal(registry.defaultVaultName, null);
   });
 
   await t.test('register adds vault and sets as default if first', async () => {
-    const registry = new VaultRegistry(registryPath);
+    const path = join(tmpDir, 'first-vault-registry.json');
+    const registry = new VaultRegistry(path);
     await registry.load();
     await registry.register('team-kb', vaultPath1);
     assert.equal(registry.vaults.length, 1);
@@ -42,7 +43,8 @@ test('VaultRegistry', async (t) => {
   });
 
   await t.test('register throws on duplicate name', async () => {
-    const registry = new VaultRegistry(registryPath);
+    const path = join(tmpDir, 'dup-vault-registry.json');
+    const registry = new VaultRegistry(path);
     await registry.load();
     await registry.register('personal', vaultPath1);
     await assert.rejects(
@@ -52,7 +54,8 @@ test('VaultRegistry', async (t) => {
   });
 
   await t.test('register throws on missing path', async () => {
-    const registry = new VaultRegistry(registryPath);
+    const path = join(tmpDir, 'missing-path-registry.json');
+    const registry = new VaultRegistry(path);
     await registry.load();
     await assert.rejects(
       () => registry.register('invalid', join(tmpDir, 'nonexistent')),
@@ -61,7 +64,8 @@ test('VaultRegistry', async (t) => {
   });
 
   await t.test('setDefault updates default vault', async () => {
-    const registry = new VaultRegistry(registryPath);
+    const path = join(tmpDir, 'setdefault-registry.json');
+    const registry = new VaultRegistry(path);
     await registry.load();
     await registry.register('vault-a', vaultPath1);
     await registry.register('vault-b', vaultPath2);
@@ -71,7 +75,8 @@ test('VaultRegistry', async (t) => {
   });
 
   await t.test('setDefault throws on invalid vault', async () => {
-    const registry = new VaultRegistry(registryPath);
+    const path = join(tmpDir, 'setdefault-invalid-registry.json');
+    const registry = new VaultRegistry(path);
     await registry.load();
     await registry.register('test', vaultPath1);
     await assert.rejects(
@@ -81,7 +86,8 @@ test('VaultRegistry', async (t) => {
   });
 
   await t.test('getByName returns vault or null', async () => {
-    const registry = new VaultRegistry(registryPath);
+    const path = join(tmpDir, 'getbyname-registry.json');
+    const registry = new VaultRegistry(path);
     await registry.load();
     await registry.register('test-vault', vaultPath1);
     const vault = registry.getByName('test-vault');
@@ -91,7 +97,8 @@ test('VaultRegistry', async (t) => {
   });
 
   await t.test('getDefault returns default vault or null', async () => {
-    const registry = new VaultRegistry(registryPath);
+    const path = join(tmpDir, 'getdefault-registry.json');
+    const registry = new VaultRegistry(path);
     await registry.load();
     assert.equal(registry.getDefault(), null);
     await registry.register('default-test', vaultPath1);
@@ -101,8 +108,8 @@ test('VaultRegistry', async (t) => {
   });
 
   await t.test('list returns all vaults with default marker', async () => {
-    const testRegistry = join(tmpDir, 'list-test.json');
-    const registry = new VaultRegistry(testRegistry);
+    const path = join(tmpDir, 'list-registry.json');
+    const registry = new VaultRegistry(path);
     await registry.load();
     await registry.register('vault1', vaultPath1);
     await registry.register('vault2', vaultPath2);
@@ -113,8 +120,8 @@ test('VaultRegistry', async (t) => {
   });
 
   await t.test('resolveVaultPath uses --vault flag precedence', async () => {
-    const testRegistry = join(tmpDir, 'resolve-test.json');
-    const registry = new VaultRegistry(testRegistry);
+    const path = join(tmpDir, 'resolve-registry.json');
+    const registry = new VaultRegistry(path);
     await registry.load();
     await registry.register('team', vaultPath1);
     await registry.register('personal', vaultPath2);
@@ -123,7 +130,8 @@ test('VaultRegistry', async (t) => {
   });
 
   await t.test('resolveVaultPath throws on unknown vault', async () => {
-    const registry = new VaultRegistry(registryPath);
+    const path = join(tmpDir, 'resolve-unknown-registry.json');
+    const registry = new VaultRegistry(path);
     await registry.load();
     assert.throws(
       () => registry.resolveVaultPath('unknown'),
@@ -135,7 +143,8 @@ test('VaultRegistry', async (t) => {
     const originalOA = process.env.OA_VAULT;
     try {
       process.env.OA_VAULT = vaultPath1;
-      const registry = new VaultRegistry(registryPath);
+      const path = join(tmpDir, 'resolve-env-registry.json');
+      const registry = new VaultRegistry(path);
       await registry.load();
       const resolved = registry.resolveVaultPath();
       assert.equal(resolved, vaultPath1);
@@ -152,7 +161,8 @@ test('VaultRegistry', async (t) => {
     const originalOA = process.env.OA_VAULT;
     try {
       delete process.env.OA_VAULT;
-      const registry = new VaultRegistry(registryPath);
+      const path = join(tmpDir, 'resolve-default-registry.json');
+      const registry = new VaultRegistry(path);
       await registry.load();
       await registry.register('default-vault', vaultPath1);
       const resolved = registry.resolveVaultPath();
@@ -168,8 +178,8 @@ test('VaultRegistry', async (t) => {
     const originalOA = process.env.OA_VAULT;
     try {
       delete process.env.OA_VAULT;
-      const newRegistryPath = join(tmpDir, 'vaults-empty.json');
-      const registry = new VaultRegistry(newRegistryPath);
+      const path = join(tmpDir, 'resolve-none-registry.json');
+      const registry = new VaultRegistry(path);
       await registry.load();
       assert.throws(
         () => registry.resolveVaultPath(),
@@ -183,12 +193,12 @@ test('VaultRegistry', async (t) => {
   });
 
   await t.test('save and load persist registry', async () => {
-    const persistPath = join(tmpDir, 'vaults-persist.json');
-    const registry1 = new VaultRegistry(persistPath);
+    const path = join(tmpDir, 'persist-registry.json');
+    const registry1 = new VaultRegistry(path);
     await registry1.load();
     await registry1.register('persist-test', vaultPath1);
 
-    const registry2 = new VaultRegistry(persistPath);
+    const registry2 = new VaultRegistry(path);
     await registry2.load();
     assert.equal(registry2.vaults.length, 1);
     assert.equal(registry2.vaults[0].name, 'persist-test');
@@ -196,9 +206,9 @@ test('VaultRegistry', async (t) => {
   });
 
   await t.test('load handles corrupted registry gracefully', async () => {
-    const corruptPath = join(tmpDir, 'vaults-corrupt.json');
-    writeFileSync(corruptPath, '{ invalid json }');
-    const registry = new VaultRegistry(corruptPath);
+    const path = join(tmpDir, 'corrupt-registry.json');
+    writeFileSync(path, '{ invalid json }');
+    const registry = new VaultRegistry(path);
     await assert.rejects(
       () => registry.load(),
       /Failed to load vault registry/

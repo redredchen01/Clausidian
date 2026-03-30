@@ -2,6 +2,22 @@
 
 All notable changes to Clausidian are documented in this file.
 
+## [v3.3.0] - 2026-03-30
+
+### Added
+
+- **VaultRegistry** (`src/vault-registry.mjs`) — Global persistent vault registry at `$HOME/.clausidian/vaults.json`
+  - Register named vaults, set default, resolve by name or env fallback
+  - 17 tests covering register, setDefault, getDefault, list, resolveVaultPath, save/load, and error handling
+
+### Fixed
+
+- **`_rgPrefilter` robustness** — Add `--` separator before search keyword to prevent patterns starting with `-` (e.g. `- [ ]`) from being misinterpreted as rg flags; treat exit status ≥ 2 as rg unavailable (fallback to full scan)
+
+### Performance
+
+- **Ripgrep acceleration for `agenda`** — Pre-filter files containing `- [ ]` with `rg` before loading body content, reducing reads to only matched files
+
 ## [v3.2.0] - 2026-03-30
 
 ### Added - Performance Optimization
