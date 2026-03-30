@@ -9,8 +9,9 @@ import { SimilarityEngine } from './similarity-engine.mjs';
 const DEFAULT_DIRS = ['areas', 'projects', 'resources', 'journal', 'ideas'];
 
 export class Vault {
-  constructor(root, { dirs, searchCache = null } = {}) {
+  constructor(root, { dirs, vaultName = null, searchCache = null } = {}) {
     this.root = resolve(root);
+    this.vaultName = vaultName;
     this.dirs = dirs || this._detectDirs() || DEFAULT_DIRS;
     this._notesCache = null;
     this._notesCacheWithBody = null;
