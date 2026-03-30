@@ -1,413 +1,528 @@
-# session-wrap v3.5
+# Session Wrap Skill v3.9.0
 
-**通用 AI Agent 記憶持久化 + 多 Agent 協作工具** — 對話結束自動保存上下文，下次無縫接續。v3.5 整合 7 個 Agent 協作工具。支援 19+ AI 平台。
+**Agent-native session management for seamless multi-agent coordination.**
 
-Universal memory persistence + multi-agent coordination for every AI agent. Say "wrap up" — context survives to the next session.
+Automatically persist project context, track decisions, and enable agents to share memory for long-term coherent development.
 
-[![npm](https://img.shields.io/npm/v/session-wrap-skill)](https://www.npmjs.com/package/session-wrap-skill)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+Works with Claude Code, Cursor, Windsurf, Cline, Aider, and any AI agent.
 
----
+## ✨ What's New (v3.9.0)
 
-## 痛點 / The Problem
+**Phase 9:** Dashboard Backend API Server — historical release notes for the session-wrap stack now housed under `projects/tools/`.
 
-每次開新 AI 對話：
+- Express server on `:3001` with localhost-only CORS
+- Task CRUD via single-writer model (delegates to `agent-tasks.sh`)
+- Decision search with keyword, agent, and date range filters
+- Memory stats with async directory walk and 30s cache
+- Agent sync status with active detection (30min threshold)
+- 10 automated tests, all passing
 
-```
-你：我們在做 XXX 專案，用 YYY 技術，上次做到 ZZZ...
-你：對，那個 bug 是因為 AAA，我們決定用 BBB 方案...
-```
+### Previous Releases
 
-**重複解釋上下文 = 浪費時間 + 遺漏關鍵資訊。**
+**v3.8.0 (Phase 8):** Enterprise features — RBAC, analytics, integrations, caching
 
-## 解法 / The Solution
+**v3.7.0 (Phase 7):** Interactive dashboard — WebSocket sync, task editing, search, team collaboration
 
-```
-你：收工
-```
+### Agent Tools + Automation (7 tools + 3 automation scripts)
 
-AI 自動掃描 → 記憶寫入 → 維護壓縮 → 下次自動載入。**零手動。**
+**7 Agent Coordination Tools:**
 
----
+| Tool | Purpose | Usage |
+|------|---------|-------|
+| **agent-context** | Auto-inject project context on startup | `agent-context` |
+| **agent-share** | Cross-agent memory sharing | `agent-share write/read/list` |
+| **agent-decision** | Decision logging + reasoning chains | `agent-decision log/list/search` |
+| **agent-checkpoint** | Checkpoint & rollback system | `agent-checkpoint save/restore` |
+| **agent-knowledge** | Project knowledge base | `agent-knowledge set/get/list` |
+| **agent-optimize** | Smart memory optimization | `agent-optimize stats/archive/prune` |
+| **agent-tasks** | Task dependency graph | `agent-tasks add/done/next/claim` |
 
-## 一鍵安裝 / One-Click Install
+**3 Automation Scripts (Phase 6):**
 
-### 方法一：npx（推薦，自動偵測平台）
+| Script | Purpose | Speed |
+|--------|---------|-------|
+| **setup.sh** | One-command project initialization | 15 min → 2 min |
+| **deploy-railway.sh** | Automated Railway backend deployment | Manual → 5 min |
+| **docs/** | Product docs, guides, and archived rollout notes | Consolidated in workspace docs |
 
-```bash
-npx session-wrap-skill install
-```
+## Features
 
-自動偵測你用的 agent，安裝到正確位置。輸出範例：
+- 🤖 **Agent-native** — 7 tools designed for multi-agent coordination
+- 🧠 **Decision tracking** — Remember *why* decisions were made
+- 🔄 **Context injection** — Agents load project context automatically
+- 👥 **Memory sharing** — Agent A's output feeds to Agent B
+- 📋 **Task coordination** — Avoid conflicts with dependency graph
+- 📚 **Knowledge base** — Persistent project conventions & architecture
+- ⚙️ **Auto-optimize** — Keep memory lean for context windows
+- 🔐 **Git-backed** — Checkpoints with full rollback support
+- 🎯 **Web Dashboard** — Historical session-wrap dashboard capability, now moved out of the workspace root
+- ⚡ **Setup Automation** — New user setup: 15 min → 2 min
+- 🚀 **One-Click Deployment** — Deploy backend to Railway in 5 minutes
 
-```
-🧠 session-wrap-skill installer
+## 📚 Documentation
 
-Detected 2 platform(s):
+Start here based on your needs:
 
-  ✅ Claude Code → ~/.claude/skills/session-wrap/SKILL.md
-  ✅ Cursor → .cursor/rules/session-wrap.mdc
-
-✨ Done! Say '收工' or 'wrap up' to save context at session end.
-```
-
-### 方法二：Shell 腳本（不需要 Node.js）
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/redredchen01/session-wrap-skill/main/install.sh | bash
-```
-
-### 方法三：npm 安裝
-
-```bash
-npm install session-wrap-skill
-npx session-wrap-skill install
-```
-
-### 方法四：手動安裝
-
-```bash
-git clone https://github.com/redredchen01/session-wrap-skill.git
-```
-
-各平台手動複製：
-
-```bash
-# Claude Code
-mkdir -p ~/.claude/skills/session-wrap
-cp session-wrap-skill/SKILL.md ~/.claude/skills/session-wrap/SKILL.md
-
-# Cursor
-mkdir -p .cursor/rules
-cp session-wrap-skill/SKILL.md .cursor/rules/session-wrap.mdc
-
-# Cline / Roo Code
-cp session-wrap-skill/SKILL.md .cline/rules/session-wrap.md
-cp session-wrap-skill/SKILL.md .roo/rules/session-wrap.md
-
-# OpenClaw
-mkdir -p ~/.openclaw/skills/session-wrap
-cp session-wrap-skill/SKILL.md ~/.openclaw/skills/session-wrap/SKILL.md
-
-# Codex / Gemini CLI / Amp / Copilot / 其他
-cat session-wrap-skill/SKILL.md >> AGENTS.md   # 或 GEMINI.md / AGENT.md
-```
-
-### 移除 / Uninstall
-
-```bash
-npx session-wrap-skill uninstall
-```
-
----
-
-## 支援平台 / Supported Agents (19+)
-
-### 有原生記憶的 Agent
-
-| Agent | 記憶路徑 | 備註 |
-|-------|---------|------|
-| **Claude Code** | `~/.claude/projects/<hash>/memory/` | 完整原生支援 |
-| **Windsurf** | 內建 Memories DB + `.ai-memory/` | 雙寫 |
-| **Cline** | `.cline/memory/` | Memory Bank |
-| **Roo Code** | `.roo/memory/` | 繼承 Cline |
-
-### 無原生記憶（Bootstrap 自動注入）
-
-| Agent | 指令檔 | Bootstrap |
-|-------|--------|-----------|
-| **Codex** (OpenAI) | `AGENTS.md` | ✅ 自動 |
-| **Gemini CLI** | `GEMINI.md` | ✅ 自動 |
-| **Amp** (Sourcegraph) | `AGENT.md` | ✅ 自動 |
-| **GitHub Copilot** | `.github/copilot-instructions.md` | ✅ 自動 |
-| **Cursor** | `.cursor/rules/` | ✅ 自動 |
-| **Continue.dev** | `.continuerules` | ✅ 自動 |
-| **Aider** | `.aider.conf.yml` | ✅ 自動 |
-| **OpenHands** | `.openhands/config.toml` | ✅ 自動 |
-| **Amazon Q** | `.amazonq/rules/` | ✅ 自動 |
-| **Tabnine** | IDE settings | 手動 |
-| **Supermaven** | IDE settings | 手動 |
-
-### AI 助理平台
-
-| Agent | 記憶路徑 |
+| Guide | Purpose |
 |-------|---------|
-| **[OpenClaw](https://github.com/openclaw/openclaw)** | `~/.openclaw/workspace/memory/` |
+| **[README.md](README.md)** (you are here) | Feature overview & quick reference |
+| **[docs/QUICKSTART-EXAMPLES.md](docs/QUICKSTART-EXAMPLES.md)** | 3 real-world copy-paste examples |
+| **[docs/AGENT-WORKFLOW.md](docs/AGENT-WORKFLOW.md)** | 6 workflow patterns + best practices |
+| **[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)** | Claude Code, Cursor, Windsurf setup |
+| **[docs/PRODUCTION-SETUP.md](docs/PRODUCTION-SETUP.md)** | Deploy backend to Railway/Docker/VPS |
+| **[docs/DASHBOARD-DEPLOYMENT-GUIDE.md](docs/DASHBOARD-DEPLOYMENT-GUIDE.md)** | Historical dashboard/backend deployment notes |
+| **[docs/VISUALIZATION-GUIDE.md](docs/VISUALIZATION-GUIDE.md)** | Visualize tasks, decisions, memory, timeline |
+| **[docs/FAQ-TROUBLESHOOTING.md](docs/FAQ-TROUBLESHOOTING.md)** | Common issues & solutions |
+| **[docs/BENCHMARKS.md](docs/BENCHMARKS.md)** | Productivity metrics & time savings |
+| **[docs/MIGRATION.md](docs/MIGRATION.md)** | Upgrade from v3.3 to v3.4.0 |
 
-### 雲端 Agent
+### Real-World Workflow Guides
 
-| Agent | 方式 |
-|-------|------|
-| **Devin** | `.ai-memory/` in repo |
-| **bolt.new** | `.ai-memory/` in project |
+See how session-wrap works in practice across different team structures:
 
----
+| Scenario | Guide | Team Size | Key Features |
+|----------|-------|-----------|--------------|
+| **Async Open Source** | [docs/OPENSOURCE-COLLABORATION.md](docs/OPENSOURCE-COLLABORATION.md) | 4+ distributed | Self-onboarding, decision logging, task coordination |
+| **Early-Stage Startup** | [docs/STARTUP-TEAM-WORKFLOW.md](docs/STARTUP-TEAM-WORKFLOW.md) | 3-5 people | Daily standups, async code review, shared decisions |
+| **Enterprise Multi-Team** | [docs/ENTERPRISE-ADOPTION.md](docs/ENTERPRISE-ADOPTION.md) | 50+ people | Cross-team coordination, knowledge sharing, incident learning |
+| **Solo Developer** | [docs/SOLO-DEVELOPER.md](docs/SOLO-DEVELOPER.md) | 1 person | Context switching, project management, client billing |
 
-## 使用方式 / Usage
+### Quick Path to Success
 
-用任何語言說「結束」：
+1. **First 5 min:** Read [docs/QUICKSTART-EXAMPLES.md](docs/QUICKSTART-EXAMPLES.md) → Copy Example 1
+2. **First session:** Follow Example 1, save your first session wrap
+3. **Multi-agent:** When ready, follow [docs/AGENT-WORKFLOW.md](docs/AGENT-WORKFLOW.md) Pattern 2
+4. **Team setup:** See [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) for your editor
+5. **Real-world:** Find your scenario in the workflow guides above
 
-| 語言 | 觸發詞 |
-|------|--------|
-| 中文 | 收工、結束、先到這、今天先這樣、下次繼續 |
-| English | wrap up, done for now, save context, end session |
-| 日本語 | 終了、今日はここまで |
-| 한국어 | 마무리, 오늘은 여기까지 |
+## Upgrade from v3.3 → v3.4.0
 
-### 輸出範例
+See **[docs/MIGRATION.md](docs/MIGRATION.md)** for step-by-step upgrade guide.
 
-```
-記憶已更新：
-
-| 檔案 | 動作 | 內容 |
-|------|------|------|
-| project_myapp.md | 更新 | v2.1 完成，auth 重構進行中 |
-| feedback_testing.md | 新增 | 整合測試用 real DB |
-| reference_apis.md | 壓縮 | 58→25 行，移除過期歷史 |
-
-維護: 壓縮 1 檔 | 過期 0 檔 | 合併 0 檔
-平台: Claude Code | 記憶路徑: ~/.claude/projects/.../memory/
-```
-
----
-
-## v3.5 新功能：Agent 協作工具
-
-從 master 分支整合 7 個 agent-native 工具，支援多 Agent 工作流的記憶共享、決策追蹤、任務協作。
-
-### 7 個 Agent 工具
-
-| 工具 | 用途 | 指令 |
-|------|------|------|
-| **agent-context** | 啟動時自動注入專案上下文 | `agent-context` |
-| **agent-share** | 跨 Agent 記憶共享 | `agent-share write/read/list` |
-| **agent-decision** | 決策日誌 + 推理鏈 | `agent-decision log/list/search` |
-| **agent-checkpoint** | 檢查點與回滾 | `agent-checkpoint save/restore` |
-| **agent-knowledge** | 專案知識庫管理 | `agent-knowledge set/get/list` |
-| **agent-optimize** | 記憶智慧壓縮 | `agent-optimize stats/archive/prune` |
-| **agent-tasks** | 任務依賴圖（避免衝突） | `agent-tasks add/done/next/claim` |
-
-所有工具支援環境變數配置：
-- `YD_MEMORY` — 記憶目錄路徑（預設 `~/.claude/memory`）
-- `YD_WORKSPACE` — 工作區根目錄（預設當前目錄）
+**Note:** v3.4.0 is fully backward compatible. No breaking changes.
 
 ---
 
-## v3.1 功能：Context Window 智慧管理
+## Installation
 
-不用等到「收工」才存。AI 會**持續監控**上下文使用量，自動在關鍵節點保存記憶。
+### npm (Recommended)
 
-### 三段式閾值機制
-
-```
-上下文使用量
-─────────────────────────────────────────────────
- 0%                    50%              75%    100%
- │     🟢 正常工作      │  🟠 檢查點存檔  │ 🔴 完整存檔 │
- │                     │  (輕量快速)     │ (含維護壓縮) │
- │                     │                │ → 建議開新對話│
+```bash
+npm install -g session-wrap-skill
 ```
 
-| 閾值 | 行為 |
-|------|------|
-| **~50%** | 🟠 **自動檢查點** — 快速保存當前進度（跳過維護），然後繼續工作 |
-| **~75%** | 🔴 **完整存檔 + 提醒** — 執行全套 session-wrap，建議開新對話 |
-| **> 80%** | 🔴 **緊急模式** — 最小化回應，優先保存所有未存的上下文 |
-
-### 怎麼判斷上下文用了多少？
-
-AI 沒有精確 token 計數器，但可以從訊號估算：
-
-| 訊號 | 說明 |
-|------|------|
-| 對話輪次 | 30+ 輪通常已過半 |
-| 工具呼叫數 | 60+ 次通常已過半 |
-| 系統壓縮訊息 | 看到 `[compacted]` = 已經被壓縮，立刻存檔 |
-| 重複讀檔 | 重新讀之前讀過的檔案 = 早期 context 被裁剪 |
-
-### 各階段行為調整
-
-| 階段 | 行為 |
-|------|------|
-| **早期 (< 30%)** | 自由探索、完整讀檔、詳細解釋 |
-| **中期 (30-60%)** | 精確定位讀取、合併工具呼叫、精簡回覆 |
-| **後期 (60%+)** | 只讀必要內容、引用記憶不重讀、主動存檔 |
-
----
-
-## v3.0 功能：記憶維護引擎
-
-### 自動壓縮
-
-記憶檔超過 50 行時自動壓縮：保留核心事實，歷史只留最近 3 條，90 天以前的歷史自動刪除。
-
-### 過期機制
-
-| 記憶類型 | 預設有效期 | 原因 |
-|---------|-----------|------|
-| project | 30 天 | 專案狀態頻繁變動 |
-| feedback | 永不過期 | 教訓長期有效 |
-| user | 永不過期 | 偏好穩定 |
-| reference | 90 天 | 外部資源可能變更 |
-
-過期記憶標記 `[STALE]` 但不自動刪除 — 讓下次 session 決定更新或移除。
-
-### 衝突解決
-
-新資訊與現有記憶矛盾時：
-1. **驗證** — 查 git 或檔案確認哪個正確
-2. **更新** — 替換過時資訊
-3. **標注** — 加一行 `> Updated YYYY-MM-DD: 原因` 說明變更
-
-### 去重合併
-
-發現兩個檔案主題重疊時，合併到更具體的那個，刪除泛用的。
-
----
-
-## 運作原理
-
-```
-                    持續監控 context window
-                    ┌──────────────────┐
-                    │ < 50%  → 正常    │
-                    │ ~ 50%  → 檢查點  │  ← v3.1 新增
-                    │ ~ 75%  → 完整存檔│
-                    └──────────────────┘
-
-觸發「收工」或達到閾值
-    │
-    ▼
-┌───────────────────────────────────┐
-│  1. 偵測平台（19+ agent）          │
-│  2. 決定記憶路徑                   │
-│  3. 掃描 git + 現有記憶            │
-│  4. 分析本次 session 關鍵資訊      │
-│  5. 記憶維護（壓縮/過期/去重）     │  ← v3.0
-│  6. 寫入/更新記憶檔案              │
-│  7. 更新 MEMORY.md 索引           │
-│  8. Bootstrap 注入（如需要）       │
-│  9. 回報摘要                      │
-└───────────────────────────────────┘
-    │
-    ▼
-下次對話自動載入 → 無縫接續
-```
-
-### 記憶四大類型
-
-| 類型 | 存什麼 | 範例 |
-|------|--------|------|
-| **project** | 專案狀態、版本、進度 | 「v2.1 已發布，auth 重構在 feat/auth」 |
-| **feedback** | 踩過的坑、教訓 | 「別用 mock DB，上次漏掉 migration bug」 |
-| **user** | 使用者偏好、風格 | 「偏好 TDD、精簡回覆」 |
-| **reference** | 外部資源、URL | 「API 文件在 internal.company.com/api」 |
-
-### 記憶檔格式（v3）
-
-```markdown
----
-name: MyApp 專案狀態
-description: v2.1 已發布，auth 重構進行中
-type: project
-updated: 2026-03-25
-expires: 2026-04-24
-platform: codex
----
-
-## MyApp v2.1
-
-**Repo**: https://github.com/user/myapp
-**Branch**: feat/auth
-
-### 已完成
-- API v2 endpoint 全部遷移
-
-### 待做
-- session store 選型
-
-## History
-> Updated 2026-03-25: 從 v2.0 更新到 v2.1
-> Updated 2026-03-20: 新增 auth 重構分支
-```
-
----
-
-## 不會保存什麼
-
-| 不保存 | 原因 |
-|--------|------|
-| 程式碼片段 | 會過時，存檔案路徑 + 行號 |
-| Git 歷史 | `git log` 就有 |
-| 任務清單 | 當次 session 專用 |
-| 暫存檔路徑 | 短暫存在 |
-| 架構/API 簽名 | 讀 code 就有 |
-| 密碼/API Key | 安全考量，永不保存 |
-
----
-
-## Bootstrap 機制
-
-```
-your-project/
-├── .ai-memory/              ← 通用記憶目錄
-│   ├── MEMORY.md            ← 索引（含 [STALE] 標記）
-│   ├── project_myapp.md     ← 專案狀態（expires: 30d）
-│   ├── feedback_testing.md  ← 教訓（永不過期）
-│   └── user_preferences.md  ← 偏好（永不過期）
-├── AGENTS.md                ← bootstrap 指令（Codex）
-├── GEMINI.md                ← bootstrap 指令（Gemini CLI）
-└── src/
-```
-
-> 建議：`echo ".ai-memory/" >> .gitignore`
-
----
-
-## 常見問題 FAQ
-
-**Q: 記憶會越來越多嗎？**
-v3 有自動壓縮 + 去重。典型專案 3-5 個檔案，超過 50 行自動壓縮。
-
-**Q: 敏感資訊安全嗎？**
-不存 secrets。建議 `.gitignore` 記憶目錄。
-
-**Q: 不用 git 能用嗎？**
-能。用目錄結構和修改時間判斷。
-
-**Q: 跟 Claude Code auto memory 差別？**
-auto memory 被動。session-wrap 主動掃描 + 結構化寫入 + 維護壓縮。兩者互補。
-
-**Q: 我的 Agent 不在列表上？**
-加入系統提示詞即可。記憶寫到 `.ai-memory/`。
-
-**Q: 過期的記憶會被刪掉嗎？**
-不會。只標記 `[STALE]`，讓下次 session 決定。
-
----
-
-## 版本歷史 / Changelog
-
-| 版本 | 日期 | 變更 |
-|------|------|------|
-| **v3.5** | 2026-03-26 | 整合 7 個 Agent 協作工具（context/share/decision/checkpoint/knowledge/optimize/tasks），修復硬編碼路徑 |
-| v3.1 | 2026-03-25 | Context Window 智慧管理（50% 檢查點、75% 完整存檔、行為分階段調整） |
-| v3.0 | 2026-03-25 | 記憶維護引擎（壓縮/過期/衝突解決/去重）、一鍵安裝 CLI、install.sh、19+ agent、韓語觸發 |
-| v2.1.1 | 2026-03-25 | 新增 OpenClaw 支援 |
-| v2.1 | 2026-03-25 | 14+ agent、Bootstrap 機制、中文文件 |
-| v2.0 | 2026-03-25 | 通用化（Claude Code + Cursor + Windsurf） |
-| v1.0 | 2026-03-25 | 初版，Claude Code 專用 |
-
-## Contributing
+### Manual with Setup Script
 
 ```bash
 git clone https://github.com/redredchen01/session-wrap-skill.git
 cd session-wrap-skill
-# 修改 → 測試 → PR
+bash scripts/setup.sh
 ```
 
-歡迎 PR：更多 agent、記憶視覺化、團隊共享記憶、AI 驅動的記憶摘要。
+This runs a guided setup that:
+- ✅ Creates memory directories
+- ✅ Initializes knowledge base
+- ✅ Verifies all prerequisites
+- ✅ Shows next steps
+
+**Time: ~2 minutes**
+
+### Manual (Advanced)
+
+```bash
+git clone https://github.com/redredchen01/session-wrap-skill.git
+cd session-wrap-skill
+chmod +x scripts/*.sh
+source .zshrc-wrap
+```
+
+## Quick Start
+
+### 1. Load Aliases
+
+```bash
+# Add to ~/.zshrc
+source ~/.zshrc-wrap
+```
+
+### 2. Agent Workflow
+
+```bash
+# At agent startup
+agent-context               # Load project context
+
+# During work
+agent-decision log "auth" "use JWT" "balance speed & security"
+agent-tasks claim my-task
+# ... work ...
+agent-tasks done my-task
+
+# End of session
+wrap "Completed auth system"
+```
+
+### 3. Multi-Agent Coordination
+
+```bash
+# Agent A publishes state
+agent-share write agent-a-state ~/my-progress.md
+
+# Agent B reads it
+agent-share read agent-a-state
+
+# Show next executable tasks
+agent-tasks next
+```
+
+## Commands
+
+### agent-context
+Load project context for agent startup.
+```bash
+agent-context              # Show compact context
+agent-context full         # Show full context with decisions & knowledge
+```
+
+### agent-share
+Cross-agent memory sharing.
+```bash
+agent-share write <agent-id> <file>   # Publish agent state
+agent-share read <agent-id>           # Read another agent's state
+agent-share list                      # List active agents
+agent-share clean                     # Remove stale states (>24h)
+```
+
+### agent-decision
+Log decisions with reasoning chains.
+```bash
+agent-decision log <topic> <decision> <reasoning>
+agent-decision list
+agent-decision search <keyword>
+```
+
+### agent-checkpoint
+Create checkpoints and rollback on errors.
+```bash
+agent-checkpoint save [label]         # Create checkpoint
+agent-checkpoint list                 # Show all checkpoints
+agent-checkpoint restore <id>         # Rollback to checkpoint
+agent-checkpoint diff <id>            # Show changes since checkpoint
+```
+
+### agent-knowledge
+Manage project knowledge base.
+```bash
+agent-knowledge set <topic> <content>
+agent-knowledge get <topic>
+agent-knowledge list
+agent-knowledge context               # For use in agent-context
+```
+
+### agent-optimize
+Smart memory optimization.
+```bash
+agent-optimize stats                  # Show breakdown
+agent-optimize archive                # Keep last 3 sessions
+agent-optimize summarize              # Compress old sessions
+agent-optimize prune [--dry-run]      # Remove empty files
+```
+
+### agent-tasks
+Coordinate multi-agent task execution.
+```bash
+agent-tasks add <id> <description> [depends-on...]
+agent-tasks done <id>
+agent-tasks next                      # Show executable tasks
+agent-tasks status                    # Full task graph
+agent-tasks claim <id> [agent-id]     # Claim task to avoid conflicts
+```
+
+## Agent Hook Integration
+
+### Claude Code
+
+Add to `~/.claude/settings.json` (PostToolUse hook):
+
+```json
+{
+  "type": "command",
+  "command": "cd ~/YD\\ 2026 && bash scripts/session-wrap.sh",
+  "statusMessage": "Saving session with agent tools..."
+}
+```
+
+### Cursor / Windsurf / Others
+
+Any agent with shell access can use:
+
+```bash
+# Load context at startup
+eval "$(agent-context)"
+
+# Log decisions during work
+agent-decision log "feature-x" "implemented via hooks" "better DX"
+
+# Show next task
+agent-tasks next
+
+# Save progress at end
+wrap "Completed feature X"
+```
+
+## Memory Structure
+
+```
+~/.claude/projects/-Users-dex-YD-2026/memory/
+├── MEMORY.md                 # Master index
+├── session_*.md              # Session wraps
+├── decisions/                # Decision logs
+│   └── YYYY-MM-DD-topic.md
+├── knowledge/                # Project knowledge
+│   ├── conventions.md
+│   ├── architecture.md
+│   ├── known-issues.md
+│   └── tech-stack.md
+├── checkpoints/              # Git checkpoints
+│   ├── manifest.json
+│   └── YYYYMMDD-HHMMSS.snapshot
+├── agents/                   # Agent states
+│   ├── agent-a-state.md
+│   └── agent-b-state.md
+└── tasks/                    # Task dependency graph
+    └── tasks.json
+```
+
+## Why This Matters
+
+### Before v3.4.0
+- Manual context loading between sessions
+- No way for agents to coordinate
+- Decision history lost
+- Long projects become incoherent
+
+### After v3.4.0
+- **Auto context injection** — Agents start with full project knowledge
+- **Decision tracking** — Why decisions were made is preserved
+- **Memory sharing** — Agent A's work feeds to Agent B
+- **Task coordination** — Multiple agents work on same project without conflicts
+- **Long-term projects** — Context never lost, decisions never forgotten
+
+## Configuration
+
+Set environment variables to customize:
+
+```bash
+export YD_WORKSPACE="/Users/dex/YD 2026"
+export YD_MEMORY="/Users/dex/.claude/projects/-Users-dex-YD-2026/memory"
+export YD_OBSIDIAN="$YD_WORKSPACE/obsidian"
+export SESSION_WRAP_API_URL="http://localhost:3000"  # Optional: cloud sync
+```
+
+## Backend (Optional)
+
+For cloud synchronization and team dashboards, use the backend project under `projects/tools/session-wrap-backend/`:
+
+### Quick Deploy to Railway
+
+```bash
+bash scripts/deploy/deploy-railway.sh
+```
+
+This automates:
+- Railway project initialization
+- Environment variable setup
+- Database configuration
+- Deployment instructions
+
+See **[docs/PRODUCTION-SETUP.md](docs/PRODUCTION-SETUP.md)** for full deployment guide.
+
+**Note:** Backend enables cloud sync and dashboards for distributed teams. In this workspace, related backend/frontend code lives under `projects/tools/`. CLI tools still work without it.
+
+## Dashboard Status
+
+The legacy top-level `web/` dashboard and `server/` backend are not present in this workspace snapshot.
+
+- Dashboard-related documentation has been retained under [`docs/`](docs/)
+- Current code locations are `projects/tools/session-wrap-backend/` and `projects/tools/session-wrap-skill/{web,server}`
+- Any setup note that assumes top-level `web/` or `server/` should be treated as historical
+
+## Files
+
+- `scripts/session-wrap.sh` — Core session wrapping
+- `scripts/obsidian-sync.sh` — Knowledge vault sync
+- `scripts/deploy/deploy-railway.sh` — Railway backend deployment automation
+- `scripts/deploy/skill-deploy.sh` — Skill deployment automation
+- `scripts/agent/*.sh` — 7 agent coordination tools
+- `scripts/viz/*.sh` — Visualization tools
+- `.zshrc-wrap` — Aliases and workflow aliases
+- `package.json` — npm metadata
+
+## How It Works
+
+```
+Agent Workflow (v3.4.0)
+
+Session Start
+    ├─ agent-context loads project context
+    ├─ agent-tasks shows next executable tasks
+    └─ agent-knowledge provides conventions
+
+During Work
+    ├─ agent-decision logs decisions
+    ├─ agent-checkpoint creates savepoints
+    └─ agent-share publishes progress
+
+Session End
+    ├─ session-wrap.sh saves wrap
+    ├─ agent-optimize archives old sessions
+    └─ task status updated for next agent
+```
+
+## Examples
+
+### Example 1: Single Agent with Context
+
+```bash
+# Start session
+source ~/.zshrc-wrap
+agent-context              # Load project context
+
+# Work on feature
+agent-decision log "caching" "use Redis" "performance vs complexity"
+
+# End session
+wrap "Implemented caching layer"
+```
+
+### Example 2: Multi-Agent Collaboration
+
+```bash
+# Agent A: Implements API
+agent-tasks add "api-design" "Design REST API"
+agent-tasks claim "api-design" "codex"
+# ... work ...
+agent-decision log "api" "use GraphQL" "better type safety"
+agent-tasks done "api-design"
+agent-share write codex ~/api-design.md
+
+# Agent B: Implements frontend
+agent-share read codex                    # Get API design
+agent-tasks add "frontend" "Build UI" "api-design"
+agent-tasks claim "frontend" "cursor"
+agent-tasks next                          # Shows "api-design" is done, can start
+# ... work ...
+
+# Both agents coordinated without stepping on each other
+```
+
+### Example 3: Long-Term Project
+
+```bash
+# Week 1
+wrap "Completed auth system"
+agent-decision log "auth" "use JWT tokens" "stateless, scales well"
+
+# Week 2 (new session)
+agent-context                             # See all past decisions
+agent-tasks next                          # See incomplete tasks
+agent-knowledge get "architecture"        # Understand design
+
+# No context loss, decisions preserved, work continues seamlessly
+```
+
+## Changelog
+
+### v3.7.0 (2026-03-27)
+
+**Phase 7: Interactive Dashboard & Team Collaboration**
+
+#### Added
+- **WebSocket Real-Time Sync** (Phase 7A)
+  - useWebSocket hook with auto-reconnect (exponential backoff)
+  - <100ms message latency vs 5s polling
+  - Fallback to polling if WebSocket unavailable
+  - Graceful error handling and recovery
+
+- **Task Editing from UI** (Phase 7B)
+  - CreateTaskModal for task creation
+  - Inline task editing (status, description)
+  - Delete tasks with confirmation
+  - Optimistic UI updates
+  - Full CRUD API integration
+
+- **Decision Search & Filtering** (Phase 7C)
+  - SearchBar with debounced keyword search
+  - FilterChips: agent filter, date range
+  - Real-time filtering with result count
+  - Persistent filter state
+  - URL-ready filter params
+
+- **Team Collaboration** (Phase 7D)
+  - ActivityFeed: real-time event stream
+  - CommentsSection: inline comments on tasks
+  - MentionInput: @mention autocomplete
+  - Comment API endpoints (CRUD)
+  - Mention extraction and validation
+
+#### Improved
+- Dashboard now fully interactive (not just read-only)
+- Real-time updates via WebSocket (replaces polling)
+- Search results <200ms response time
+- Component architecture supports future extensibility
+- Better UX with loading states and error handling
+
+#### Architecture
+- Event-driven WebSocket with HTTP fallback
+- Modular component design (11 new/refactored)
+- Efficient filtering with useMemo
+- Mention system independent of backend
+- Activity feed extensible for new event types
+
+**Total changes:** 1,679 lines (Phases 7A-D)
+
+### v3.6.0 (2026-03-26)
+
+**Phase 6: Setup Automation & Deployment Infrastructure**
+
+#### Added
+- 🚀 `scripts/setup.sh` — One-command project initialization (15 min → 2 min)
+- 🔧 `scripts/deploy/deploy-railway.sh` — Automated Railway backend deployment
+- 🎯 Web Dashboard (later moved under `projects/tools/`) — Real-time team monitoring with React + Vite
+  - TaskBoard: Visual task status columns
+  - DecisionTimeline: Chronological decision history
+  - MemoryStats: Usage trends with sparkline charts
+  - SyncStatus: Agent connection monitoring
+  - Vercel deployment ready
+- 📖 `DASHBOARD-DEPLOYMENT-GUIDE.md` — Full deployment documentation
+- 📚 Dashboard setup docs — now tracked via `docs/DASHBOARD-DEPLOYMENT-GUIDE.md` and tool subprojects
+
+#### Improved
+- README updated with v3.6.0 features
+- Setup process now automatable with shell script
+- Backend deployment scripted (eliminates manual steps)
+
+#### Fixed
+- Path inconsistencies in setup scripts
+
+#### Known Issues
+- Dashboard uses HTTP polling (WebSocket planned for v3.7)
+- Backend endpoints template (implementation required by user)
+
+**Total changes:** 1,207 lines (scripts + dashboard)
+
+### v3.5.1 (2026-03-25)
+- [Previous releases...]
 
 ## License
 
 MIT
+
+## Author
+
+redredchen01
+
+---
+
+**v3.4.0** — Agent-native session management for seamless multi-agent workflows.
+
+For updates: https://github.com/redredchen01/session-wrap-skill

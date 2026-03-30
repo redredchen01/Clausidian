@@ -1,0 +1,621 @@
+{
+  "total_notes": 47,
+  "train_count": 32,
+  "test_count": 15,
+  "unique_tags": [
+    "agents",
+    "ai",
+    "analytics",
+    "api",
+    "automation",
+    "backend",
+    "bash",
+    "bot",
+    "ci-cd",
+    "cli",
+    "competitive",
+    "conclusion",
+    "context",
+    "daily",
+    "deploy",
+    "docker",
+    "docs",
+    "experimental",
+    "express",
+    "github",
+    "go",
+    "google-workspace",
+    "hooks",
+    "launchd",
+    "memory",
+    "monitoring",
+    "monthly-retro",
+    "monthly-review",
+    "nodejs",
+    "npm",
+    "ops",
+    "p2",
+    "p3",
+    "product",
+    "pypi",
+    "python",
+    "react",
+    "reference",
+    "remotion",
+    "repos",
+    "roadmap",
+    "scheduling",
+    "scripts",
+    "seo",
+    "session-wrap",
+    "sites",
+    "skill",
+    "skills",
+    "tech",
+    "telegram",
+    "testing",
+    "tool",
+    "tools",
+    "validation",
+    "video",
+    "watermark",
+    "weekly-review",
+    "workflow"
+  ],
+  "tag_count": 58,
+  "train": [
+    {
+      "file": "resources/golden-principles.md",
+      "title": "Agent Golden Principles",
+      "type": "resource",
+      "summary": "30 條從歷史失敗中提取的確定性約束規則 — Agent 每次犯錯就回寫一條",
+      "content": "Agent Golden Principles\n\n> Hashimoto 方法論：每當 Agent 犯錯，就工程化一個解決方案確保不再犯。\n> 本檔案從 2203 commits、14 份 feedback memory、7 個 session 記錄中提取。\n\n高頻規則（Top 10 — 覆蓋 80% 失敗場景）\n\n1. Hook 必須讀 stdin JSON\nClaude Code hooks 用 `INPUT=$(cat); CMD=$(echo \"$INPUT\" | jq -r '.tool_input.command // empty')` — 不用 `$TOOL_INPUT` 環境變數。\n\n2. 路徑必須用 path 模組\nNode.js 用 `path.resolve()` / `fileURLToPath(import.meta.url)`，不手動拼接字串。YD 2026 路徑有空格。\n\n3. MCP 配置寫 .mcp.json\n`~/.claude/.mcp.json` 管 MCP server 註冊，settings.json 只管 hooks/permissions/env。\n\n4. 測試不碰真實配置\n測試不修改 `~/.claude/.mcp.json`、`~/.zshrc` 等。用臨時副本 + setup/teardown。\n\n5. LaunchAgent 用 symlink\nplist 源頭在項目 `launchd/` 目錄，`ln -s` 到 `~/Library/LaunchAgents/`。不複製文件。\n\n6. 單一輪詢入口\n所有排程走 `automation-cron.sh`，TG Bot 用 `exec` 保證單例，避免 409 Conflict。\n\n7. Commit 前查 git status\nauto-hook（prettier、obsidian-agent sync）可能改了你沒預期的檔案。commit 前必查。\n\n8. CLI 包裝前跑 --help\n不信文件或範例 — IOPaint 用 `--image` 不是 `--input`。跑 `tool --help` 確認實際 flag。\n\n9. 不主動執行報表\n日報/周報只在用戶明確要求或 launchd 排程時執行。Agent 絕不主動跑報表腳本。\n\n10. Patch 文件 minus 行不可動\n`.patch` 裡 `-` 行是原始內容，不能改。只能改 `+` 行。改前跑 `patch --dry-run`。\n\n---\n\n完整規則索引\n\n| # | 類別 | 規則 |\n|---|------|------|\n| 1 | Hooks | stdin JSON only，拒絕 $TOOL_INPUT |\n| 2 | Paths | fileURLToPath()，拒絕字串拼接 |\n| 3 | MCP | .mcp.json 管 MCP，settings.json 不管 |\n| 4 | Tests | 測試隔離，不碰 ~ 路徑 |\n| 5 | LaunchD | symlink not copy |\n| 6 | Automation | 單一輪詢入口 |\n| 7 | Git | commit 前查 status |\n| 8 | CLI | --help 驗證 flag |\n| 9 | Reports | 不主動執行 |\n| 10 | Patches | minus 行不可動 |\n| 11 | Integration | 跑完 unit test 還要",
+      "tags": [
+        "agents",
+        "automation",
+        "reference"
+      ]
+    },
+    {
+      "file": "projects/daily-report.md",
+      "title": "Daily Report Skill",
+      "type": "project",
+      "summary": "日報自動生成 Skill v1.0.0 — 從 Obsidian/Git/排程數據產出 5 區塊日報",
+      "content": "Daily Report Skill\n\n概覽\n\n- **版本：** v1.0.0\n- **GitHub：** [redredchen01/daily-report-skill](https://github.com/redredchen01/daily-report-skill)\n- **npm：** `daily-report-skill`\n- **PyPI：** ⏳ 待手動 twine upload\n\n功能\n\n從多數據源自動生成日報，固定 5 區塊格式：\n1. 今日完成\n2. 進度更新\n3. 問題與阻礙\n4. AI 亮點\n5. 明日計劃\n\n數據源\n\n- Obsidian journal（當天記錄）\n- Git commit history\n- DEX Bot 排程結果\n- Site health 狀態",
+      "tags": [
+        "skill",
+        "npm",
+        "automation"
+      ]
+    },
+    {
+      "file": "projects/session-wrap.md",
+      "title": "Session Wrap Skill",
+      "type": "project",
+      "summary": "跨平台 AI agent 記憶持久化，v3.9.0，支援 19+ agents，Dashboard + RBAC + 團隊協作",
+      "content": "Session Wrap Skill\n\n概覽\n\n- **版本：** v3.9.0\n- **GitHub：** [redredchen01/session-wrap-skill](https://github.com/redredchen01/session-wrap-skill)\n- **npm：** `session-wrap-skill`\n- **支援 Agents：** 19+（Claude Code, Codex, Gemini CLI, Cursor, Windsurf, Cline, etc.）\n- **總提交數：** 57\n\n核心功能\n\n- 會話結束時自動保存項目上下文到 memory 文件\n- 下次會話自動加載，零損失 resume\n- Agent-native 架構：7 個新工具支援多代理協調\n- Dashboard Backend API（Express :3001，單寫者模型）\n- RBAC 權限管理 + Analytics + 外部整合（Slack/GitHub/Jira）\n- WebSocket 實時同步 + 團隊協作（評論、@提及）\n- 決策搜索過濾 + 任務 CRUD UI\n\n版本歷史\n\n| 版本 | 日期 | 重點 |\n|------|------|------|\n| v3.9.0 | 2026-03-27 | Phase 9 — Dashboard Backend API + autoplan 審查 |\n| v3.8.1 | 2026-03-27 | Security hardening — 移除預設憑證、webhook 簽名 |\n| v3.8.0 | 2026-03-27 | Phase 8 — RBAC、Analytics、Integrations、Caching |\n| v3.7.0 | 2026-03-27 | Phase 7 — WebSocket、Task CRUD、Decision Search、Team Collab |\n| v3.5.1 | 2026-03-26 | Phase 4 — 目錄結構優化 |\n| v3.5.0 | 2026-03-26 | 合併 agent-native tools |\n| v3.4.0 | 2026-03-26 | Agent-native 架構重構 |\n| v3.3.0 | 2026-03-26 | Phase 3 backend + Docker |\n| v3.2.0 | 2026-03-26 | npm bin 修復 |\n| v1.0.0 | 2026-03-25 | 初始發佈 |\n\nPhase 進展\n\n| Phase | 狀態 | 功能 |\n|-------|------|------|\n| 1-4 | ✅ | 基礎架構、Agent-native、Backend、目錄優化 |\n| 5-6 | ✅ | 前端組件（11 個 React 組件）|\n| 7 | ✅ | WebSocket 實時同步、Task CRUD UI、決策搜索、團隊協作 |\n| 8 | ✅ | RBAC、Analytics Dashboard、Slack/GitHub/Jira 整合、Redis 快取 |\n| 9A/9B | ✅ | Dashboard Backend API — Express :3001、單寫者模型 |\n| 9B | ✅ | Core React components |\n| 9C | ✅ | Page-level routing integration |\n| 9D | ",
+      "tags": [
+        "skill",
+        "npm",
+        "agents",
+        "memory"
+      ]
+    },
+    {
+      "file": "journal/2026-03-25.md",
+      "title": "2026-03-25",
+      "type": "journal",
+      "summary": "大量 Skill/工具發佈 + DEX Bot 排程優化 + 小黃書站點異常排查",
+      "content": "2026-03-25 Tue\n\n今日完成\n\n- GA4 日報優化：去重機制（同日只推一次）+ 精簡報表 + --dry-run 模式\n- 排程系統加固：網路任務失敗自動重試 3 次\n- 工具鏈建設 — StaticGhost v0.4.0→v0.4.2（AI 去浮水印）、Session Wrap v3.1（跨平台記憶持久化）\n- 小黃書站點排查：www 子域無響應、裸域 404，已定位 IP 118.25.163.88\n- gwx 密集迭代：v0.17.0 → v0.23.0（7 個版本）\n- Article Tagger v0.4.0 發佈\n- 51acgs-scraper repo 建立\n- triple-publish-skill repo 建立\n- 主項目 dexapi / ydapi / apex 同步推送\n\n發佈記錄\n\n| Repo | 版本 |\n|------|------|\n| gwx | v0.17.0 → v0.23.0 |\n| static-ghost | v0.4.0 → v0.4.2 |\n| article-tagger | v0.4.0 |\n\n想法\n\n- DEX Bot 排程從 23 個精簡到 17 個，並行化+原子寫入效果明顯\n- 競品監控並行抓取從 ~40s 降至 21s\n\n明日計劃\n\n- [ ] Session Wrap 大版本迭代（agent-native 架構）\n- [ ] Triple Publish Skill 開發\n- [ ] Version Sync Skill 開發\n\n---\n< [[2026-03-24]] | [[2026-03-26]] >",
+      "tags": [
+        "daily"
+      ]
+    },
+    {
+      "file": "projects/static-ghost.md",
+      "title": "Static Ghost",
+      "type": "project",
+      "summary": "AI 去浮水印工具 v0.4.2 — LaMa inpainting，支援固定/半透明/全頁水印",
+      "content": "Static Ghost\n\n概覽\n\n- **版本：** v0.4.2\n- **GitHub：** [redredchen01/static-ghost](https://github.com/redredchen01/static-ghost)\n- **技術棧：** Python（OpenCV + LaMa）\n\n功能\n\n- 固定 logo 移除\n- 半透明浮水印清除\n- 全頁浮水印處理\n- 影片浮水印支援\n- 像素分析自動定位邊界\n\n關聯\n\n- [[apex]] (P3) 的子工具\n- `image-watermark-removal` Skill 調用此引擎",
+      "tags": [
+        "tool",
+        "python",
+        "watermark"
+      ]
+    },
+    {
+      "file": "journal/2026-03-24.md",
+      "title": "2026-03-24",
+      "type": "journal",
+      "summary": "搭建 Obsidian 知识库框架",
+      "content": "2026-03-24 Tue\n\n今日记录\n\n- 搭建 agent-friendly 的 Obsidian 知识库框架\n- 配置 Templater + Daily Notes\n\n想法\n\n-\n\n明日计划\n\n- [ ]\n\n---\n< [[2026-03-23]] | [[2026-03-25]] >",
+      "tags": [
+        "daily"
+      ]
+    },
+    {
+      "file": "resources/claude-code-settings.md",
+      "title": "Claude Code 設定與 Hooks",
+      "type": "resource",
+      "summary": "Claude Code hooks 配置 — 安全檢查 + Obsidian 同步 + commit 警告 + npm 發佈追蹤",
+      "content": "Claude Code 設定與 Hooks\n\n設定檔：`~/.claude/settings.json`\n\nHooks\n\nPreToolUse — 安全檢查（Bash）\n\n攔截高危命令，需用戶明確確認：\n- `rm -rf /`\n- `DROP TABLE`\n- `git reset --hard`\n- `git push --force`\n- `truncate CASCADE`\n\nStop — Obsidian Journal 同步\n\n每次 session 結束時自動執行：\n```\nnode obsidian-journal-sync.mjs session-stop\n```\n- 有效 `stop_reason` → 追加到當天 journal\n- 無效/缺失 → 靜默跳過（已修復，不再產生垃圾記錄）\n- Timeout: 15s\n\nPostToolUse — Commit 警告 + npm 發佈（Bash）\n\n1. **大 commit 警告：** `git commit` 超過 100 行 → 建議 `/codex review`\n2. **npm publish 追蹤：** 發佈後自動更新 Obsidian `skill-development.md` + 當天 journal\n\nPlugins\n\n| Plugin | 用途 |\n|--------|------|\n| claude-hud | 狀態列 HUD 顯示 |\n| typescript-lsp | TypeScript 語言服務 |\n\nobsidian-journal-sync.mjs 模式\n\n| 模式 | 觸發 | 功能 |\n|------|------|------|\n| `session-stop` | Stop hook | 寫入當天 journal（有效 reason 才寫）|\n| `daily-backfill` | launchd 23:00 | 從 git/GitHub 回填當天 journal |\n| `site-alert` | 站點異常 | 異常事件寫入 journal 問題區 |\n| `npm-publish` | PostToolUse | 更新 skill-development.md + journal |\n| `index-sync` | 手動/定期 | 重建 _tags.md + _graph.md |\n\n腳本位置：`~/YD 2026/Archived/references/0323/claude_code_telegram_bot/obsidian-journal-sync.mjs`",
+      "tags": [
+        "reference",
+        "automation",
+        "hooks"
+      ]
+    },
+    {
+      "file": "resources/npm-global.md",
+      "title": "npm 全局套件",
+      "type": "resource",
+      "summary": "npm 全局安裝的 8 個套件清單（Agent CLI + 工具）",
+      "content": "npm 全局套件\n\n安裝位置：`/Users/dex/.local/lib`\n\nAgent CLI\n\n| 套件 | 版本 | 用途 |\n|------|------|------|\n| @anthropic-ai/claude-code | 2.1.84 | Claude Code 主力 CLI |\n| @kilocode/cli | 7.1.4 | Kilo Agent |\n| @qoder-ai/qodercli | 0.1.36 | Qoder 知識檢索 |\n| cline | 2.11.0 | Cline 代碼 Agent |\n| clausidian | 2026.3.24 | Clausidian 框架 |\n\n工具\n\n| 套件 | 版本 | 用途 |\n|------|------|------|\n| gwx-cli | 0.10.0 | Google Workspace CLI |\n| session-wrap-skill | 3.4.0 | Session 持久化 |\n| pnpm | 10.33.0 | 套件管理器 |",
+      "tags": [
+        "reference",
+        "npm",
+        "tools"
+      ]
+    },
+    {
+      "file": "areas/site-ops.md",
+      "title": "站點運營",
+      "type": "area",
+      "summary": "小黃書 + 51漫畫站點運營、SEO、監控",
+      "content": "站點運營\n\n站點列表\n\n| 站點 | 域名 | GA4 Property | 到期日 |\n|------|------|-------------|--------|\n| 小黃書 | xhslink.com | 506575534 | 2026-05-03 |\n| 51漫畫 | 51acgs.com | 524298631 | 2026-05-02 |\n\n監控指標\n\n- 站點健康（每 5 分鐘 ping）\n- GA4 流量日報（每日 9:00）\n- GA4 異常警報（每小時）\n- SSL 憑證到期（每日 8:00）\n- Lighthouse 效能（每週一 6:00）\n- 斷鏈檢查（每週三 4:00）\n- SEO 審計（每週三 7:00）\n- CrUX 體驗指標（每週一 7:30）\n\n競品\n\n| 站點 | 域名 |\n|------|------|\n| 禁漫天堂 | 18mh.net |\n| E-Hentai | e-hentai.org |\n| nHentai | nhentai.net |\n\n當前問題\n\n- ⚠️ 小黃書 www 子域持續異常（failCount=392，2026-03-27）\n- 裸域 nginx 404，DNS A 記錄指向 118.195.253.242 / 106.54.99.69",
+      "tags": [
+        "sites",
+        "seo",
+        "monitoring"
+      ]
+    },
+    {
+      "file": "journal/2026-03-29.md",
+      "title": "2026-03-29",
+      "type": "journal",
+      "summary": "無 git 活動",
+      "content": "2026-03-29 Sun\n\n今日記錄\n\n- （無 git 活動）\n\n問題與風險\n\n- ⚠️ xhs 連續失敗 548 次（lastDown: 2026-03-29T05:59:19.599Z）\n\n---\n< [[2026-03-28]] | [[2026-03-30]] >",
+      "tags": [
+        "daily"
+      ]
+    },
+    {
+      "file": "resources/scripts-reference.md",
+      "title": "腳本工具速查",
+      "type": "resource",
+      "summary": "20 個 bash 自動化腳本分類速查（Agent 協調 + 部署 + 分析）",
+      "content": "腳本工具速查\n\n位置：`~/YD 2026/scripts/`\n\nAgent 協調工具（7 個）\n\n| 腳本 | 用途 |\n|------|------|\n| `agent-tasks.sh` | 任務依賴圖 + 多 Agent 協調 |\n| `agent-checkpoint.sh` | 檢查點 & 回滾系統 |\n| `agent-context.sh` | 啟動時自動注入項目上下文 |\n| `agent-decision.sh` | 決策日誌 + 推理鏈記錄 |\n| `agent-knowledge.sh` | 項目知識庫管理 |\n| `agent-optimize.sh` | 記憶智能優化 |\n| `agent-share.sh` | 跨 Agent 記憶共享 |\n\n自動化 & 部署（5 個）\n\n| 腳本 | 用途 |\n|------|------|\n| `setup.sh` | 一鍵項目初始化（15min → 2min）|\n| `deploy-railway.sh` | Railway 後端自動部署（5min）|\n| `session-wrap.sh` | 會話結束自動保存上下文 |\n| `obsidian-sync.sh` | Obsidian 知識庫同步 |\n| `wrap-cli.sh` | 雲端認證 & 同步 CLI |\n\n分析 & 測試（5 個）\n\n| 腳本 | 用途 |\n|------|------|\n| `validate-demo.sh` | Demo 驗證 |\n| `integration-test.sh` | 集成測試套件 |\n| `test-agent-tools.sh` | Agent 工具測試 |\n| `analyze-decisions.sh` | 決策分析 |\n| `memory-report.sh` | 記憶統計報告 |\n\n可視化（2 個）\n\n| 腳本 | 用途 |\n|------|------|\n| `timeline.sh` | 時間線可視化 |\n| `visualize-tasks.sh` | 任務可視化 |\n\n其他\n\n| 腳本 | 用途 |\n|------|------|\n| `login-agents.sh` | 多 Agent 登入 |",
+      "tags": [
+        "reference",
+        "scripts",
+        "automation",
+        "bash"
+      ]
+    },
+    {
+      "file": "journal/2026-03-review.md",
+      "title": "月回顧 2026-03",
+      "type": "journal",
+      "summary": "2026年03月回顧",
+      "content": "月回顧 2026-03\n\n> 2026-03-01 ~ 2026-03-31\n\n本月完成\n\n主要里程碑\n-\n\n版本發佈\n| 項目 | 版本 | 重點 |\n|------|------|------|\n|  |  |  |\n\n數據\n- 總 commits：\n- 發佈 packages：\n- 新建 repos：\n\n本月問題\n\n-\n\n本月想法\n\n-\n\n進行中項目\n\n| 項目 | 狀態 | 下月重點 |\n|------|------|---------|\n|  |  |  |\n\n下月計劃\n\n- [ ]\n\n反思\n\n做得好\n-\n\n可改進\n-\n\n學到的\n-\n\n---\n< [[2026-02-review]] | [[2026-04-review]] >",
+      "tags": [
+        "monthly-review"
+      ]
+    },
+    {
+      "file": "ideas/competitor-intel-skill.md",
+      "title": "Competitor Intel Skill",
+      "type": "idea",
+      "summary": "競品情報自動簡報 — 定期監控、趨勢識別、功能差異分析",
+      "content": "Competitor Intel Skill\n\n想法\n\n將 DEX Bot 現有的競品追蹤功能（每日 06:45）封裝為獨立 Skill，加入趨勢分析和自動簡報。\n\n理由\n\n- 目前只做基礎 title/size 變更偵測，缺乏深度分析\n- 競品並行抓取已優化到 21s，基礎設施成熟\n- 市場趨勢需要跨時間維度分析\n\n下一步\n\n- [ ] 定義情報維度（功能、定價、流量、SEO）\n- [ ] 設計週報格式\n- [ ] 評估瀏覽器自動化需求（gstack browse）",
+      "tags": [
+        "skill",
+        "monitoring",
+        "competitive"
+      ]
+    },
+    {
+      "file": "projects/apex.md",
+      "title": "APEX (P3)",
+      "type": "project",
+      "summary": "APEX — Autonomous Pipeline EXecution Engine，圖像水印移除工具，1.3G，含多語言 plugins",
+      "content": "APEX (P3 — 工具項目)\n\n概覽\n\n- **全名：** Autonomous Pipeline EXecution Engine\n- **技術棧：** Python, Go, React\n- **位置：** `~/YD 2026/projects/production/watermark-0324/`\n- **GitHub：** [redredchen01/apex](https://github.com/redredchen01/apex)\n- **快速命令：** `p3` / `dev3` / `test3`\n- **規模：** 1.3G, 25+ commits\n\n子模組\n\n| 模組 | 用途 |\n|------|------|\n| `apex-plugins/` | 多語言插件（database, django, dotnet, flutter, golang, nestjs, python, react, rust）|\n| `ghost-remover/` | Ghost 圖像移除引擎 |\n| `instincts/` | 智能分析模組 |\n\n相關 Skill\n\n- `image-watermark-removal` — 像素分析 → mask 確認 → inpainting\n- `static-ghost` v0.4.2 — AI 去浮水印（LaMa）\n- 支援：固定 logo、半透明浮水印、全頁浮水印、影片浮水印\n\n狀態\n\n- ✅ 代碼清潔\n- ✅ 無待提交修改\n- ✅ 配置優化完成",
+      "tags": [
+        "p3",
+        "tools",
+        "python",
+        "watermark"
+      ]
+    },
+    {
+      "file": "areas/ai-automation.md",
+      "title": "AI 自動化運營",
+      "type": "area",
+      "summary": "DEX Bot 自動化系統 + 6 AI Agent 調度 + 9 Obsidian 自動化 + Skill 工具鏈",
+      "content": "AI 自動化運營\n\n當前關注\n\n- DEX Bot 自動化系統（14 個排程 + TG 推送）\n- 6 個 AI Agent 統一調度（orchestrator-agents-skill 路由）\n- Obsidian 知識庫 4 層自動化（hooks + CLI + launchd + health，11 個 slash commands）\n- Skill 工具鏈生態（7 個已發佈）\n\n系統組成\n\nDEX Bot（TG 自動化）\n- 站點健康監控（每 5 分鐘）\n- GA4 日報/週報（每日 9:00）\n- 競品監控（週一~五 6:45）\n- SEO 審計（週三 7:00）\n- SSL/域名到期檢查\n- Morning Briefing（週一~五 9:50）\n- 日報/週報自動生成\n\nAI Agent 調度（6 個）\n| Agent | 版本 | 用途 |\n|-------|------|------|\n| Claude Code | 主力 | 開發、架構、文檔 |\n| Codex CLI | 最新 | 安全審查、第二意見 |\n| Gemini CLI | 0.35.1 | 分析研究、多角度觀點 |\n| Cline | 2.11.0 | 代碼審查 |\n| Kilo | 最新 | 代碼審查 |\n| OpenCode | 最新 | 代碼品質、Debug |\n| Qodercli | 0.1.36 | 代碼審查 |\n\n路由：orchestrator-agents-skill v1.1.1 自動分配\n\nObsidian 4 層自動化\n\n| 層 | 觸發 | 動作 |\n|---|------|------|\n| PostToolUse hook | 編輯 .md | `obsidian-agent sync` 自動更新索引 |\n| Stop hook | 會話結束 | session-stop + sync + 日記/orphan 檢查 |\n| Pre-commit | git commit | 索引重建 + frontmatter 校驗 |\n| launchd daily 08:00 | cron | journal + backfill + auto-commit |\n| launchd weekly Sun 20:00 | cron | 週回顧 + health |\n| launchd monthly 1st 20:00 | cron | 月回顧 + duplicates |\n\n11 個 slash commands（全部委託 `obsidian-agent` CLI）：\njournal / note / capture / search / list / review / health / rename / move / batch / orphans\n\n額外自動化（不變）：\n- npm publish → KB 更新\n- 站點異常 → Journal 記錄\n- Morning Briefing（9:50）\n- GitHub PR/Release 同步\n\nSkill 工具鏈\n| Skill | 狀態 | 用途 |\n|-------|------|------|\n| session-wrap | v3.9.0 ✅ | 跨平台記憶持久化 + Dashboard |\n| orchestrator-agents | v1.1.1 ✅ | Multi-agent 路由 |\n| weekly-sheet | v1.0.0 ✅ | 周報 Google Sheet",
+      "tags": [
+        "ai",
+        "automation",
+        "ops"
+      ]
+    },
+    {
+      "file": "resources/context-compaction-strategy.md",
+      "title": "Context Compaction 策略",
+      "type": "resource",
+      "summary": "上下文壓縮規則 — 何時壓縮、保留什麼、丟棄什麼",
+      "content": "Context Compaction 策略\n\n> Context is a scarce resource — every token consumes attention budget.\n\n1. 何時壓縮\n\n| 觸發條件 | 說明 |\n|----------|------|\n| **自動壓縮** | Claude Code 在 95% context window 時自動觸發 |\n| **手動觸發** | 對話超過 ~50 輪交互時主動執行 |\n| **Sub-agent 委派前** | 壓縮父級上下文，只傳遞任務相關資訊 |\n| **長時間探索後** | 連續讀取 10+ 個檔案後，壓縮探索結果 |\n\n2. 絕對保留（禁止壓縮）\n\n這些資訊一旦丟失，會導致重複犯錯或偏離方向：\n\n- **錯誤追蹤與失敗歷史** — 避免重蹈覆轍的唯一依據\n- **本次會話的架構決策** — 壓縮後 agent 會做出矛盾決策\n- **用戶的明確指令與修正** — 用戶說過「不要 X」就必須記住\n- **當前任務狀態與進度** — 已完成什麼、下一步是什麼\n- **檔案路徑與關鍵變數名** — 壓縮後會找不到檔案\n\n3. 可壓縮（保留結論，丟棄原始資料）\n\n| 類型 | 壓縮方式 |\n|------|----------|\n| **工具輸出**（檔案內容、grep 結果） | 保留結論，丟棄原始輸出。例：「`_index.md` 有 25 筆記錄，最後更新 03-30」 |\n| **探索死胡同** | 摘要為「嘗試了 X，因為 Y 失敗」。一行即可 |\n| **中間推理過程** | 保留最終決策，丟棄思考過程。「選擇方案 B 因為 A 有性能問題」 |\n| **已確認的配置** | 保留結論：「確認 hooks 已配置正確」，丟棄配置檔內容 |\n\n4. 可直接丟棄\n\n這些資訊完全無需保留：\n\n- **重複讀取** — 同一檔案讀取兩次，只保留最新版\n- **系統提示與 skill 列表** — 每次呼叫自動重新注入\n- **冗長的成功確認** — 「檔案已寫入」不需要佔 200 tokens\n- **已解決的討論** — 問題已修復後，排查過程可丟棄\n- **格式化輸出** — 表格邊框、分隔線等裝飾性 token\n\n5. Sub-agent 上下文隔離規則\n\n每種 agent 只接收完成任務所需的最小上下文：\n\nExplore Agent（探索型）\n- **輸入**：搜索目標 + 約束條件（< 500 tokens）\n- **輸出**：最多 2000 tokens 摘要\n- **禁止**：傳入完整對話歷史\n\nImplementation Agent（實作型）\n- **輸入**：任務描述 + 相關檔案內容 + 架構約束\n- **禁止**：傳入探索過程、用戶閒聊、其他任務的討論\n- **關鍵**：只傳遞要修改的檔案，不傳完整 codebase 快照\n\nReview Agent（審查型）\n- **輸入**：diff + 架構上下文 + 相關規範文件\n- **禁止**：傳入實作討論、嘗試過程、中間版本\n- **關鍵**：審查者不需要知道「為什麼嘗試了方案 A」，只需要看到最終的方案 B\n\n6. 壓縮模板\n\n壓縮後的上下文應遵循此結構：\n\n```\n會話摘要（壓縮於 HH:MM）\n\n任務\n[一句話描述當前任務]\n\n已完成\n- [x] 步驟 1：結果\n- [x] 步驟 2：結果\n\n進行中\n- [ ] 步驟 3：當前狀態\n\n關鍵決策\n- 選擇 X 而非 Y，因為 Z\n\n失敗記",
+      "tags": [
+        "agents",
+        "context",
+        "reference"
+      ]
+    },
+    {
+      "file": "resources/docs-guide.md",
+      "title": "文檔指南速查",
+      "type": "resource",
+      "summary": "~/YD 2026/docs/ 下 15 個技術文檔索引與用途速查",
+      "content": "文檔指南速查\n\n位置：`~/YD 2026/docs/`\n\n架構與設計\n\n| 文檔 | 內容 |\n|------|------|\n| ARCHITECTURE.md | 工作區結構、目錄層級、系統設計 |\n| WORKSPACE_STRUCTURE.md | 2026-03-26 目錄重組優化記錄 |\n| IMPLEMENTATION_ROADMAP.md | 雲端 session 管理系統架構總覽 |\n\n開發指南\n\n| 文檔 | 內容 |\n|------|------|\n| DEVELOPMENT.md | 完整開發指南（結構 + 工作流） |\n| FRONTEND_SETUP.md | 前端開發 quick start + 目錄結構 |\n| GETTING_STARTED.md | 多 Agent session 管理系統 3 步驟上手 |\n| SESSION-WRAP-QUICKSTART.md | 5 分鐘設定（別名 + token 配置） |\n\n部署與運維\n\n| 文檔 | 內容 |\n|------|------|\n| DEPLOY_RAILWAY.md | Railway 平台生產部署指南 |\n| CI-CD.md | GitHub Actions CI/CD 流程 |\n| PERFORMANCE.md | 效能優化、基準測試、監控 |\n| TROUBLESHOOTING.md | 常見問題排解（環境/Git/依賴/Docker/DB） |\n\n項目狀態\n\n| 文檔 | 內容 |\n|------|------|\n| CHANGELOG.md | 版本歷史（Keep a Changelog 格式） |\n| PROJECT_STATUS.md | Phase 2 項目狀態報告 |\n| IMPLEMENTATION_COMPLETE.md | 生產就緒狀態報告（API + CLI + Docker） |\n| FINAL_CHECKLIST.md | 後端 API + CLI + Docker 實現清單（已完成） |",
+      "tags": [
+        "reference",
+        "docs"
+      ]
+    },
+    {
+      "file": "ideas/phase-10-analytics.md",
+      "title": "Phase 10 — Advanced Analytics",
+      "type": "idea",
+      "summary": "深度指標分析、AI 洞察、Custom Dashboard、Data Export、Scheduled Reports",
+      "content": "Phase 10 — Advanced Analytics\n\n想法\n\n在 dashboard 價值驗證通過後，深入做數據分析層。\n\n功能列表\n\n- 決策影響分析（哪些決策導致最多後續工作）\n- Agent 績效對比（多代理協調效率）\n- 記憶知識庫增長趨勢預測\n- Custom Dashboard Builder\n- Data Export (CSV/Excel/PDF)\n- Scheduled Reports 推送\n\n前置條件\n\n- [ ] Dashboard 價值驗證通過\n- [ ] Phase 9C/9D 完成\n- [ ] PostgreSQL schema 穩定",
+      "tags": [
+        "session-wrap",
+        "analytics",
+        "roadmap"
+      ]
+    },
+    {
+      "file": "projects/dex-bot.md",
+      "title": "DEX Bot 自動化系統",
+      "type": "project",
+      "summary": "TG Bot + 14 個排程任務，站點監控、GA4 報表、競品追蹤",
+      "content": "DEX Bot 自動化系統\n\n概覽\n\n- **位置：** `~/YD 2026/APP/claude_code_telegram_bot/`\n- **技術棧：** Node.js (ESM)\n- **推送：** Telegram (chat_id: 7789686608)\n- **排程：** macOS launchd（14 個任務 + 1 守護進程）\n\n排程任務\n\n| 任務 | 頻率 | 推送 |\n|------|------|------|\n| site-health | 每 5 分鐘 | TG（異常/恢復） |\n| ga4-alert | 每小時 | TG |\n| log-rotate | 每日 03:00 | — |\n| broken-links | 週三 04:00 | — |\n| lighthouse | 週一 06:00 | — |\n| competitor | 週一~五 06:45 | — |\n| seo-audit | 週三 07:00 | TG |\n| crux | 週一 07:30 | TG |\n| ssl-check | 週一~五 08:00 | TG |\n| ga4-daily-report | 週一~五 09:00 | TG + Email |\n| dashboard | 每日 09:15 | — |\n| content-analytics | 週一~五 09:30 | TG |\n| morning-briefing | 週一~五 09:50 | TG |\n| daily-report | 週一~五 17:50 | TG + Email |\n| ops-report | 每週五 18:00 | TG |\n\n特性\n\n- GA4 日報去重（同日只推一次）\n- 競品誤報過濾（title 不變且 size <1% 靜默）\n- 網路任務失敗自動重試 3 次\n- Log 輪轉（7 天清理 + 1MB 截斷）\n\n待辦\n\n- [x] 遷移至 `~/YD 2026/APP/` 正式目錄（已完成）\n- [ ] xhs 連續失敗 392 次排查",
+      "tags": [
+        "bot",
+        "telegram",
+        "automation",
+        "monitoring"
+      ]
+    },
+    {
+      "file": "resources/prompt-inventory.md",
+      "title": "Prompt 版本清單",
+      "type": "resource",
+      "summary": "所有 system prompt 和 skill prompt 的位置清單 — prompt 版本控制的基礎",
+      "content": "Prompt 版本清單\n\n所有 CLAUDE.md（system prompt）、SKILL.md（skill prompt）及 slash command 的完整盤點。\n用於 prompt 版本控制、審計、及變更追蹤。\n\n> 最後掃描：2026-03-30\n\n---\n\n一、CLAUDE.md 檔案（System Prompts）\n\n活躍項目\n\n| 檔案路徑 | 行數 | 最後修改 | Git | 用途 |\n|----------|------|----------|-----|------|\n| `~/.claude/CLAUDE.md` | 48 | 2026-03-27 | 未追蹤 | 全域指令 — 語言、風格、快捷鍵、hooks |\n| `~/YD 2026/CLAUDE.md` | 78 | 2026-03-27 | 已追蹤 | 工作區根指令 — 項目導航、目錄結構、工作流 |\n| `~/YD 2026/obsidian/CLAUDE.md` | 92 | 2026-03-30 | 已追蹤 | Obsidian 知識庫操作規則 — PARA 結構、frontmatter |\n| `~/YD 2026/projects/production/gwx/CLAUDE.md` | 152 | 2026-03-11 | 已追蹤 | GWX 項目指令 |\n| `~/YD 2026/projects/production/claude_code_telegram_bot/CLAUDE.md` | 132 | 2026-03-27 | 已追蹤 | Telegram Bot 項目指令 |\n| `~/YD 2026/projects/production/claude_code_telegram_bot/gwx/CLAUDE.md` | 152 | 2026-03-23 | 已追蹤 | Telegram Bot GWX 子模組指令 |\n| `~/YD 2026/projects/experimental/remotion-clip/.claude/CLAUDE.md` | 38 | 2026-03-27 | 已追蹤 | Remotion 短視頻項目指令 |\n| `~/YD 2026/projects/experimental/NS_0327/CLAUDE.md` | 152 | 2026-03-22 | 未追蹤 | NS 實驗項目指令 |\n\n歸檔項目\n\n| 檔案路徑 | 行數 | 最後修改 | Git | 用途 |\n|----------|------|----------|-----|------|\n| `~/YD 2026/Archived/tools/0324_gstack/gstack/CLAUDE.md` | 286 | 2026-03-24 | 已追蹤 | GStack 工具（已歸檔） |\n| `~/YD 2026/Archived/references/workspace-0325/CLAUDE.md` | 152 | 2026-03-22 | 未追蹤 | 舊版工作區設定參考 |\n| `~/YD 2026/Archived/references/workspace-0325/apex/CLAUDE.md` | 75 | 2026-03-24 | 已追蹤 | APEX 工具參考 |\n| `~/YD 2026/Archived/references/0323/quota-dash/CLAUDE.md` | 152 | 2026-03-11 | 未",
+      "tags": [
+        "agents",
+        "reference"
+      ]
+    },
+    {
+      "file": "ideas/dspy-trial-plan.md",
+      "title": "DSPy 試點計劃",
+      "type": "idea",
+      "summary": "DSPy 自動 prompt 優化可行性評估 + 試點計劃",
+      "content": "DSPy 試點計劃\n\n什麼是 DSPy\n\nDSPy 是 Stanford NLP 開發的框架，核心理念是「編程而非 prompting」。它把 LLM 呼叫抽象為可組合的模組（Signature / Module），然後用 Optimizer 自動搜尋最佳 prompt 組合——包括 few-shot 範例選擇、指令措辭優化、甚至模型微調。開發者只需定義輸入/輸出結構和評估指標，DSPy 會自動迭代出高品質 prompt，取代手工調 prompt 的苦力活。目前最新版本 **3.1.3**（2026-02-05），要求 Python >= 3.10。\n\nClaude / Anthropic 支援情況（關鍵問題）\n\n**結論：原生支援，開箱即用。**\n\n- `pip install dspy[anthropic]` 即可啟用 Anthropic 後端\n- 設定 `ANTHROPIC_API_KEY` 環境變數，傳入 `anthropic/{model_name}` 即可使用\n- 底層走 LiteLLM 統一介面，支援所有 Claude 模型（Haiku 4.5 / Sonnet 4.6 / Opus 4.6）\n- 也可透過 OpenRouter 間接呼叫 Claude，增加靈活性\n\n```python\nimport dspy\nlm = dspy.LM(\"anthropic/claude-haiku-4-5\", api_key=\"...\")\ndspy.configure(lm=lm)\n```\n\n**無阻塞風險。** Claude 作為 LLM 後端完全可用。\n\n推薦試點任務：Obsidian 標籤匹配\n\n為什麼選這個任務：\n\n1. **有真實數據** — 知識庫 `_tags.md` 包含完整標籤體系，每篇筆記有 frontmatter tags\n2. **可量化** — 給定筆記內容，預測應有的 tags，用 F1-score 衡量準確率\n3. **有實際價值** — 目前新筆記的標籤由人工判斷，自動化可提升一致性\n4. **規模適中** — 約 40-60 篇筆記，足夠 BootstrapFewShot 但不會燒太多 token\n\n具體做法：\n- 從現有筆記提取 `(content, tags)` 配對作為 ground truth\n- 定義 DSPy Signature：`content -> tags`\n- 用 BootstrapFewShot 優化 few-shot 範例選擇\n- 對比優化前後的標籤預測準確率\n\n實施計劃\n\n第一步：環境搭建（30 分鐘）\n\n```bash\npython3 -m venv .venv-dspy\nsource .venv-dspy/bin/activate\npip install dspy[anthropic]\n```\n\n第二步：數據準備（1 小時）\n\n- 從 Obsidian 筆記提取 frontmatter，建立 `(title + summary + content_snippet, tags)` 資料集\n- 拆分 train / test（70/30）\n- 定義評估指標（tag 預測的 precision / recall / F1）\n\n第三步：Baseline 建立（30 分鐘）\n\n```python\nimport dspy\n\nlm = dspy.LM(\"anthropic/claude-haiku-4-5\")\ndspy.configure(lm=lm)\n\nclass TagPredictor(dsp",
+      "tags": [
+        "agents",
+        "ai",
+        "automation"
+      ]
+    },
+    {
+      "file": "resources/github-repos.md",
+      "title": "GitHub Repos 總覽",
+      "type": "resource",
+      "summary": "redredchen01 GitHub 帳號 50+ repo 分類總覽",
+      "content": "GitHub Repos 總覽\n\n帳號：**redredchen01** | 總計：50+ repos\n\n活躍項目（2026 年）\n\n主項目\n| Repo | 說明 | 語言 |\n|------|------|------|\n| dexapi | AI API Gateway (Sub2API) | Shell |\n| apex | Autonomous Pipeline Execution Engine | Python |\n\nSkill 工具鏈\n| Repo | 說明 | 版本 |\n|------|------|------|\n| session-wrap-skill | 跨平台 AI agent 記憶持久化 | v3.9.0 |\n| orchestrator-agents-skill | Multi-agent 路由 orchestrator | v1.1.1 |\n| weekly-sheet-skill | 周報 Google Sheets 自動填寫 | v1.0.0 |\n| triple-publish-skill | 三管道發佈 GitHub+npm+PyPI | v1.0.0 |\n| version-sync-skill | 版本迭代+文檔同步 | v1.0.0 |\n| daily-report-skill | 日報自動生成 | v1.0.0 |\n| static-ghost | AI 去浮水印 (LaMa) | v0.4.2 |\n\n開發工具\n| Repo | 說明 | 語言 |\n|------|------|------|\n| gwx | Google Workspace CLI | Go |\n| dex-cli | AI dev tool + ACP protocol | TypeScript |\n| quota-dash | LLM quota monitoring TUI | Python |\n| dex-bot-automation | Bot 自動化 | JavaScript |\n| claude-code-telegram | TG remote Claude Code | Python |\n\n內容工具\n| Repo | 說明 | 語言 |\n|------|------|------|\n| article-tagger | 文章自動標籤 | Python |\n| 51acgs-scraper | 51漫畫爬蟲 | Python |\n| keyword-ops-tool | 關鍵詞運營工具 | Python |\n| manga-tagger | 漫畫封面 VLM 標籤 | Python |\n| video-moderation | 影片內容審核 | JavaScript |\n\n歸檔/早期項目（2025 年）\n\nACG 相關工具鏈（TypeScript 為主）：\nacg-frontend, animevibe-demo (x3), banana-editor, comic-polyglot, comfyui-proxy-service, geoed-it, GTT, Hen-HenTai-Tag-Generator, Hentai, hentai-boxing, hentai-gmd, HENTAI-KEYSCOPE, Hentiny, ht-tag-1125, HTTagGenerator, img2pdf, pdf2pdf, repo-name, SB-AI, synthcheck, Tag-Generate, vel",
+      "tags": [
+        "github",
+        "repos",
+        "reference"
+      ]
+    },
+    {
+      "file": "resources/收件与沉淀规则.md",
+      "title": "收件與沈澱規則",
+      "type": "resource",
+      "summary": "Obsidian 知識管理收件與升格規則 — journal 入口 → projects/resources 升格",
+      "content": "收件与沉淀规则\n\n目标\n\n让资料先有落点，再做升格；避免下载区、聊天附件、零碎文本长期漂浮。\n\n入口规则\n\n1. 日常文字入口\n统一先进入：`journal/`\n\n适用内容：\n- 当天想法\n- 临时判断\n- 会议/沟通摘要\n- 待验证结论\n- 任务碎片\n\n2. 下载与聊天附件\n处理原则：\n- **项目相关** → 送回对应项目目录\n- **长期参考资料** → 升格到 `resources/`\n- **仍不确定归属** → 先留在下载区的 `_待分拣`\n- **临时产物** → 留在 `_临时产物`，后续再清\n\n3. 项目知识\n满足任一条件时，从 `journal/` 或项目资料升格到 `projects/`：\n- 已形成明确方案\n- 已有阶段性结论\n- 后续一定会复用\n- 与某一项目强绑定\n\n4. 稳定经验 / 参考材料\n满足任一条件时，升格到 `resources/`：\n- 可跨项目复用\n- 是标准流程/规范/清单\n- 是值得长期保存的参考资料\n\n每周一次升格\n每周做一次：\n1. 回看最近 journal\n2. 提取值得保留的结论\n3. 升格到 `projects/` 或 `resources/`\n4. 其余内容留在 journal，不强求整理\n\n自動化沈澱系統（14 個自動化）\n\n寫入層（已有 #1-9）\n- Journal 自動記錄、週報/月報生成、索引同步等\n\n沈澱層（新增 A1-A5）\n\n| # | 自動化 | 觸發時機 | 輸出 |\n|---|--------|----------|------|\n| A1 | 升格提醒 | 週五週報生成時 | 週報中 `## 升格建議` 章節 |\n| A2 | Idea 溫度追蹤 | 每晚 23:00 | ideas/_index.md 溫度欄（🆕/🔥/🧊/💀）|\n| A3 | 資源過期檢測 | 月底月報生成時 | 月報中 `## 知識庫健康度` 章節 |\n| A4 | 結論自動萃取 | Session stop hook | Journal tags 標記 #conclusion / #resolved |\n| A5 | 關聯建議 | 每晚 index-sync | _graph.md `## 建議關聯` 區段 |\n\n設計原則\n- **只建議，不自動搬移** — 升格/歸檔由人決定\n- **標記 > 搬移** — 用 tag 和溫度追蹤，不改變檔案位置\n- **週報/月報是匯報面板** — 所有建議匯聚到報表\n\n索引維護（已自動化）\n\n以下索引現由 `obsidian-journal-sync.mjs index-sync` 模式自動維護：\n- `_tags.md` — 從 frontmatter `tags` 欄位自動重建\n- `_graph.md` — 從 `related` 欄位 + journal 導航鏈接 + 建議關聯自動重建\n\n手動更新時遵循 `CONVENTIONS.md` 規範，寫入後同步更新這兩個索引。",
+      "tags": [
+        "reference",
+        "workflow"
+      ]
+    },
+    {
+      "file": "projects/remotion-clip.md",
+      "title": "Remotion Clip",
+      "type": "project",
+      "summary": "Remotion 影片生成與剪輯工具，React 19 + Remotion 4.0",
+      "content": "Remotion Clip\n\n概覽\n\n- **位置：** `~/YD 2026/projects/experimental/remotion-clip/`\n- **技術棧：** React 19.2.4 + Remotion 4.0.440 + TypeScript\n- **狀態：** 實驗階段\n\nScripts\n\n| 命令 | 用途 |\n|------|------|\n| `dev` | Remotion Studio 預覽 |\n| `build` | 打包影片 |\n| `render` | 渲染為 MP4 |\n| `probe` | FFprobe 元數據查看 |",
+      "tags": [
+        "experimental",
+        "react",
+        "video",
+        "remotion"
+      ]
+    },
+    {
+      "file": "projects/ctx.md",
+      "title": "CTX — Context Window Manager",
+      "type": "project",
+      "summary": "免費用戶 AI Agent Context Window 自動管理器，200K 上下文優化",
+      "content": "CTX — Context Window Manager\n\n概覽\n\n- **版本：** v0.1.0\n- **位置：** `~/YD 2026/projects/tools/ctx/`\n- **GitHub：** [redredchen01/ctx](https://github.com/redredchen01/ctx)\n- **技術棧：** Node.js + Jest\n- **CLI：** `ctx`\n\n用途\n\n為免費 AI Agent 用戶優化 200K context window 使用：\n- Clausidian\n- Claude Code\n- Cursor\n- Cline\n\n功能\n\n- Context window 使用量監控\n- 自動壓縮與優化\n- 50% checkpoint、75% full save\n- 記憶去重與過期清理",
+      "tags": [
+        "tool",
+        "nodejs",
+        "context",
+        "agents"
+      ]
+    },
+    {
+      "file": "projects/sub2api-deploy.md",
+      "title": "Sub2API Deploy",
+      "type": "project",
+      "summary": "Sub2API 本地測試與部署環境，Docker Compose + PostgreSQL",
+      "content": "Sub2API Deploy\n\n概覽\n\n- **位置：** `~/YD 2026/projects/experimental/sub2api-deploy/`\n- **技術棧：** Docker + PostgreSQL + Python\n- **規模：** 68M\n- **狀態：** 實驗/開發中\n\n用途\n\n- YDAPI 本地測試環境\n- Docker 配置驗證\n- 數據庫整合測試",
+      "tags": [
+        "experimental",
+        "docker",
+        "deploy"
+      ]
+    },
+    {
+      "file": "resources/agent-engineering-research.md",
+      "title": "Agent Engineering 四大支柱研究",
+      "type": "resource",
+      "summary": "Harness / Compound / Context / Prompt Engineering 四大支柱深度調研 + Agent Power 升級路線圖",
+      "content": "Agent Engineering 四大支柱研究\n\n> 2026-03-30 四個研究 Agent 並行調研成果整合\n\n演進全景：三個時代\n\n```\n┌─────────────────────────────────────────┐\n│         Harness Engineering             │  ← 2026：完整運行環境\n│  (約束、回饋迴路、驗證、生命週期)         │\n├─────────────────────────────────────────┤\n│         Context Engineering             │  ← 2025：上下文管理\n│  (檢索、壓縮、記憶、漸進式揭露)           │\n├─────────────────────────────────────────┤\n│         Prompt Engineering              │  ← 2022-2024：指令設計\n│  (CoT, ReAct, few-shot, system prompt)  │\n├─────────────────────────────────────────┤\n│      Compound AI Systems                │  ← 橫切面：系統架構\n│  (多模型、多工具、路由、編排)             │\n└─────────────────────────────────────────┘\n```\n\n每一層不取消前一層，而是擴展範圍。**Compound AI Systems** 是橫切面架構原則。\n\n---\n\n一、Prompt Engineering — 指令設計層\n\n核心進階技術\n\n| 技術 | 原理 | 適用場景 |\n|------|------|---------|\n| **Chain-of-Thought** | 暴露中間推理步驟 | 邏輯密集型任務 |\n| **Tree of Thoughts** | 多路徑搜索 + 剪枝 | 需要探索的複雜問題 |\n| **Self-Consistency** | 多路徑取多數決 | 提高推理準確率 |\n| **ReAct** | Thought → Action → Observation 循環 | Agent 核心模式 |\n| **Meta-Prompting** | 用 LLM 自動優化 prompt | 規模化 prompt 管理 |\n\nAgent System Prompt 八要素\n\n1. 精確角色定義 + 能力邊界\n2. 結構化組織（XML/Markdown 分層）\n3. 顯式工具整合（規格 + 範例）\n4. 強制推理要求\n5. 動態環境感知\n6. 領域專業知識嵌入\n7. 安全協議（至少 7 類拒絕）\n8. 一致語調定義\n\n自動化 Prompt 優化\n\n- **DSPy**：程式化 LM 而非提示化 LM，MIPROv2 優化器，準確率 46.2% → 64.0%\n- **OPRO**：Google DeepMind，用 LLM 做 beam search 優化 prompt\n\n反模式清單\n\n- 模糊指令（沒有格式/範圍/語氣要求）\n- Prompt 過長（稀釋注意力）\n- 矛盾指令（「簡潔」+「詳細解釋」）\n- 單次塞太多任務\n- 絕對要求（模型為遵守而幻覺）\n- 缺乏驗證迴路\n\n---\n\n二、Context Engineering — 上下文管理層\n\n> ",
+      "tags": [
+        "agents",
+        "ai",
+        "reference",
+        "roadmap"
+      ]
+    },
+    {
+      "file": "ideas/dashboard-value-validation.md",
+      "title": "Dashboard 價值驗證",
+      "type": "idea",
+      "summary": "驗證 session-wrap web dashboard 是否為團隊帶來實際價值，決定是否投入 Phase 9C/9D",
+      "content": "Dashboard 價值驗證\n\n想法\n\nautoplan CEO 審查質疑了 dashboard 的價值。需要在投入 Phase 9C（WebSocket）和 9D（Comments）之前驗證基礎假設。\n\n背景\n\n- CEO 雙聲道（Claude + Codex）一致質疑：dashboard 680 LOC 是否過度\n- 已砍到 ~500 LOC（9A+9B only）\n- 前端 HTTP polling fallback 已可用\n\n驗證方法\n\n- [ ] 自己日常使用 1-2 週\n- [ ] 記錄實際使用頻率和場景\n- [ ] 對比：用 dashboard vs 直接看 CLI 輸出的效率差異\n- [ ] 如果驗證成功 → Phase 9C/9D\n- [ ] 如果驗證失敗 → 停止投入，focus on CLI 體驗",
+      "tags": [
+        "product",
+        "validation",
+        "session-wrap"
+      ]
+    },
+    {
+      "file": "journal/2026-03-26.md",
+      "title": "2026-03-26",
+      "type": "journal",
+      "summary": "111 commits across 9 repos — Phase 6 完成 + 5 個 Skill 發佈 + Obsidian KB 自動化上線",
+      "content": "2026-03-26 Thu\n\n今日記錄（111 commits / 9 repos）\n\nPhase 6 完成 + v3.5.1 發布\n\n- YD 2026（40 commits）：Phase 6A/6B/6C 全部完成\n- Keyword tool（40 commits）：Phase 6 文檔和功能\n\n5 個 Skill 發佈（4 個新建 repo）\n\n| Skill | 版本 | 說明 |\n|-------|------|------|\n| session-wrap-skill | v3.5.0 | Agent-native 架構 + 7 新工具（16 commits）|\n| triple-publish-skill | v1.0.0 | 三管道發佈 + post-publish verification |\n| version-sync-skill | v1.0.0 | 版本同步 |\n| daily-report-skill | v1.0.0 | 日報生成 |\n| agents-skill | v1.0.0 | orchestrator 初始版 |\n\n其他\n\n- gwx：settings permissions 清理 + headless credential storage\n- Obsidian 知識庫：9 個自動化流程上線（journal/weekly/monthly/index sync）\n\n想法\n\n- Phase 4-6 的結構優化讓後續 Phase 開發速度明顯提升\n- Skill 發佈流程已標準化（SKILL.md + package.json + pyproject.toml）\n\n問題與風險\n\n- ⚠️ xhs 連續失敗 370 次（lastDown: 2026-03-26T10:11:42.730Z）\n\n明日計劃\n\n- [ ] Phase 7 開發（WebSocket + Task CRUD + 決策搜索）\n- [ ] orchestrator-agents-skill 獨立 repo\n- [ ] 周報 Google Sheets 填寫\n\n---\n< [[2026-03-25]] | [[2026-03-27]] >",
+      "tags": [
+        "daily"
+      ]
+    },
+    {
+      "file": "projects/triple-publish.md",
+      "title": "Triple Publish Skill",
+      "type": "project",
+      "summary": "三管道發佈 Skill v1.0.0 — GitHub + npm + PyPI 一鍵發佈",
+      "content": "Triple Publish Skill\n\n概覽\n\n- **版本：** v1.0.0\n- **GitHub：** [redredchen01/triple-publish-skill](https://github.com/redredchen01/triple-publish-skill)\n- **npm：** `triple-publish-skill`\n\n功能\n\n一條命令完成三管道發佈：\n1. **GitHub** — commit + tag + push\n2. **npm** — `npm publish`\n3. **PyPI** — `twine upload`（目前需手動 token）\n\n自動偵測項目類型、版本號，執行測試後發佈。\n\n已知問題\n\n- PyPI 發佈需手動配置 token（見 [[pypi-auto-publish]]）",
+      "tags": [
+        "skill",
+        "npm",
+        "ci-cd"
+      ]
+    },
+    {
+      "file": "projects/ops-system-upgrade-roadmap.md",
+      "title": "運營系統升級路線圖",
+      "type": "project",
+      "summary": "從工具集 → 自治運營系統，4 個 Phase 升級計劃",
+      "content": "運營系統升級路線圖\n\n> 目標：從 37 Skills + 26 Scripts + 20 Schedules 的「啞元件集合」→ 數據互通、智能告警、記憶回查的自治系統\n\n現狀問題\n\n| 斷裂點 | 現象 | 損失 |\n|--------|------|------|\n| 數據不流通 | GA4/site-health/lighthouse 各寫各的 CSV/JSON，不交叉 | 關聯事件無法自動識別 |\n| 日報手動拼裝 | daily-progress.json 需人工維護，過期 2 天才發現 | 每天 20-30 分鐘手動聚合 |\n| Obsidian 只寫不讀 | 9 個流程灌數據進去，從不回查歷史 | 重複排查已解決的問題 |\n| 告警無層次 | xhs 失敗 392 次 = 同一告警重複 130 遍 | 告警疲勞，真正問題被淹沒 |\n| 週末盲區 | skipWeekend() 讓監控以外全靜默 | 週末故障週一才知道，損失 48h |\n\nPhase A — 數據匯流（auto-daily skill）\n\n**核心產物：`daily-context.json` — 所有報表的單一數據源**\n\n```\ngit log ──┐\nObsidian ─┤\nGA4 CSV ──┼──→ daily-context.json ──→ 日報 / 周報 / 晨報\ngwx ──────┤                          全部從同一來源生成\nsite-health┘\n```\n\n- [ ] auto-daily skill 開發：自動收集 git + Obsidian + gwx + GA4\n- [ ] daily-progress.json → daily-context.json 遷移\n- [ ] daily-work-report.mjs 改讀 daily-context.json\n- [ ] morning-briefing.mjs 改讀 daily-context.json\n- [ ] weekly-ops-report.mjs 改讀 daily-context.json\n\n**預估：半天 | 價值：消滅手動日報**\n\nPhase B — 智能告警（site-health 升級）\n\n**告警分層，不再一視同仁：**\n\n| failCount | 動作 |\n|-----------|------|\n| < 3 | 靜默 |\n| 3-10 | Telegram 一次 |\n| > 50 | Telegram + Email + journal 標紅 |\n| > 200 | + 自動觸發排查 checklist |\n| 流量同步下降 | 關聯告警：「站點掛了 + 流量歸零 = 全站故障」|\n\n- [ ] site-health.mjs 加入分層告警邏輯\n- [ ] GA4 流量 + site-health 狀態交叉關聯\n- [ ] 告警去重（同一事件只升級不重複）\n- [ ] 週末關鍵告警不靜默（health + SSL 到期）\n\n**預估：2h | 價值：告警從噪音 → 有層次的信號**\n\nPhase C — 記憶回查（Obsidian 知識化）\n\n**從「倉庫」變成「可查詢的知識庫」：**\n\n```\n\"上次 xhs 掛了做了什麼？\"\n→ 搜 journal：xhs + 失敗 + 處理\n→ 返回：03-25 排查定位 IP 118.25.163.88\n→ morning-briefing 自動引用歷史方案\n```\n\n- [ ] Ob",
+      "tags": [
+        "roadmap",
+        "automation",
+        "ops"
+      ]
+    },
+    {
+      "file": "ideas/agent-trace-system.md",
+      "title": "Agent Trace System 設計",
+      "type": "idea",
+      "summary": "輕量級 Agent 操作追蹤系統 — append-only JSONL + 周報整合",
+      "content": "Agent Trace System 設計\n\nAgent Power Phase 3 — 多 Agent 系統可觀測性。追蹤哪些 Agent 被呼叫、表現如何、哪裡失敗。\n\n1. Trace 格式\n\nAppend-only JSONL，每行一個事件：\n\n```json\n{\"ts\":\"2026-03-30T14:00:00Z\",\"agent\":\"codex\",\"task\":\"review\",\"tokens_in\":1200,\"tokens_out\":800,\"duration_ms\":5000,\"status\":\"success\",\"summary\":\"Found 2 issues\"}\n```\n\n欄位定義\n\n| 欄位 | 類型 | 說明 |\n|------|------|------|\n| `ts` | ISO 8601 | 事件時間戳 |\n| `agent` | string | Agent 名稱（codex/cline/gemini/kilo/opencode/qoder/claude-sub） |\n| `task` | string | 任務類型（review/fix/generate/research/deploy） |\n| `tokens_in` | number | 輸入 token 數 |\n| `tokens_out` | number | 輸出 token 數 |\n| `duration_ms` | number | 執行時間（毫秒） |\n| `status` | string | success / failure / timeout / fallback |\n| `summary` | string | 一句話結果摘要 |\n| `fallback_from` | string? | 可選 — 如果是 fallback，記錄原始 Agent |\n| `error` | string? | 可選 — 失敗原因 |\n| `session_id` | string? | 可選 — 關聯 session |\n\n2. 追蹤範圍\n\n必須追蹤\n\n- 每次 `/codex`、`/cline`、`/gemini`、`/kilo`、`/opencode`、`/qoder` 呼叫\n- 每次透過 Agent tool 啟動的 sub-agent\n- Fallback 事件（Agent A 失敗 → 改用 Agent B）\n\n可選追蹤\n\n- Hook 失敗（從 `~/.claude/hooks-audit.log` 讀取）\n- Skill 呼叫（`/ship`、`/review`、`/qa` 等）\n- 長時間任務的中間狀態\n\n3. 儲存\n\n```\n~/.claude/trace.jsonl          # 當月 trace\n~/.claude/trace-2026-03.jsonl  # 歸檔（月底 rotate）\n```\n\n- **格式：** Append-only JSONL\n- **輪替：** 每月自動 rotate（launchd 或 pre-commit hook 觸發）\n- **大小預估：** 每天 ~50 次 agent 呼叫 × ~200 bytes = ~10KB/天，每月 ~300KB\n- **清理：** 保留最近 3 個月，更舊的自動刪除\n\nRotate 腳本\n\n```bash\n#!/bin/bash\nrotate-trace.sh — 每月 1 號執行\nTRACE=~/.claude/trace.jsonl\nMONTH=$(d",
+      "tags": [
+        "agents",
+        "monitoring",
+        "automation"
+      ]
+    }
+  ],
+  "test": [
+    {
+      "file": "areas/skill-development.md",
+      "title": "Skill 工具鏈開發",
+      "type": "area",
+      "summary": "Claude Code Skill 生態系統開發與發佈，7 個已發佈 + gstack 基座",
+      "content": "Skill 工具鏈開發\n\n當前關注\n\n- 建立可複用的 Claude Code Skill 生態\n- 每個 Skill 發佈到 GitHub + npm（+ PyPI）\n- 統一結構：SKILL.md + references/ + package.json + pyproject.toml\n- Agents orchestrator 已獨立 repo，支援 6 個 sub-agent 自動路由\n\n已發佈 Skills\n\n| Skill | 版本 | GitHub | npm | PyPI |\n|-------|------|--------|-----|------|\n| session-wrap | v3.9.0 | [repo](https://github.com/redredchen01/session-wrap-skill) | ✅ | — |\n| orchestrator-agents | v1.1.1 | [repo](https://github.com/redredchen01/orchestrator-agents-skill) | ✅ | ⏳ |\n| weekly-sheet | v1.0.0 | [repo](https://github.com/redredchen01/weekly-sheet-skill) | ✅ | ⏳ |\n| triple-publish | v1.0.0 | [repo](https://github.com/redredchen01/triple-publish-skill) | ✅ | — |\n| version-sync | v1.0.0 | [repo](https://github.com/redredchen01/version-sync-skill) | ✅ | — |\n| daily-report | v1.0.0 | [repo](https://github.com/redredchen01/daily-report-skill) | ✅ | ⏳ |\n| static-ghost | v0.4.2 | [repo](https://github.com/redredchen01/static-ghost) | — | — |\n\n基座工具\n\n| 工具 | 版本 | 說明 |\n|------|------|------|\n| gstack | v0.12.5.0 | Claude Code skills + fast headless browser（146 commits） |\n| web-access | — | 社區維護的瀏覽器自動化（27 commits） |\n\n計劃中\n\n- Site Doctor Skill — 一鍵全套站點診斷\n- Competitor Intel Skill — 競品情報簡報\n\n最近進展\n\n- 2026-03-27：orchestrator-agents-skill v1.1.1 獨立發布，舊包 deprecated\n- 2026-03-27：weekly-sheet-skill v1.0.0 發布（gwx + Google Sheets）\n- 2026-03-27：session-wrap v3.5.0 → v3.9.0（Phase 7/8/9 完成）\n- 2026-03-27：gstack 升級 0.11.14.0 → 0.12.5.0\n\nSkill 結構標準\n\n```\nskill-name/\n├── SKILL.md          ← ",
+      "tags": [
+        "skills",
+        "tools",
+        "npm",
+        "pypi"
+      ]
+    },
+    {
+      "file": "resources/launchd-schedule.md",
+      "title": "LaunchAgent 排程總覽",
+      "type": "resource",
+      "summary": "24 個 com.dex.* LaunchAgent 排程任務完整清單",
+      "content": "LaunchAgent 排程總覽\n\nmacOS launchd 管理的自動化排程，共 24 個 `com.dex.*` agent。\n\n常駐服務\n\n| Agent | 模式 | Runtime | 用途 |\n|-------|------|---------|------|\n| `com.dex.bot` | KeepAlive | Bun | TG Bot 守護進程 |\n| `com.dex.tg-bot` | KeepAlive | Node | TG Bot (Node 版) |\n\n定時排程\n\n每日\n\n| Agent | 時間 | 用途 |\n|-------|------|------|\n| `com.dex.site-health` | 每 5 分鐘 | 站點健康 ping |\n| `com.dex.ga4-alert` | 每小時 | GA4 異常警報 |\n| `com.dex.log-rotate` | 03:00 | 日誌輪轉（7天清理 + 1MB 截斷）|\n| `com.dex.dashboard` | 09:15 | Dashboard 數據更新 |\n| `com.dex.journal-backfill` | 23:00 | Obsidian Journal Git 回填 |\n| `com.dex.obsidian-daily` | 08:00 | Obsidian 日記 + backfill + sync + auto-commit |\n\n週一~五\n\n| Agent | 時間 | 推送 | 用途 |\n|-------|------|------|------|\n| `com.dex.competitor` | 06:45 | — | 競品追蹤 |\n| `com.dex.ssl-check` | 08:00 | TG | SSL 憑證到期檢查 |\n| `com.dex.ga4-daily-report` | 09:00 | TG + Email | GA4 日報 |\n| `com.dex.content-analytics` | 09:30 | TG | 內容分析 |\n| `com.dex.morning-briefing` | 09:50 | TG | 早報簡報 |\n| `com.dex.daily-report` | 17:50 | TG + Email | 日報 |\n\n每週\n\n| Agent | 時間 | 用途 |\n|-------|------|------|\n| `com.dex.broken-links` | 週三 04:00 | 斷鏈檢查 |\n| `com.dex.lighthouse` | 週一 06:00 | Lighthouse 效能 |\n| `com.dex.seo-audit` | 週三 07:00 | SEO 審計 |\n| `com.dex.crux` | 週一 07:30 | Core Web Vitals |\n| `com.dex.weekly-review` | 週五 17:30 | 週回顧 |\n| `com.dex.ops-report` | 週五 18:00 | 運營報告 |\n| `com.dex.obsidian-weekly` | 週日 20:00 | Obsidian 週回顧 + health + orphans |\n\n每月\n\n| Agent | 時間 | 用途 |\n|-------|------|------|\n| `com.dex.monthly-retro` | 28-31日 1",
+      "tags": [
+        "reference",
+        "automation",
+        "launchd",
+        "scheduling"
+      ]
+    },
+    {
+      "file": "ideas/pypi-auto-publish.md",
+      "title": "PyPI 自動發布",
+      "type": "idea",
+      "summary": "消除手動 twine upload — GitHub Actions 或 triple-publish 自動化 PyPI 發布",
+      "content": "PyPI 自動發布\n\n想法\n\n目前 3 個 Skill（orchestrator-agents, weekly-sheet, daily-report）需手動 `twine upload`。應該整合到 triple-publish 或 GitHub Actions 自動完成。\n\n理由\n\n- 每次發布都忘記 PyPI 這一步\n- twine 需要手動設 token，不同機器要重新配\n\n下一步\n\n- [ ] 配置 PyPI API token\n- [ ] 在 triple-publish-skill 中修復 PyPI 自動發布\n- [ ] 或改用 GitHub Actions trusted publisher",
+      "tags": [
+        "automation",
+        "pypi",
+        "ci-cd"
+      ]
+    },
+    {
+      "file": "journal/2026-03-28.md",
+      "title": "2026-03-28",
+      "type": "journal",
+      "summary": "無 git 活動",
+      "content": "2026-03-28 Sat\n\n今日記錄\n\n- （無 git 活動）\n\n問題與風險\n\n- ⚠️ xhs 連續失敗 530 次（lastDown: 2026-03-28T04:39:18.024Z）\n\n---\n< [[2026-03-27]] | [[2026-03-29]] >",
+      "tags": [
+        "daily"
+      ]
+    },
+    {
+      "file": "projects/gwx.md",
+      "title": "GWX — Google Workspace CLI",
+      "type": "project",
+      "summary": "Google Workspace CLI — Gmail, Calendar, Drive, Docs, Sheets, Tasks, Contacts, Chat",
+      "content": "GWX — Google Workspace CLI\n\n概覽\n\n- **技術棧：** Go\n- **GitHub：** [redredchen01/gwx](https://github.com/redredchen01/gwx)\n- **版本：** v0.23.0（2026-03-25）\n- **本地安裝：** `npm install -g gwx-cli` (v0.10.0) + symlink `/Users/dex/.local/bin/gwx`\n- **用途：** 人類和 AI agent 共用的 Google Workspace 命令行工具\n- **認證：** Google OAuth 已認證（sheets/gmail/calendar/drive）\n\n支援服務\n\n- Gmail — 收發郵件、搜索、草稿\n- Calendar — 行程管理、會議查找\n- Drive — 文件管理\n- Docs / Sheets — 文檔操作（直接 API 讀寫，非下載上傳）\n- Tasks — 任務管理\n- Contacts — 聯絡人\n- Chat — 即時通訊\n\n使用經驗\n\n- `.xlsx` 無法用 Sheets API，必須轉為原生 Google Sheet\n- 中文 sheet 名用引號：`'工作流明细'!A1:V10`\n- values 需 2D array：`[[\"val1\",\"val2\"]]`\n- drive 沒有 delete/update 命令，只能上傳新檔\n\n版本密集迭代（2026-03-25）\n\nv0.17.0 → v0.23.0（7 個版本，單日）",
+      "tags": [
+        "cli",
+        "go",
+        "google-workspace",
+        "tool"
+      ]
+    },
+    {
+      "file": "journal/2026-W13-review.md",
+      "title": "周回顧 2026-W13",
+      "type": "journal",
+      "summary": "2026年第13周回顧",
+      "content": "周回顧 2026-W13\n\n> 2026-03-22 ~ 2026-03-28\n\n本週完成\n\n- autoplan CEO 審查砍掉 WebSocket + Comments，scope 680→~500 LOC\n- PR #1 merged（security hardening）、三版發布 GitHub + npm\n- 從 `~/.claude/skills/agents/` 拆出獨立 repo → GitHub + npm ✅，PyPI ⏳\n- 舊包 `agents-skill` 已 deprecated\n- 三張 Google Sheet 寫入（周報總覽 + 工作流明細 13 個 + 入庫模板 22 欄）\n- 周報數據：產出 11 個工作流 | 上線 9 個 | 節省 35h\n- `weekly-sheet-skill` 發布 GitHub + npm ✅，PyPI ⏳\n\n本週問題\n\n- ⚠️ xhs 連續失敗 370 次（lastDown: 2026-03-26T10:11:42.730Z）\n- [18:31:24] [L3] 🚨 小黃書 連續 486 次失敗（嚴重）\n- ⚠️ xhs 連續失敗 392 次（lastDown: 2026-03-27T01:49:08.873Z）\n- PyPI 發布仍需手動 twine upload（agents-skill + weekly-sheet-skill 兩個）\n\n本週想法\n\n- DEX Bot 排程從 23 個精簡到 17 個，並行化+原子寫入效果明顯\n- 競品監控並行抓取從 ~40s 降至 21s\n- Phase 4-6 的結構優化讓後續 Phase 開發速度明顯提升\n- Skill 發佈流程已標準化（SKILL.md + package.json + pyproject.toml）\n- autoplan 的 CEO 審查很有效，幫助砍掉了不必要的 scope\n- 單寫者模型解決了 API 與 agent 的並發競態問題\n\n下週計劃\n\n- [ ] Session Wrap 大版本迭代（agent-native 架構）\n- [ ] Triple Publish Skill 開發\n- [ ] Version Sync Skill 開發\n- [ ] Phase 7 開發（WebSocket + Task CRUD + 決策搜索）\n- [ ] orchestrator-agents-skill 獨立 repo\n- [ ] 周報 Google Sheets 填寫\n- [ ] Phase 9C/9D 延後項目評估（WebSocket、Comments/Activity Feed）\n- [ ] PyPI 手動發布\n- [ ] xhs 異常排查\n\n反思\n\n-",
+      "tags": [
+        "weekly-review"
+      ]
+    },
+    {
+      "file": "resources/tech-stack.md",
+      "title": "技術棧速查",
+      "type": "resource",
+      "summary": "YD 2026 工作區使用的技術棧總覽",
+      "content": "技術棧速查\n\n語言\n\n| 語言 | 用途 |\n|------|------|\n| Go | YDAPI 核心、GWX CLI |\n| Python | APEX、爬蟲、AI 工具 |\n| TypeScript | 前端工具、dex-cli |\n| JavaScript (ESM) | DEX Bot、自動化腳本 |\n| Shell/Bash | 部署腳本、別名系統 |\n\nAI / Agent\n\n| 工具 | 版本 | 用途 |\n|------|------|------|\n| Claude Code | 主力 | 開發、架構、文檔 |\n| Codex CLI | 最新 | 安全審查、第二意見 |\n| Gemini CLI | 0.35.1 | 分析研究、多角度觀點 |\n| Cline | 2.11.0 | 代碼審查 |\n| Kilo | 最新 | 代碼審查 |\n| OpenCode | 最新 | 代碼品質、debug |\n| Qodercli | 0.1.36 | 代碼審查 |\n\n路由系統：orchestrator-agents-skill v1.1.1\n\n基礎設施\n\n| 服務 | 用途 |\n|------|------|\n| macOS launchd | 排程系統（21 個 com.dex.* agent，見 [[launchd-schedule]]）|\n| Telegram Bot API | 推送通知（chat_id: 7789686608） |\n| Google Workspace (gwx) | 郵件、日曆、Drive、Sheets、Tasks、Chat |\n| GA4 API | 流量分析（小黃書 506575534、51漫畫 524298631） |\n| GitHub API (gh) | Repo 管理（50+ repos） |\n| npm / PyPI | 套件發佈（7 個 skill） |\n| Docker | 後端容器化（PostgreSQL + Express + Minio） |\n| Express.js | Dashboard API (:3001) + 雲端後端 (:3000) |\n\n開發工具\n\n| 工具 | 用途 |\n|------|------|\n| gstack | v0.12.5.0 — Claude Code skills + headless browser（40+ skill） |\n| Vite | 前端構建（React Dashboard） |\n| Jest | 測試框架 |\n| Playwright | E2E 測試 |\n| Recharts | 數據可視化 |\n\n本機環境\n\n- macOS (darwin, arm64)\n- Node.js + npm + pnpm (10.33.0)\n- Bun（TG Bot runtime）\n- Python 3.14\n- Go\n- Homebrew\n- Obsidian（知識庫）\n- 8 個 npm 全局套件（見 [[npm-global]]）\n- 20 個自動化腳本（見 [[scripts-reference]]）",
+      "tags": [
+        "tech",
+        "reference"
+      ]
+    },
+    {
+      "file": "journal/2026-03-retro.md",
+      "title": "2026年三月回顧",
+      "type": "journal",
+      "summary": "2026年03月回顧 — 6 天記錄",
+      "content": "2026年三月回顧\n\n> 2026-03-01 ~ 2026-03-30\n\n統計\n\n- 記錄天數：6\n- Git Commits：2203\n- Releases：9\n16\n12\n- 完成事項：8\n- 問題記錄：6\n\n本月完成\n\n- autoplan CEO 審查砍掉 WebSocket + Comments，scope 680→~500 LOC\n- PR #1 merged（security hardening）、三版發布 GitHub + npm\n- 從 `~/.claude/skills/agents/` 拆出獨立 repo → GitHub + npm ✅，PyPI ⏳\n- 舊包 `agents-skill` 已 deprecated\n- 三張 Google Sheet 寫入（周報總覽 + 工作流明細 13 個 + 入庫模板 22 欄）\n- 周報數據：產出 11 個工作流 | 上線 9 個 | 節省 35h\n- `weekly-sheet-skill` 發布 GitHub + npm ✅，PyPI ⏳\n- Agent Engineering 四大支柱升級（18 subagent 調度，10 文件 + 6 腳本 + 3 配置）\n- Harness 系統化：Golden Principles 30 條 + Hook audit log + Fallback 路由\n- Context 工程化：三級記憶架構 + Compaction 策略 + 防中毒協議\n- Compound 系統化：LLM Cascade + Context Firewall + Trace 系統\n- Prompt 自動化：Reasoning Sandwich + 42 prompt 版本清單\n\n本月問題\n\n- ⚠️ xhs 連續失敗 370 次（lastDown: 2026-03-26T10:11:42.730Z）\n- [18:31:24] [L3] 🚨 小黃書 連續 486 次失敗（嚴重）\n- ⚠️ xhs 連續失敗 392 次（lastDown: 2026-03-27T01:49:08.873Z）\n- PyPI 發布仍需手動 twine upload（agents-skill + weekly-sheet-skill 兩個）\n- ⚠️ xhs 連續失敗 530 次（lastDown: 2026-03-28T04:39:18.024Z）\n- ⚠️ xhs 連續失敗 548 次（lastDown: 2026-03-29T05:59:19.599Z）\n\n想法與洞察\n\n- DEX Bot 排程從 23 個精簡到 17 個，並行化+原子寫入效果明顯\n- 競品監控並行抓取從 ~40s 降至 21s\n- Phase 4-6 的結構優化讓後續 Phase 開發速度明顯提升\n- Skill 發佈流程已標準化（SKILL.md + package.json + pyproject.toml）\n- autoplan 的 CEO 審查很有效，幫助砍掉了不必要的 scope\n- 單寫者模型解決了 API 與 agent 的並發競態問題\n\n反思\n\n- 改 harness 比換模型更有效（LangChain 實驗 +13.7%，模型不變）\n- 約束 = 生產力：限制 Agent 行動空間反而加速收斂\n- 技術債被 Agent 指數級放大：臨時妥協會被當作「先例」系統性複用\n\n知識庫健康度（自動生成）\n\n- 📚 Resources: 13 篇 (+4)\n- 📁 Projects: 15 篇\n- 💡 Ide",
+      "tags": [
+        "monthly-retro"
+      ]
+    },
+    {
+      "file": "journal/2026-W14-review.md",
+      "title": "周回顾 2026-W14",
+      "type": "journal",
+      "summary": "2026年第14周回顾",
+      "content": "周回顾 2026-W14\n\n> 2026-03-30 ~ 2026-04-05\n\n本周完成\n\n<!-- agent 自动从本周 journal 中提取已完成事项 -->\n-\n\n本周学到\n\n<!-- agent 自动从本周 journal 的「想法」中提取 -->\n-\n\n新增/更新笔记\n\n<!-- agent 自动列出本周 updated 字段在范围内的笔记 -->\n| 文件 | 类型 | 摘要 |\n|------|------|------|\n\n进行中的项目\n\n<!-- agent 自动列出 status: active 的项目及最新进展 -->\n-\n\n下周计划\n\n- [ ]\n\n反思\n\n-",
+      "tags": [
+        "weekly-review"
+      ]
+    },
+    {
+      "file": "projects/session-wrap-backend.md",
+      "title": "Session Wrap Backend",
+      "type": "project",
+      "summary": "Express.js 雲端後端 v3.9.0 — 多 Agent 同步、PostgreSQL、Docker、14.6K LOC",
+      "content": "Session Wrap Backend\n\n概覽\n\n- **版本：** v3.9.0\n- **位置：** `~/YD 2026/projects/tools/session-wrap-backend/`\n- **技術棧：** Express.js + PostgreSQL + Docker\n- **規模：** 96 files, 14,648 LOC\n- **GitHub：** [redredchen01/session-wrap-skill](https://github.com/redredchen01/session-wrap-skill)（monorepo）\n- **Node：** >=18.0.0\n\n架構\n\nAPI Endpoints\n| 路徑 | 方法 | 用途 |\n|------|------|------|\n| `/api/auth/login` | POST | 多 Agent 認證（自動偵測 agent 類型） |\n| `/api/auth/verify` | POST | JWT 驗證 |\n| `/api/wraps` | POST | 保存 wrap 到雲端 |\n| `/api/wraps/history` | GET | 分頁查詢歷史 |\n| `/api/users/profile` | GET | 用戶資料 + 訂閱狀態 |\n| `/health` | GET | 健康檢查 |\n\nDatabase Schema\n- `users` — GitHub 認證、個人資料\n- `claude_subscriptions` — 訂閱驗證\n- `session_wraps` — Wrap 歷史儲存\n- `api_tokens` — API 金鑰管理\n\n支援 Agents\nClaude Code, Cursor, Windsurf, Cline, Aider, Continue.dev, Copilot\n\n依賴\n\n生產\nexpress, pg, jsonwebtoken, axios, cors, dotenv, uuid, morgan\n\n開發\njest (29.7.0), nodemon, supertest\n\nDocker 配置\n\n- **Base：** Node.js 18-alpine\n- **Security：** 非 root 用戶 (nodejs:1001)\n- **Health Check：** `/health` endpoint\n- **Compose：** PostgreSQL 15 + Express + Minio (S3)\n\n前端 Dashboard\n\n- **路徑：** `~/YD 2026/web/` (session-wrap-dashboard v3.4.0)\n- **技術棧：** React 18.2 + Vite + TypeScript + Recharts + Lucide React\n- **功能：** 實時團隊監控、任務可視化、決策追蹤、記憶分析\n\nAPI Server\n\n- **路徑：** `~/YD 2026/server/` (session-wrap-dashboard-api v1.0.0)\n- **用途：** 橋接 bash 工具與 React Dashboard\n- **特性：** 單寫者模型、30s 快取、30min 活躍閾值\n- **測試：** 10 個自動化測試全過\n\n部署\n\n- Railway / Render 部署支援\n- Self-hosted Docker",
+      "tags": [
+        "backend",
+        "nodejs",
+        "express",
+        "docker",
+        "api"
+      ]
+    },
+    {
+      "file": "projects/test-ydapi.md",
+      "title": "Test YDAPI (P2)",
+      "type": "project",
+      "summary": "P1 YDAPI 的測試環境，功能驗證和集成測試",
+      "content": "Test YDAPI (P2 — 測試環境)\n\n概覽\n\n- **用途：** P1 功能驗證和集成測試\n- **技術棧：** Go\n- **位置：** `~/YD 2026/projects/production/test-ydapi/`\n- **規模：** 3264 files, 137M\n- **快速命令：** `p2` / `dev2` / `test2`\n\n狀態\n\n- ✅ 與 P1 代碼同步\n- ✅ 所有 TODO 已解決\n- ✅ 集成測試通過 (5.381s)",
+      "tags": [
+        "p2",
+        "testing",
+        "go"
+      ]
+    },
+    {
+      "file": "projects/weekly-sheet.md",
+      "title": "Weekly Sheet Skill",
+      "type": "project",
+      "summary": "周報 Google Sheets 自動填寫 Skill v1.0.0 — 從 Git/Obsidian/Gmail 收集數據",
+      "content": "Weekly Sheet Skill\n\n概覽\n\n- **版本：** v1.0.0\n- **GitHub：** [redredchen01/weekly-sheet-skill](https://github.com/redredchen01/weekly-sheet-skill)\n- **npm：** `weekly-sheet-skill`\n- **PyPI：** ⏳ 待手動 twine upload\n\n功能\n\n從多數據源自動收集本週工作數據，填入 Google Sheet：\n- 周報總覽\n- 工作流明細\n- 入庫模板\n\n依賴\n\n- gwx-cli（Google Sheets API 讀寫）\n- Google OAuth 認證（sheets/gmail/calendar/drive）\n\nCLI 命令\n\n| 命令 | 用途 |\n|------|------|\n| `weekly-sheet` | 填寫周報 |\n| `weekly-sheet-init` | 初始化配置 |\n| `weekly-sheet-status` | 查看狀態 |",
+      "tags": [
+        "skill",
+        "npm",
+        "google-workspace"
+      ]
+    },
+    {
+      "file": "journal/2026-03-27.md",
+      "title": "2026-03-27",
+      "type": "journal",
+      "summary": "Phase 7-9 全部完成 + v3.7.0/3.8.0/3.9.0 三版發布 + agents-skill 獨立發布 + 周報填寫",
+      "content": "2026-03-27 Fri\n\n今日記錄\n\nSession Wrap — Phase 7/8/9 三階段完成\n\n| Phase | 版本 | 內容 |\n|-------|------|------|\n| 7 | v3.7.0 | WebSocket 實時同步、任務 CRUD、決策搜索過濾、團隊協作 |\n| 8 | v3.8.0 | RBAC 權限管理、Analytics、外部整合、快取系統 |\n| 8.1 | v3.8.1 | Security hardening（移除預設憑證、Dockerfile USER、webhook 簽名）|\n| 9 | v3.9.0 | Dashboard Backend API（Express :3001、單寫者模型）|\n| 9B–9D | — | React components + routing + unit tests |\n\n- autoplan CEO 審查砍掉 WebSocket + Comments，scope 680→~500 LOC\n- PR #1 merged（security hardening）、三版發布 GitHub + npm\n\norchestrator-agents-skill v1.1.1 獨立發布\n\n- 從 `~/.claude/skills/agents/` 拆出獨立 repo → GitHub + npm ✅，PyPI ⏳\n- 舊包 `agents-skill` 已 deprecated\n\n周報填寫 + weekly-sheet-skill v1.0.0\n\n- 三張 Google Sheet 寫入（周報總覽 + 工作流明細 13 個 + 入庫模板 22 欄）\n- 周報數據：產出 11 個工作流 | 上線 9 個 | 節省 35h\n- `weekly-sheet-skill` 發布 GitHub + npm ✅，PyPI ⏳\n\n工具升級\n\n| 工具 | 升級 |\n|------|------|\n| gstack | 0.11.14.0 → 0.12.5.0 |\n| gemini | 0.35.0 → 0.35.1 |\n| cline | 2.9.0 → 2.11.0 |\n| qodercli | 0.1.35 → 0.1.36 |\n\n想法\n\n- autoplan 的 CEO 審查很有效，幫助砍掉了不必要的 scope\n- 單寫者模型解決了 API 與 agent 的並發競態問題\n\n問題與風險\n\n- [18:31:24] [L3] 🚨 小黃書 連續 486 次失敗（嚴重）\n\n- ⚠️ xhs 連續失敗 392 次（lastDown: 2026-03-27T01:49:08.873Z）\n- PyPI 發布仍需手動 twine upload（agents-skill + weekly-sheet-skill 兩個）\n\n明日計劃\n\n- [ ] Phase 9C/9D 延後項目評估（WebSocket、Comments/Activity Feed）\n- [ ] PyPI 手動發布\n- [ ] xhs 異常排查\n\n---\n< [[2026-03-26]] | [[2026-03-28]] >",
+      "tags": [
+        "daily"
+      ]
+    },
+    {
+      "file": "journal/2026-03-30.md",
+      "title": "2026-03-30",
+      "type": "journal",
+      "summary": "Obsidian CLI 4 層自動化架構 + 沈澱自動化 A1-A5 + Agent Engineering 四大支柱調研 + 4-Phase 升級全部完成",
+      "content": "2026-03-30 Sun\n\n今日記錄\n\nObsidian 知識沈澱自動化（A1-A5）\n\n從「寫入自動化」擴展到「沈澱自動化」，新增 5 個規則：\n\n| # | 自動化 | 整合到 | 效果 |\n|---|--------|--------|------|\n| A1 | 升格提醒 | weekly-review.mjs | 跨天重複主題 → 週報建議升格 |\n| A2 | Idea 溫度追蹤 | journal-sync.mjs | ideas/_index.md 顯示 🆕/🔥/🧊/💀 |\n| A3 | 資源過期檢測 | monthly-retro.mjs | 月報顯示知識庫健康度 |\n| A4 | 結論自動萃��� | journal-sync.mjs | session-stop 自動標記 #conclusion |\n| A5 | 關聯建議 | journal-sync.mjs | _graph.md 自動發現 11 對建議關聯 |\n\n- 零新腳本、零新排程 — 全部整合到現有 4 個腳本\n- automation-cron.sh journal-backfill 鏈加入 idea-lifecycle\n- 收件與沈澱規則文檔更新、_index.md 統計更新\n\n驗證結果\n\n- A1: 本週無跨天重複 → 不產生噪音 ✅\n- A2: 5 ideas 全標 🆕（< 7 天）✅\n- A3: 知識庫健康度章節生成 ✅\n- A4: 正確偵測 03-27 的 2 條結論 ✅\n- A5: 發現 11 對建議關聯 ✅\n\n想法\n\n- 知識管理的核心瓶頸不在「寫入」而在「沈澱」— journal 寫了很多但結論沒有升格到 resources\n- 「只建議不搬移」是正確策略 — 自動搬移會破壞 journal 的完整性\n- tag 標記比檔案搬移更靈活 — #conclusion 可以在任何層級被查詢到\n- Idea 溫度追蹤能有效暴露「寫了就忘」的問題\n\nObsidian CLI 4 層自動化架構\n\n重構整個 Obsidian CLI 系統，從「手動逐步更新」升級到「4 層自動化」：\n\n| 層 | 觸發 | 動作 |\n|---|------|------|\n| PostToolUse hook | 編輯 vault .md 文件 | `obsidian-agent sync` 自動更新索引 |\n| Stop hook | 會話結束 | session-stop + sync + 缺日記提醒 + orphan 告警 |\n| launchd daily (08:00) | cron | 創建日記 + backfill + sync + auto-commit |\n| launchd weekly (Sun 20:00) | cron | 週回顧 + health + orphans + broken-links |\n\n- 6 個 slash commands 全部精簡為 `obsidian-agent` CLI 薄殼\n- 新增 `/health` `/rename` `/move` `/batch` `/orphans` 5 個 power commands\n- Agent 操作規則簡化：索引由 hook 自動維護，不再手動更新\n- Memory 寫入：記錄完整架構供未來會話使用\n\n核心理念：`obsidian-agent` CLI 作為唯一真理源，零重複邏輯。\n\nobsidian-agent v0.8.1 — A1-A5 整合\n\n將沈澱邏輯從 DEX Bot ",
+      "tags": [
+        "daily",
+        "conclusion"
+      ]
+    },
+    {
+      "file": "ideas/site-doctor-skill.md",
+      "title": "Site Doctor Skill",
+      "type": "idea",
+      "summary": "一鍵全套站點診斷 — SEO、效能、可用性、競品對標",
+      "content": "Site Doctor Skill\n\n想法\n\n整合現有分散的站點檢查（Lighthouse、SEO audit、broken links、CrUX、SSL）為單一 Skill，一鍵出完整診斷報告。\n\n理由\n\n- 現有 DEX Bot 14 個排程分散執行，缺乏統一視圖\n- 手動串接各工具產出不同格式的報告\n- 新站點接入時需逐一配置排程\n\n下一步\n\n- [ ] 定義診斷項清單和輸出格式\n- [ ] 評估是否整合現有 gstack `/qa` 和 `/smoke` skill\n- [ ] 設計 TG 推送摘要格式",
+      "tags": [
+        "skill",
+        "monitoring",
+        "automation"
+      ]
+    }
+  ]
+}

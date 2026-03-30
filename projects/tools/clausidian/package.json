@@ -1,0 +1,38 @@
+{
+  "name": "clausidian",
+  "version": "2.0.0",
+  "description": "CLI toolkit for AI agents to manage Obsidian vaults — journal, notes, search, index sync, and more",
+  "type": "module",
+  "bin": {
+    "clausidian": "bin/cli.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "scaffold/",
+    "skill/"
+  ],
+  "keywords": [
+    "obsidian",
+    "ai-agent",
+    "claude-code",
+    "mcp",
+    "knowledge-base",
+    "cli",
+    "automation",
+    "markdown",
+    "journal"
+  ],
+  "author": "redredchen01",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/redredchen01/Clausidian.git"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

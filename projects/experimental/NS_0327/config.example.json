@@ -1,0 +1,21 @@
+{
+  "bots": {
+    "onboarding": { "token": "YOUR_BOT_TOKEN_1", "enabled": true },
+    "work_permit": { "token": "YOUR_BOT_TOKEN_2", "enabled": true },
+    "leave": { "token": "YOUR_BOT_TOKEN_3", "enabled": true },
+    "offboarding": { "token": "YOUR_BOT_TOKEN_4", "enabled": true }
+  },
+  "google_sheet_id": "YOUR_SHEET_ID",
+  "google_credentials_file": "credentials.json",
+  "smtp": {
+    "host": "smtp.gmail.com",
+    "port": 587,
+    "user": "bot@company.com",
+    "password": "YOUR_APP_PASSWORD"
+  },
+  "hr_email": "hr@company.com",
+  "webhooks": [
+    "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK",
+    "https://YOUR_TEAM.webhook.office.com/webhookb2/..."
+  ]
+}
