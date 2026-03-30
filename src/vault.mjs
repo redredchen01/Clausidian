@@ -58,6 +58,11 @@ export class Vault {
 
   // ── Frontmatter parsing ──────────────────────────────
 
+  /**
+   * Parse YAML frontmatter from note content.
+   * @param {string} content - Full note content (including frontmatter)
+   * @returns {Object} Parsed frontmatter object {title, type, tags, status, ...}
+   */
   parseFrontmatter(content) {
     const match = content.match(/^---\n([\s\S]*?)\n---/);
     if (!match) return {};
@@ -83,12 +88,23 @@ export class Vault {
 
   // ── Extract body (content after frontmatter) ────────
 
+  /**
+   * Extract body content (after frontmatter).
+   * @param {string} content - Full note content (including frontmatter)
+   * @returns {string} Body text without frontmatter
+   */
   extractBody(content) {
     return content.replace(/^---\n[\s\S]*?\n---\n?/, '').trim();
   }
 
   // ── Scan all notes (cached) ──────────────────────────
 
+  /**
+   * Scan all notes in the vault (with caching).
+   * @param {Object} options - Scan options
+   * @param {boolean} [options.includeBody=false] - Include note body content
+   * @returns {Array<Object>} Array of note objects with metadata
+   */
   scanNotes({ includeBody = false } = {}) {
     const cacheKey = includeBody ? '_notesCacheWithBody' : '_notesCache';
     if (this[cacheKey]) return this[cacheKey];
@@ -133,6 +149,16 @@ export class Vault {
 
   // ── Search notes by keyword (relevance-scored) ─────
 
+  /**
+   * Full-text search notes by keyword (relevance-scored).
+   * @param {string} keyword - Search term (or regex if opts.regex = true)
+   * @param {Object} options - Search options
+   * @param {string} [options.type] - Filter by note type
+   * @param {string} [options.tag] - Filter by tag
+   * @param {string} [options.status] - Filter by status
+   * @param {boolean} [options.regex=false] - Treat keyword as regex pattern
+   * @returns {Array<Object>} Sorted by relevance score (highest first)
+   */
   search(keyword, { type, tag, status, regex = false } = {}) {
     const notes = this.scanNotes({ includeBody: true });
     const results = [];
@@ -171,6 +197,11 @@ export class Vault {
 
   // ── Find backlinks (notes that link TO a given note) ─
 
+  /**
+   * Find all notes that link to a given note (backlinks).
+   * @param {string} noteName - Target note filename (without .md)
+   * @returns {Array<Object>} Notes that link to the target
+   */
   backlinks(noteName) {
     const notes = this.scanNotes({ includeBody: true });
     return notes.filter(n => {
@@ -183,6 +214,10 @@ export class Vault {
 
   // ── Find orphan notes (no inbound links) ─────────────
 
+  /**
+   * Find notes with no inbound links (excluding journal entries).
+   * @returns {Array<Object>} Orphaned notes
+   */
   orphans() {
     const notes = this.scanNotes({ includeBody: true });
     const linked = new Set();
@@ -197,6 +232,13 @@ export class Vault {
 
   // ── Update frontmatter fields on a note ──────────────
 
+  /**
+   * Update frontmatter fields on a note.
+   * @param {string} dir - Directory path (e.g., "projects")
+   * @param {string} filename - Note filename (without .md extension)
+   * @param {Object} updates - Key-value pairs to update in frontmatter
+   * @returns {boolean|null} True if successful, null if note not found
+   */
   updateNote(dir, filename, updates) {
     const filePath = `${dir}/${filename}.md`;
     let content = this.read(filePath);
@@ -214,6 +256,10 @@ export class Vault {
 
   // ── Vault stats (single-pass, no rescan) ────────────
 
+  /**
+   * Compute vault statistics (single pass).
+   * @returns {Object} Stats object with total count, type/status/tag distribution, orphan count
+   */
   stats() {
     const notes = this.scanNotes({ includeBody: true });
     const byType = {};
@@ -234,6 +280,12 @@ export class Vault {
 
   // ── Find related notes (TF-IDF weighted) ────────────
 
+  /**
+   * Find related notes by title keywords and tags (TF-IDF weighted).
+   * @param {string} title - Reference title
+   * @param {Array<string>} [tags=[]] - Reference tags
+   * @returns {Array<Object>} Related notes sorted by relevance score (max 5)
+   */
   findRelated(title, tags = []) {
     const notes = this.scanNotes({ includeBody: true });
     const nonJournal = notes.filter(n => n.type !== 'journal');
@@ -278,6 +330,11 @@ export class Vault {
 
   // ── Find note by name (fuzzy) ───────────────────────
 
+  /**
+   * Find a note by name using fuzzy matching (exact → case-insensitive → partial → title).
+   * @param {string} name - Note name or title (with or without .md)
+   * @returns {Object|null} Matched note or null if not found
+   */
   findNote(name) {
     if (!name) return null;
     const notes = this.scanNotes();
@@ -304,6 +361,11 @@ export class Vault {
 
   // ── Type → directory mapping ─────────────────────────
 
+  /**
+   * Map note type to vault directory name.
+   * @param {string} type - Note type (area, project, resource, idea, journal)
+   * @returns {string} Directory name
+   */
   typeDir(type) {
     const map = { area: 'areas', project: 'projects', resource: 'resources', idea: 'ideas', journal: 'journal' };
     return map[type] || type;

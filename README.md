@@ -482,16 +482,11 @@ Edit `CONVENTIONS.md` to change frontmatter rules, naming conventions, or agent 
 ### Language
 Templates ship in English. Replace template content with your preferred language — the CLI doesn't care about content language, only the `{{}}` placeholders.
 
-## Migration from obsidian-agent
+## Clausidian v2.0.0
 
-If you're upgrading from `obsidian-agent`:
+Upgraded from obsidian-agent to clausidian — same CLI interface, 48 tools via MCP, 4-layer automation, and cross-system integration (Google Calendar, Gmail, GitHub, Telegram).
 
-```bash
-npm uninstall -g obsidian-agent
-npm install -g clausidian
-```
-
-The CLI commands and vault structure are fully compatible — only the binary name changed.
+For details, see the main README.
 
 ## Development
 

@@ -12,7 +12,7 @@ import { Vault } from '../vault.mjs';
 import { BM25Index } from '../bm25.mjs';
 
 export function smartSearch(vaultRoot, query, opts = {}) {
-  if (!query) throw new Error('Usage: obsidian-agent smart-search <query>');
+  if (!query) throw new Error('Usage: clausidian smart-search <query>');
 
   const vault = new Vault(vaultRoot);
   const notes = vault.scanNotes({ includeBody: true });

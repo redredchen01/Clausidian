@@ -2,9 +2,9 @@
  * Obsidian 1.12 CLI bridge — detect and proxy to official CLI when available.
  *
  * The official CLI requires Obsidian.app running (IPC communication).
- * obsidian-agent works headless. This bridge lets them coexist:
+ * clausidian works headless. This bridge lets them coexist:
  * - Commands the official CLI handles better → proxy to it
- * - Commands unique to obsidian-agent → keep native
+ * - Commands unique to clausidian → keep native
  * - Fallback to native if official CLI unavailable or fails
  */
 
@@ -45,7 +45,7 @@ export function detectOfficialCli() {
 }
 
 /**
- * Command mapping: obsidian-agent command → official CLI command + arg transform.
+ * Command mapping: clausidian command → official CLI command + arg transform.
  * Only commands where the official CLI provides equal or better functionality.
  */
 const BRIDGE_MAP = {
@@ -71,7 +71,7 @@ const BRIDGE_MAP = {
   random:     { cmd: 'random:read', transform: (pos, flags) => buildArgs('random:read', pos, flags) },
 };
 
-// Commands that should NEVER be bridged (obsidian-agent unique features)
+// Commands that should NEVER be bridged (clausidian unique features)
 const NEVER_BRIDGE = new Set([
   'init', 'serve', 'setup', 'help',
   'sync', 'health', 'graph', 'review',
@@ -105,7 +105,7 @@ function buildArgs(cmd, pos, flags, params = {}) {
 export function tryBridge(command, positional, flags) {
   // Never bridge these
   if (NEVER_BRIDGE.has(command)) {
-    return { bridged: false, reason: 'command is obsidian-agent native only' };
+    return { bridged: false, reason: 'command is clausidian native only' };
   }
 
   const mapping = BRIDGE_MAP[command];

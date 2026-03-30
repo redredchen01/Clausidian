@@ -12,7 +12,7 @@ import { join } from 'path';
 import { execFileSync } from 'child_process';
 import { Vault } from '../vault.mjs';
 
-const CACHE_DIR = '.obsidian-agent';
+const CACHE_DIR = '.clausidian';
 const CACHE_FILE = 'embeddings.json';
 
 // ── Provider detection ──
@@ -105,7 +105,7 @@ function saveCache(vaultRoot, cache) {
 // ── Main search function ──
 
 export async function embedSearch(vaultRoot, query, opts = {}) {
-  if (!query) throw new Error('Usage: obsidian-agent embed-search <query>');
+  if (!query) throw new Error('Usage: clausidian embed-search <query>');
 
   const provider = getProvider(opts);
   if (!provider) {
