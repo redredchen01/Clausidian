@@ -1,30 +1,7 @@
 {
-  "name": "session-wrap-skill",
-  "version": "3.9.0",
-  "description": "Universal session wrap-up: automatically persist project context to memory files for seamless resume",
-  "main": "scripts/session-wrap.sh",
-  "files": [
-    "scripts/",
-    "*.md",
-    ".zshrc-wrap",
-    "LICENSE"
-  ],
-  "scripts": {
-    "wrap": "bash scripts/session-wrap.sh",
-    "sync": "bash scripts/obsidian-sync.sh"
-  },
-  "keywords": ["session", "automation", "memory", "context", "claude-code"],
-  "author": "redredchen01",
-  "license": "MIT",
-  "bin": {
-    "session-wrap": "scripts/session-wrap.sh",
-    "obsidian-sync": "scripts/obsidian-sync.sh",
-    "agent-context": "scripts/agent/agent-context.sh",
-    "agent-share": "scripts/agent/agent-share.sh",
-    "agent-decision": "scripts/agent/agent-decision.sh",
-    "agent-checkpoint": "scripts/agent/agent-checkpoint.sh",
-    "agent-knowledge": "scripts/agent/agent-knowledge.sh",
-    "agent-optimize": "scripts/agent/agent-optimize.sh",
-    "agent-tasks": "scripts/agent/agent-tasks.sh"
-  }
+  "name": "yd-2026-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "YD 2026 workspace root — not published",
+  "license": "MIT"
 }

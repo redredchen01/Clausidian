@@ -29,8 +29,24 @@ fi
 # ============================================
 
 acquire_lock() {
-  local max_retries=30
+  local max_retries=10
   local count=0
+  
+  # Stale lock cleanup (if older than 60s)
+  if [ -d "$LOCK_DIR" ]; then
+    local now=$(date +%s)
+    local lock_time
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      lock_time=$(stat -f %m "$LOCK_DIR" 2>/dev/null || echo 0)
+    else
+      lock_time=$(stat -c %Y "$LOCK_DIR" 2>/dev/null || echo 0)
+    fi
+    
+    if (( now - lock_time > 60 )); then
+      rm -rf "$LOCK_DIR"
+    fi
+  fi
+
   while ! mkdir "$LOCK_DIR" 2>/dev/null; do
     if [ $count -ge $max_retries ]; then
       log_error "Failed to acquire task lock after ${max_retries}s. Manual cleanup: rm -rf $LOCK_DIR"
@@ -38,10 +54,13 @@ acquire_lock() {
     sleep 1
     ((count++))
   done
+  
+  # Release lock on exit
+  trap release_lock EXIT
 }
 
 release_lock() {
-  rm -rf "$LOCK_DIR"
+  rm -rf "$LOCK_DIR" 2>/dev/null
 }
 
 # ============================================
