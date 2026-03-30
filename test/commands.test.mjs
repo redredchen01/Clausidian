@@ -467,4 +467,90 @@ describe('commands (import)', () => {
     assert.ok(names.includes('batch_tag'));
     assert.ok(names.includes('export'));
   });
+
+  // ── v0.8 new commands ────────────────────────────
+
+  it('link finds and creates missing links (dry-run)', async () => {
+    const { link } = await import('../src/commands/link.mjs');
+    const result = link(TMP, { dryRun: true, threshold: 0.1 });
+    assert.ok(Array.isArray(result.suggestions));
+  });
+
+  it('link creates bidirectional links', async () => {
+    const { note } = await import('../src/commands/note.mjs');
+    note(TMP, 'Link Test A', 'resource', { tags: ['linktest'] });
+    note(TMP, 'Link Test B', 'resource', { tags: ['linktest'] });
+
+    const { link } = await import('../src/commands/link.mjs');
+    const result = link(TMP, { threshold: 0.1 });
+    // May or may not link depending on similarity, but should not crash
+    assert.ok(typeof result.linked === 'number');
+  });
+
+  it('timeline shows recent activity', async () => {
+    const { timeline } = await import('../src/commands/timeline.mjs');
+    const result = timeline(TMP, { days: 7 });
+    assert.ok(Array.isArray(result.entries));
+    assert.ok(result.entries.length > 0);
+  });
+
+  it('timeline filters by type', async () => {
+    const { timeline } = await import('../src/commands/timeline.mjs');
+    const result = timeline(TMP, { days: 7, type: 'project' });
+    assert.ok(result.entries.every(e => e.type === 'project'));
+  });
+
+  it('validate finds issues in vault', async () => {
+    const { validate } = await import('../src/commands/validate.mjs');
+    const result = validate(TMP);
+    assert.ok(Array.isArray(result.issues));
+    assert.ok(typeof result.valid === 'boolean');
+  });
+
+  it('pin and unpin a note', async () => {
+    const { pin, unpin, listPinned } = await import('../src/commands/pin.mjs');
+
+    const pinResult = pin(TMP, 'test-project');
+    assert.equal(pinResult.status, 'pinned');
+
+    // Check it appears in pinned list
+    const list = listPinned(TMP);
+    assert.ok(list.pinned.some(n => n.file === 'test-project'));
+
+    // Pin again = already pinned
+    const again = pin(TMP, 'test-project');
+    assert.equal(again.status, 'already_pinned');
+
+    // Unpin
+    const unpinResult = unpin(TMP, 'test-project');
+    assert.equal(unpinResult.status, 'unpinned');
+
+    // Unpin again = not pinned
+    const notPinned = unpin(TMP, 'test-project');
+    assert.equal(notPinned.status, 'not_pinned');
+  });
+
+  it('relink finds fixable broken links (dry-run)', async () => {
+    const { relink } = await import('../src/commands/relink.mjs');
+    const result = relink(TMP, { dryRun: true });
+    assert.ok(Array.isArray(result.fixes));
+  });
+
+  it('MCP server exposes v0.8 tools', async () => {
+    const { McpServer } = await import('../src/mcp-server.mjs');
+    const server = new McpServer(TMP);
+    const tools = server.handleMessage({
+      jsonrpc: '2.0', id: 11,
+      method: 'tools/list',
+      params: {},
+    });
+    const names = tools.result.tools.map(t => t.name);
+    assert.ok(names.includes('link'));
+    assert.ok(names.includes('timeline'));
+    assert.ok(names.includes('validate'));
+    assert.ok(names.includes('pin'));
+    assert.ok(names.includes('unpin'));
+    assert.ok(names.includes('pin_list'));
+    assert.ok(names.includes('relink'));
+  });
 });

@@ -44,6 +44,14 @@ const TOOLS = [
   { name: 'batch_tag', description: 'Batch add/remove tags', inputSchema: { type: 'object', properties: { type: { type: 'string' }, tag: { type: 'string' }, status: { type: 'string' }, add: { type: 'string' }, remove: { type: 'string' } } } },
   { name: 'batch_archive', description: 'Batch archive matching notes', inputSchema: { type: 'object', properties: { type: { type: 'string' }, tag: { type: 'string' }, status: { type: 'string' } } } },
   { name: 'export', description: 'Export notes to JSON or markdown', inputSchema: { type: 'object', properties: { type: { type: 'string' }, tag: { type: 'string' }, status: { type: 'string' }, format: { type: 'string', enum: ['json', 'markdown'] }, output: { type: 'string', description: 'Output file path' } } } },
+  // v0.8 new tools
+  { name: 'link', description: 'Auto-link related but unlinked notes', inputSchema: { type: 'object', properties: { dry_run: { type: 'boolean', description: 'Preview only' }, threshold: { type: 'number', description: 'Similarity threshold 0-1' } } } },
+  { name: 'timeline', description: 'Chronological activity feed', inputSchema: { type: 'object', properties: { days: { type: 'number', description: 'Days to look back (default: 30)' }, type: { type: 'string' }, limit: { type: 'number', description: 'Max entries (default: 50)' } } } },
+  { name: 'validate', description: 'Check frontmatter completeness', inputSchema: { type: 'object', properties: {} } },
+  { name: 'pin', description: 'Pin a note as favorite', inputSchema: { type: 'object', properties: { note: { type: 'string' } }, required: ['note'] } },
+  { name: 'unpin', description: 'Unpin a note', inputSchema: { type: 'object', properties: { note: { type: 'string' } }, required: ['note'] } },
+  { name: 'pin_list', description: 'Show all pinned notes', inputSchema: { type: 'object', properties: {} } },
+  { name: 'relink', description: 'Fix broken links with closest matches', inputSchema: { type: 'object', properties: { dry_run: { type: 'boolean', description: 'Preview only' } } } },
 ];
 
 // ── Dispatch table ───────────────────────────────────
@@ -78,6 +86,14 @@ const DISPATCH = {
   async batch_tag(root, a) { const { batchTag } = await import('./commands/batch.mjs'); return batchTag(root, { type: a.type, tag: a.tag, status: a.status, add: a.add, remove: a.remove }); },
   async batch_archive(root, a) { const { batchArchive } = await import('./commands/batch.mjs'); return batchArchive(root, { type: a.type, tag: a.tag, status: a.status }); },
   async export(root, a) { const { exportNotes } = await import('./commands/export.mjs'); return exportNotes(root, { type: a.type, tag: a.tag, status: a.status, format: a.format, output: a.output }); },
+  // v0.8 new
+  async link(root, a) { const { link } = await import('./commands/link.mjs'); return link(root, { dryRun: a.dry_run, threshold: a.threshold }); },
+  async timeline(root, a) { const { timeline } = await import('./commands/timeline.mjs'); return timeline(root, { days: a.days, type: a.type, limit: a.limit }); },
+  async validate(root) { const { validate } = await import('./commands/validate.mjs'); return validate(root); },
+  async pin(root, a) { const { pin } = await import('./commands/pin.mjs'); return pin(root, a.note); },
+  async unpin(root, a) { const { unpin } = await import('./commands/pin.mjs'); return unpin(root, a.note); },
+  async pin_list(root) { const { listPinned } = await import('./commands/pin.mjs'); return listPinned(root); },
+  async relink(root, a) { const { relink } = await import('./commands/relink.mjs'); return relink(root, { dryRun: a.dry_run }); },
 };
 
 // ── Server class ─────────────────────────────────────

@@ -289,6 +289,54 @@ async function main() {
       break;
     }
 
+    case 'link': {
+      const { link } = await import('../src/commands/link.mjs');
+      result = link(resolveVault(flags), {
+        dryRun: flags['dry-run'] === true,
+        threshold: flags.threshold ? parseFloat(flags.threshold) : undefined,
+      });
+      break;
+    }
+
+    case 'timeline': {
+      const { timeline } = await import('../src/commands/timeline.mjs');
+      result = timeline(resolveVault(flags), {
+        days: flags.days ? parseInt(flags.days) : undefined,
+        type: flags.type,
+        limit: flags.limit ? parseInt(flags.limit) : undefined,
+      });
+      break;
+    }
+
+    case 'validate': {
+      const { validate } = await import('../src/commands/validate.mjs');
+      result = validate(resolveVault(flags));
+      break;
+    }
+
+    case 'pin': {
+      if (positional[0] === 'list') {
+        const { listPinned } = await import('../src/commands/pin.mjs');
+        result = listPinned(resolveVault(flags));
+      } else {
+        const { pin } = await import('../src/commands/pin.mjs');
+        result = pin(resolveVault(flags), positional[0]);
+      }
+      break;
+    }
+
+    case 'unpin': {
+      const { unpin } = await import('../src/commands/pin.mjs');
+      result = unpin(resolveVault(flags), positional[0]);
+      break;
+    }
+
+    case 'relink': {
+      const { relink } = await import('../src/commands/relink.mjs');
+      result = relink(resolveVault(flags), { dryRun: flags['dry-run'] === true });
+      break;
+    }
+
     // ── existing utility commands ────────────────────
 
     case 'setup': {
@@ -390,6 +438,14 @@ Commands:
   export [output]          Export notes (--format json|markdown)
   import <file>            Import notes from JSON or markdown
 
+  link                     Auto-link related but unlinked notes
+  timeline                 Chronological activity feed
+  validate                 Check frontmatter completeness
+  pin <note>               Pin a note as favorite
+  unpin <note>             Unpin a note
+  pin list                 Show all pinned notes
+  relink                   Fix broken links with closest matches
+
   setup [vault-path]       Install MCP server + skill
   watch                    Auto-rebuild indices on file changes
   health                   Vault health scoring report
@@ -420,6 +476,7 @@ Flags:
         'recent','backlinks','update','archive','stats','graph','orphans','patch','tag',
         'watch','health','setup','serve','hook','version','help',
         'rename','move','merge','duplicates','broken-links','batch','export','import',
+        'link','timeline','validate','pin','unpin','relink',
       ];
       const similar = cmds.filter(c => c.startsWith(command?.slice(0, 2) || '') || levenshtein(c, command) <= 2);
       console.error(`Unknown command: ${command}`);
