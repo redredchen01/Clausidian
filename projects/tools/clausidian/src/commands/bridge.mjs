@@ -128,14 +128,110 @@ export function bridgeGcal(vaultRoot, { date } = {}) {
   }
 }
 
-// ── Gmail integration (placeholder) ──
+// ── Gmail integration ──
 
-export function bridgeGmail(vaultRoot, options = {}) {
-  console.log(JSON.stringify({
-    status: 'skipped',
-    event: 'bridge_gmail',
-    reason: 'not yet implemented'
-  }));
+export function bridgeGmail(vaultRoot, { label, days } = {}) {
+  const vault = new Vault(vaultRoot);
+  const labelParam = label || 'important';
+  const daysParam = days || 1;
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - daysParam);
+  const cutoffStr = cutoffDate.toISOString().split('T')[0];
+
+  try {
+    // Query gwx gmail for messages
+    let messagesJson;
+    const query = `label:${labelParam} after:${cutoffStr}`;
+    try {
+      messagesJson = run(`gwx gmail search '${query}' --format json`);
+    } catch (err) {
+      if (err.message.includes('oauth2') || err.message.includes('invalid_client')) {
+        console.log(JSON.stringify({
+          status: 'skipped',
+          event: 'bridge_gmail',
+          reason: 'gwx not authenticated or installed'
+        }));
+        return;
+      }
+      throw err;
+    }
+
+    let messages = [];
+    try {
+      const result = JSON.parse(messagesJson);
+      if (result.error) {
+        console.log(JSON.stringify({
+          status: 'error',
+          event: 'bridge_gmail',
+          error: result.error.message
+        }));
+        return;
+      }
+      messages = result.messages || [];
+    } catch {
+      console.log(JSON.stringify({
+        status: 'skipped',
+        event: 'bridge_gmail',
+        reason: 'invalid gwx response'
+      }));
+      return;
+    }
+
+    if (messages.length === 0) {
+      console.log(JSON.stringify({
+        status: 'skipped',
+        event: 'bridge_gmail',
+        reason: 'no messages'
+      }));
+      return;
+    }
+
+    // Check for existing ideas to avoid duplicates (based on message ID in title)
+    const existingNotes = vault.scanNotes();
+    const capturedIds = new Set();
+    for (const note of existingNotes) {
+      if (note.dir === 'ideas') {
+        // Extract message ID from title if present (format: "[MSG_ID] Subject")
+        const idMatch = note.title.match(/\[([a-f0-9]+)\]/);
+        if (idMatch) capturedIds.add(idMatch[1]);
+      }
+    }
+
+    // Capture new messages as ideas
+    const captured = [];
+    for (const msg of messages) {
+      if (capturedIds.has(msg.id)) {
+        continue; // Already captured
+      }
+
+      // Format: [MSG_ID] From: sender | Subject: subject | Snippet: snippet
+      const subject = msg.subject || '(no subject)';
+      const from = msg.from || '(unknown sender)';
+      const snippet = (msg.snippet || '(no preview)').substring(0, 100);
+      const ideaText = `[${msg.id}] From: ${from} | Subject: ${subject} | Snippet: ${snippet}`;
+
+      try {
+        const result = run(`clausidian capture '${ideaText.replace(/'/g, "'\\''")}'`);
+        captured.push({ messageId: msg.id, subject });
+        capturedIds.add(msg.id);
+      } catch (err) {
+        console.error(`[bridge_gmail capture error] ${err.message}`);
+      }
+    }
+
+    console.log(JSON.stringify({
+      status: 'captured',
+      event: 'bridge_gmail',
+      label: labelParam,
+      days: daysParam,
+      total: messages.length,
+      captured: captured.length,
+      messages: captured
+    }));
+  } catch (err) {
+    console.error(`[bridge_gmail error] ${err.message}`);
+    return { status: 'error', event: 'bridge_gmail', error: err.message };
+  }
 }
 
 // ── GitHub integration (placeholder) ──
