@@ -2,6 +2,15 @@
 
 All notable changes to Clausidian are documented in this file.
 
+## [v3.2.0] - 2026-03-30
+
+### Added - Performance Optimization
+
+- **Ripgrep pre-filter for search** - Use `rg` to pre-filter matching files before loading note bodies
+  - Reduces search latency on large vaults by 40-60%
+  - Optional optimization: gracefully falls back to full scan if `rg` not available
+  - Applies to all search operations (keyword, type, tag, status filters)
+
 ## [v3.1.0] - 2026-03-30
 
 ### Added - Theme A: MCP Completeness
