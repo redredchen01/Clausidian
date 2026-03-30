@@ -17,7 +17,7 @@ YD 2026/
 │   │   └── dspy-trial/
 │   └── tools/
 │       ├── ctx/
-│       ├── obsidian-agent/
+│       ├── clausidian/
 │       ├── session-wrap-backend/
 │       └── session-wrap-skill/
 ├── docs/

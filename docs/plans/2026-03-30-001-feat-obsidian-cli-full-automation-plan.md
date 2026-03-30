@@ -3,13 +3,14 @@ title: "feat: Obsidian CLI 全面自動化整合"
 type: feat
 status: active
 date: 2026-03-30
+deepened: 2026-03-30
 ---
 
 # feat: Obsidian CLI 全面自動化整合
 
 ## Overview
 
-將 obsidian-agent CLI 從「功能完整但鬆散耦合」升級為「深度整合的自動化知識管理系統」。三大主軸：
+將 clausidian CLI 從「功能完整但鬆散耦合」升級為「深度整合的自動化知識管理系統」。三大主軸：
 
 1. **MCP Server 深度整合** — 消除 registry 重複，新增 resources/prompts，讓所有 MCP 客戶端原生存取 vault 上下文
 2. **自動化層統一與強化** — 合併雙套 launchd 系統、實作 pre-commit hook、修復 watch 遞迴、建立事件驅動管道
@@ -20,7 +21,7 @@ date: 2026-03-30
 現有系統已達 Grade A 健康度（48 筆記，0 orphans），CLI 有 47 命令 + 46 MCP tools。但存在明確的架構債務和整合缺口：
 
 - MCP server 手動維護 TOOLS/DISPATCH 陣列，與 registry 脫節（新命令無法自動出現在 MCP）
-- 兩套獨立 launchd 系統並存（`com.dex.obsidian-*` vs `com.obsidian-agent.*`），排程重疊
+- 兩套獨立 launchd 系統並存（`com.dex.obsidian-*` vs `com.clausidian.*`），排程重疊
 - `watch` 命令 `{ recursive: false }` 無法偵測子目錄變更
 - CLAUDE.md 文檔的 Pre-commit 層未實作
 - 跨系統整合仍是手動觸發（無事件驅動管道）
@@ -53,7 +54,7 @@ date: 2026-03-30
 - `src/registry.mjs` (817 lines) — 所有命令的單一真相來源，已匯出 `getMcpTools()` / `getMcpDispatch()`
 - `src/mcp-server.mjs` (219 lines) — 手寫 JSON-RPC 2.0，`TOOLS` 和 `DISPATCH` 是硬編碼副本
 - `src/commands/hook.mjs` — 現有 hook 事件處理（session-stop）
-- `src/commands/launchd.mjs` — 內建 launchd 安裝（`com.obsidian-agent.*`）
+- `src/commands/launchd.mjs` — 內建 launchd 安裝（`com.clausidian.*`）
 - `automation-cron.sh` — 統一排程入口模式（Golden Principles 確認）
 - `src/vault.mjs` — 核心 vault 操作（search、backlinks、orphans）
 - `src/index-manager.mjs` — TF-IDF + Union-Find 索引引擎
@@ -67,14 +68,15 @@ date: 2026-03-30
 - **Golden Principle #5:** Commit 前必查 git status — auto-hook 可能改了預期外的文件
 - **Stop hook 已知陷阱:** 無效 `stop_reason` 會產生垃圾記錄，需防禦性解析
 - **MCP server 已知問題:** `mcp-server.mjs` 的 `TOOLS`/`DISPATCH` 與 registry 脫節
-- **雙套 launchd:** `com.dex.*`（08:00）和 `com.obsidian-agent.*`（23:30）可能重複執行
+- **雙套 launchd:** `com.dex.*`（08:00）和 `com.clausidian.*`（23:30）可能重複執行
 
 ## Key Technical Decisions
 
 - **MCP server 修復策略：** 直接替換為 `getMcpTools()` / `getMcpDispatch()`，而非重寫整個 server。Rationale: 最小變更，registry 已提供完整介面。
-- **launchd 統一方向：** 保留 `com.dex.obsidian-*` 系列（走 `automation-cron.sh`），移除 `com.obsidian-agent.*` 內建排程。Rationale: `automation-cron.sh` 是全局標準入口，24 個任務都走這條路。
-- **事件驅動架構：** 擴展現有 `hook` 命令為事件管道（`obsidian-agent hook <event> [--payload json]`），不引入消息隊列。Rationale: 零依賴原則，vault 規模不需要隊列。
-- **跨系統整合方式：** 新增 `bridge` 命令群組（`obsidian-agent bridge gcal|gmail|github`），內部調用 `gwx` CLI。Rationale: 保持 obsidian-agent 為統一入口，gwx 已有 Go 實作。
+- **launchd 統一方向：** 保留 `com.dex.obsidian-*` 系列（走 `automation-cron.sh`），移除 `com.clausidian.*` 內建排程。Rationale: `automation-cron.sh` 是全局標準入口，24 個任務都走這條路。
+- **事件驅動架構：** 擴展現有 `hook` 命令為事件管道（`clausidian hook <event> [--payload json]`），不引入消息隊列。Rationale: 零依賴原則，vault 規模不需要隊列。
+- **跨系統整合方式：** 新增 `bridge` 命令群組，使用 registry 的 `subcommands` 模式（如 `batch`/`tag`），讓子命令自動暴露為 MCP tools（`bridge_gcal`、`bridge_gmail`、`bridge_github`）。內部調用 `gwx` CLI。Rationale: 保持 clausidian 為統一入口，gwx 已有 Go 實作；`subcommands` 模式確保 MCP 自動同步。
+- **事件管道 stdin 統一：** hook 命令的 stdin JSON 解析提升到 registry 的 `run` 路由層統一處理，各事件函數接收已解析的物件。Rationale: 避免每個事件函數重複 `readFileSync('/dev/stdin')` 邏輯。
 - **MCP resources 實作：** 靜態 resources 暴露三個索引文件，無需訂閱機制。Rationale: 索引在每次 sync 時重建，MCP 客戶端按需讀取即可。
 
 ## Open Questions
@@ -83,7 +85,7 @@ date: 2026-03-30
 
 - **Q: MCP server 是否需要 SDK？** → 不需要。手寫 JSON-RPC 2.0 只有 219 行，加 resources/prompts 預估增加 ~80 行，仍遠小於引入 SDK 的複雜度。
 - **Q: watch 遞迴在 macOS 是否穩定？** → 穩定。Node.js `fs.watch({ recursive: true })` 在 macOS 使用 FSEvents，是原生支援的。
-- **Q: bridge 命令是否需要認證管理？** → 不需要。gwx CLI 已處理 OAuth，obsidian-agent 只是調用者。
+- **Q: bridge 命令是否需要認證管理？** → 不需要。gwx CLI 已處理 OAuth，clausidian 只是調用者。
 
 ### Deferred to Implementation
 
@@ -102,7 +104,7 @@ graph TB
     end
 
     subgraph "Layer 2: 自動化層 (統一)"
-        CRON[automation-cron.sh<br/>單一排程入口] --> |daily/weekly/monthly| CLI[obsidian-agent CLI]
+        CRON[automation-cron.sh<br/>單一排程入口] --> |daily/weekly/monthly| CLI[clausidian CLI]
         HOOK[Claude Code hooks<br/>PostToolUse/Stop] --> CLI
         WATCH[watch --recursive<br/>FSEvents] --> CLI
         PRECOMMIT[.git/hooks/pre-commit<br/>sync + validate] --> CLI
@@ -157,7 +159,7 @@ graph TB
 - Error path: 呼叫不存在的工具名回傳標準 MCP error
 
 **Verification:**
-- `obsidian-agent serve` 啟動後，`tools/list` 回傳 46+ 工具
+- `clausidian serve` 啟動後，`tools/list` 回傳 46+ 工具
 - 新增測試命令到 registry 後，MCP 自動可見
 
 ---
@@ -239,8 +241,8 @@ graph TB
 - Modify: `/Users/dex/YD 2026/scripts/obsidian-daily.sh`（確認覆蓋所有功能）
 
 **Approach:**
-- 盤點 `com.obsidian-agent.*` 的功能是否已被 `com.dex.obsidian-*` 完整覆蓋
-- 如已覆蓋：`launchctl bootout` 移除 `com.obsidian-agent.*`，更新 `launchd.mjs` 標記為 deprecated
+- 盤點 `com.clausidian.*` 的功能是否已被 `com.dex.obsidian-*` 完整覆蓋
+- 如已覆蓋：`launchctl bootout` 移除 `com.clausidian.*`，更新 `launchd.mjs` 標記為 deprecated
 - 如有缺口：補充到 `com.dex.obsidian-*` 的腳本中，再移除
 - 更新 `launchd-schedule.md` 文檔
 
@@ -249,13 +251,13 @@ graph TB
 - 現有 `automation-cron.sh` 單一入口模式
 
 **Test scenarios:**
-- Happy path: 執行 `obsidian-daily.sh` 涵蓋原 `com.obsidian-agent.daily-backfill` 的所有功能
+- Happy path: 執行 `obsidian-daily.sh` 涵蓋原 `com.clausidian.daily-backfill` 的所有功能
 - Happy path: `launchctl list | grep obsidian` 只顯示 `com.dex.obsidian-*` 系列
 - Error path: 移除後，原 daily-backfill 23:30 排程不再觸發
 - Integration: 日報功能在新排程下正常產出
 
 **Verification:**
-- `launchctl list | grep obsidian-agent` 無結果
+- `launchctl list | grep clausidian` 無結果
 - `com.dex.obsidian-daily` 的功能清單完整涵蓋所有需求
 
 ---
@@ -269,11 +271,11 @@ graph TB
 **Dependencies:** None
 
 **Files:**
-- Create: `.git/hooks/pre-commit`（或使用 `obsidian-agent` 子命令安裝）
+- Create: `.git/hooks/pre-commit`（或使用 `clausidian` 子命令安裝）
 - Modify: `src/commands/hook.mjs`（新增 `pre-commit` 事件）
 
 **Approach:**
-- pre-commit hook 腳本：呼叫 `obsidian-agent sync` + `obsidian-agent validate`
+- pre-commit hook 腳本：呼叫 `clausidian sync` + `clausidian validate`
 - 如果 validate 回報 frontmatter 不完整，阻止 commit 並顯示缺失欄位
 - sync 結果（索引變更）自動 `git add` 到本次 commit
 
@@ -318,7 +320,7 @@ graph TB
 - Edge case: `.git/` 目錄的變更不觸發 sync
 
 **Verification:**
-- 啟動 `obsidian-agent watch`，在任意子目錄建立新筆記，確認 sync 自動執行
+- 啟動 `clausidian watch`，在任意子目錄建立新筆記，確認 sync 自動執行
 
 ---
 
@@ -326,38 +328,43 @@ graph TB
 
 - [ ] **Unit 7: 擴展 hook 命令為事件管道**
 
-**Goal:** 讓 `obsidian-agent hook <event>` 成為通用事件處理入口
+**Goal:** 讓 `clausidian hook <event>` 成為通用事件處理入口，統一 stdin 解析
 
 **Requirements:** R7
 
 **Dependencies:** Unit 5, Unit 6
 
 **Files:**
-- Modify: `src/commands/hook.mjs`
-- Modify: `src/registry.mjs`（註冊新事件類型）
+- Modify: `src/commands/hook.mjs`（新增事件處理函數）
+- Modify: `src/commands/watch.mjs`（接線：偵測到變更時 spawn hook 事件）
+- Modify: `src/registry.mjs`（hook `run` 中統一 stdin JSON 解析，各事件函數接收已解析物件）
 
 **Approach:**
+- 在 registry 的 hook `run` 函數中統一 `readFileSync('/dev/stdin')` + `JSON.parse`，將解析結果傳入各事件函數，消除重複
 - 擴展 hook 命令支援更多事件：`note-created`、`note-updated`、`note-deleted`、`index-rebuilt`
-- 每個事件接收 JSON payload（stdin）：`{ event, note, changes, timestamp }`
+- 每個事件接收 JSON payload：`{ event, note, changes, timestamp }`
 - 事件處理邏輯：
   - `note-created` → 自動搜尋相關筆記，建議 related 連結
   - `note-updated` → 如果 tags 變更，觸發 TF-IDF 重新計算該筆記的建議關聯
   - `index-rebuilt` → 通知 Telegram Bot（可選）
-- watch 命令和 PostToolUse hook 作為事件來源，呼叫相應 hook 事件
+- watch.mjs 接線：偵測到文件變更時，識別變更類型（create/update/delete），spawn `clausidian hook note-created|note-updated|note-deleted` 並傳入 JSON payload
+- PostToolUse hook 同樣作為事件來源
 
 **Patterns to follow:**
 - 現有 `hook session-stop` 的處理模式
 - Golden Principle #1: stdin JSON 輸入
 
 **Test scenarios:**
-- Happy path: `echo '{"event":"note-created","note":"test-note"}' | obsidian-agent hook note-created` 回傳關聯建議
+- Happy path: `echo '{"event":"note-created","note":"test-note"}' | clausidian hook note-created` 回傳關聯建議
 - Happy path: `note-updated` 事件觸發後，`_graph.md` 的 Suggested Links 更新
 - Error path: 無效 JSON payload 輸出錯誤訊息但不 crash
 - Error path: hook 處理失敗不阻斷主流程（事件處理是 best-effort）
 - Integration: watch 偵測到文件變更後，自動觸發對應 hook 事件
+- Integration: watch → hook note-created → TF-IDF 建議 → stdout 輸出完整管道
 
 **Verification:**
 - 建立新筆記後，自動收到相關筆記建議（stdout 或 notification）
+- watch 啟動中修改子目錄文件，確認事件管道端到端觸發
 
 ---
 
@@ -376,7 +383,8 @@ graph TB
 - Modify: `src/registry.mjs`（註冊 bridge 命令群組）
 
 **Approach:**
-- `obsidian-agent bridge gcal [--date today]` — 呼叫 `gwx calendar list-events` 取得當日會議
+- bridge 使用 registry 的 `subcommands` 模式，結構如 `{ name: 'bridge', subcommands: { gcal: { mcpName: 'bridge_gcal', ... }, gmail: {...}, github: {...} } }`，確保子命令自動暴露為 MCP tools
+- `clausidian bridge gcal [--date today]` — 呼叫 `gwx calendar list-events` 取得當日會議
 - 對每個會議，在 journal 條目中生成「會議」區塊（時間、參與者、議程）
 - 如果已有 journal 條目，append 而非覆蓋
 - 可整合到 daily cron（08:00 自動執行）
@@ -393,7 +401,7 @@ graph TB
 - Integration: `obsidian-daily.sh` 中加入 `bridge gcal` 步驟
 
 **Verification:**
-- 執行 `obsidian-agent bridge gcal`，journal 中出現當日會議資訊
+- 執行 `clausidian bridge gcal`，journal 中出現當日會議資訊
 
 ---
 
@@ -410,7 +418,7 @@ graph TB
 - Modify: `src/registry.mjs`
 
 **Approach:**
-- `obsidian-agent bridge gmail [--label important] [--days 1]` — 呼叫 `gwx gmail search-messages`
+- `clausidian bridge gmail [--label important] [--days 1]` — 呼叫 `gwx gmail search-messages`
 - 對每封符合條件的郵件，使用 `capture` 命令建立 idea 筆記（或 append 到 journal）
 - 標籤映射：Gmail label → vault tag
 - 可整合到 daily cron
@@ -443,7 +451,7 @@ graph TB
 - Modify: `src/registry.mjs`
 
 **Approach:**
-- `obsidian-agent bridge github [--repo owner/repo] [--days 1]` — 呼叫 `gh` CLI
+- `clausidian bridge github [--repo owner/repo] [--days 1]` — 呼叫 `gh` CLI
 - 同步活動類型：新 issue、PR merged、release published
 - 對應 vault 行為：
   - 新 issue → 更新 project 筆記的「Open Issues」區塊
