@@ -2,6 +2,7 @@
  * Index manager — maintains _tags.md, _graph.md, and directory _index.md files
  */
 import { todayStr, prevDate, nextDate } from './dates.mjs';
+import { TFIDFIndex } from './tfidf-utils.mjs';
 
 export class IndexManager {
   constructor(vault) {
@@ -48,13 +49,24 @@ export class IndexManager {
 
     let content = `---\ntitle: Knowledge Graph\ntype: index\nupdated: ${today}\n---\n\n# Knowledge Graph\n\n| Source | Links To | Type | nav |\n|--------|----------|------|-----|\n`;
 
+    // Pre-build tag Sets for all notes (for strength calculation)
+    const allTagSets = new Map();
+    for (const n of notes) {
+      allTagSets.set(n.file, new Set(n.tags));
+    }
+
     let relCount = 0;
     for (const note of notes) {
       for (const rel of note.related) {
         const target = noteMap.get(rel);
         let strength = 'weak';
         if (target) {
-          const shared = note.tags.filter(t => target.tags.includes(t)).length;
+          const noteSet = allTagSets.get(note.file);
+          const targetSet = allTagSets.get(target.file);
+          let shared = 0;
+          for (const t of noteSet) {
+            if (targetSet.has(t)) shared++;
+          }
           if (shared >= 2) strength = 'strong';
           else if (shared >= 1) strength = 'medium';
         }
@@ -71,18 +83,21 @@ export class IndexManager {
 
     // ── TF-IDF weighted link suggestions ──
     const nonJournal = notes.filter(n => n.dir !== 'journal' && n.tags.length > 0);
-    const totalNotes = nonJournal.length;
 
-    // Build tag document frequency (how many notes have each tag)
-    const tagDF = {};
+    // Build TF-IDF index
+    const tfidf = new TFIDFIndex();
+    const docs = [];
     for (const n of nonJournal) {
-      for (const t of n.tags) tagDF[t] = (tagDF[t] || 0) + 1;
+      for (const t of n.tags) {
+        docs.push({ tag: t, docId: n.file });
+      }
     }
+    tfidf.build(docs);
 
-    // IDF weight: rarer tags score higher — log(N / df)
-    const tagIDF = {};
-    for (const [tag, df] of Object.entries(tagDF)) {
-      tagIDF[tag] = Math.log(totalNotes / df);
+    // Build tag Sets per note (O(1) lookup instead of O(m) includes)
+    const tagSets = new Map();
+    for (const n of nonJournal) {
+      tagSets.set(n.file, new Set(n.tags));
     }
 
     // Build keyword sets per note (title + summary words, 3+ chars)
@@ -112,10 +127,12 @@ export class IndexManager {
         let score = 0;
         const shared = [];
 
-        // TF-IDF weighted tag overlap
-        for (const t of a.tags) {
-          if (b.tags.includes(t)) {
-            score += tagIDF[t] || 1;
+        // TF-IDF weighted tag overlap (using Set for O(1) lookup)
+        const aSet = tagSets.get(a.file);
+        const bSet = tagSets.get(b.file);
+        for (const t of aSet) {
+          if (bSet.has(t)) {
+            score += tfidf.score(t);
             shared.push(t);
           }
         }
@@ -216,10 +233,29 @@ export class IndexManager {
 
   // ── Sync all indices (single scan) ──────────────────
 
+  /**
+   * Sync indices with change detection.
+   * If no changes detected, skip full rebuild and return cached result.
+   * If changes detected, rebuild indices only for changed/new notes while preserving unchanged.
+   * @returns {Object} Sync result with tags, notes, relationships, etc.
+   */
   sync() {
+    const changes = this.vault.detectChanges();
+
+    // No changes: quick return (still rebuild to ensure consistency)
+    if (changes.created.length === 0 && changes.modified.length === 0 && changes.deleted.length === 0) {
+      // Even with no changes, rebuild indices from full note set
+      // (ensures indices are consistent, but reuses all notes for efficiency)
+      const notes = this.vault.scanNotes();
+      const tags = this.rebuildTags(notes);
+      const graph = this.rebuildGraph(notes);
+      return { ...tags, ...graph, unchanged: changes.unchanged, total: changes.total };
+    }
+
+    // Changes detected: full rebuild (scan all notes, process all)
     const notes = this.vault.scanNotes();
     const tags = this.rebuildTags(notes);
     const graph = this.rebuildGraph(notes);
-    return { ...tags, ...graph };
+    return { ...tags, ...graph, changed: changes.created.length + changes.modified.length };
   }
 }

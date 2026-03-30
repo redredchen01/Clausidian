@@ -3,6 +3,7 @@
  */
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'fs';
 import { resolve, join, dirname } from 'path';
+import { FileHasher } from './file-hasher.mjs';
 
 const DEFAULT_DIRS = ['areas', 'projects', 'resources', 'journal', 'ideas'];
 
@@ -12,6 +13,7 @@ export class Vault {
     this.dirs = dirs || this._detectDirs() || DEFAULT_DIRS;
     this._notesCache = null;
     this._notesCacheWithBody = null;
+    this._fileHashes = null;
   }
 
   _detectDirs() {
@@ -28,6 +30,7 @@ export class Vault {
   invalidateCache() {
     this._notesCache = null;
     this._notesCacheWithBody = null;
+    this._fileHashes = null;
   }
 
   // ── Path helpers ─────────────────────────────────────
@@ -369,5 +372,48 @@ export class Vault {
   typeDir(type) {
     const map = { area: 'areas', project: 'projects', resource: 'resources', idea: 'ideas', journal: 'journal' };
     return map[type] || type;
+  }
+
+  // ── Detect file changes (incremental sync) ──────────
+
+  /**
+   * Detect which notes were created, modified, or deleted since last sync.
+   * Returns total unchanged count for efficiency.
+   * @returns {Object} {created, modified, deleted, unchanged, total}
+   */
+  detectChanges() {
+    const cacheFile = this.path('.clausidian', 'hashes.json');
+    let prevHashes = {};
+
+    if (existsSync(cacheFile)) {
+      try {
+        const data = readFileSync(cacheFile, 'utf8');
+        prevHashes = JSON.parse(data);
+      } catch {
+        // Cache corrupted or invalid — fall back to empty
+        prevHashes = {};
+      }
+    }
+
+    // Hash all current .md files in directories
+    const currentHashes = {};
+    for (const dir of this.dirs) {
+      const hashes = FileHasher.hashDir(this.path(dir));
+      Object.assign(currentHashes, hashes);
+    }
+
+    const { created, modified, deleted } = FileHasher.compare(prevHashes, currentHashes);
+    const total = Object.keys(currentHashes).length;
+    const unchanged = total - (created.length + modified.length);
+
+    // Save updated hashes for next sync
+    try {
+      mkdirSync(this.path('.clausidian'), { recursive: true });
+      writeFileSync(cacheFile, JSON.stringify(currentHashes, null, 2));
+    } catch {
+      // Graceful degradation on write failure
+    }
+
+    return { created, modified, deleted, unchanged, total };
   }
 }
