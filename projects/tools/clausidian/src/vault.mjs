@@ -139,9 +139,9 @@ export class Vault {
   _rgPrefilter(keyword, regex) {
     const args = ['--files-with-matches', '--glob', '*.md'];
     if (!regex) args.push('--fixed-strings');
-    args.push(keyword, this.root);
+    args.push('--', keyword, this.root);
     const result = spawnSync('rg', args, { encoding: 'utf8', timeout: 5000 });
-    if (result.error || result.status === null) return null; // rg not available
+    if (result.error || result.status === null || result.status >= 2) return null;
     if (result.status === 1) return new Set();               // no matches
     return new Set(result.stdout.trim().split('\n').filter(Boolean));
   }

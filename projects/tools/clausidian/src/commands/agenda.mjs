@@ -1,7 +1,6 @@
 /**
  * agenda — extract pending TODO items from journals and project notes
  */
-import { readdirSync } from 'fs';
 import { Vault } from '../vault.mjs';
 import { todayStr } from '../dates.mjs';
 
