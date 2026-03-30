@@ -630,6 +630,35 @@ const COMMANDS = [
     },
   },
 
+  // ── Auto-tag & Stale ──
+  {
+    name: 'auto-tag',
+    description: 'Suggest and apply tags to untagged notes using TF-IDF',
+    usage: 'auto-tag [--dry-run]',
+    mcpSchema: { dry_run: { type: 'boolean', description: 'Preview suggestions without writing' } },
+    async run(root, flags) {
+      const { autoTag } = await import('./commands/auto-tag.mjs');
+      return autoTag(root, { dryRun: flags.dry_run || flags['dry-run'] });
+    },
+  },
+
+  {
+    name: 'stale',
+    description: 'List and manage stale (inactive) notes',
+    usage: 'stale [--threshold N] [--auto-archive]',
+    mcpSchema: {
+      threshold: { type: 'number', description: 'Days inactive (default: 30)' },
+      auto_archive: { type: 'boolean', description: 'Archive matching notes' },
+    },
+    async run(root, flags) {
+      const { stale } = await import('./commands/stale.mjs');
+      return stale(root, {
+        threshold: flags.threshold ? parseInt(flags.threshold, 10) : 30,
+        autoArchive: flags.auto_archive || flags['auto-archive'],
+      });
+    },
+  },
+
   // ── Tags ──
   {
     name: 'tag',

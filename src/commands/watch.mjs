@@ -1,10 +1,11 @@
 /**
- * watch — auto-rebuild indices on file changes + spawn hook events
+ * watch — auto-rebuild indices on file changes + spawn hook events + time-aware automation
  */
 import { watch as fsWatch, existsSync } from 'fs';
 import { spawn } from 'child_process';
 import { Vault } from '../vault.mjs';
 import { IndexManager } from '../index-manager.mjs';
+import { todayStr } from '../dates.mjs';
 
 export function watch(vaultRoot) {
   const vault = new Vault(vaultRoot);
@@ -13,6 +14,11 @@ export function watch(vaultRoot) {
   let debounce = null;
   const changedFiles = new Set();
   const fileState = new Map(); // Track file existence
+
+  // Time-aware state
+  let lastDailyBackfillDate = null;
+  let lastWeeklyReviewDate = null;
+  let lastSyncResult = null;
 
   // Initialize file state
   const initialNotes = vault.scanNotes();
@@ -26,11 +32,31 @@ export function watch(vaultRoot) {
       try {
         const result = idx.sync();
         const ts = new Date().toLocaleTimeString('en-US', { hour12: false });
-        console.log(`[${ts}] Synced: ${result.tags} tags, ${result.notes} notes, ${result.relationships} links`);
+        const today = todayStr();
+
+        // Calculate delta from last sync
+        let delta = '';
+        if (lastSyncResult) {
+          const tagDelta = result.tags - lastSyncResult.tags;
+          const notesDelta = result.notes - lastSyncResult.notes;
+          const linksDelta = result.relationships - lastSyncResult.relationships;
+          delta = ` [${tagDelta > 0 ? '+' : ''}${tagDelta}T ${notesDelta > 0 ? '+' : ''}${notesDelta}N ${linksDelta > 0 ? '+' : ''}${linksDelta}L]`;
+        }
+
+        console.log(`[${ts}] Synced: ${result.tags} tags, ${result.notes} notes, ${result.relationships} links${delta}`);
+        lastSyncResult = result;
 
         // Spawn hook events for changed files
         spawnHookEvents(vaultRoot, changedFiles);
         changedFiles.clear();
+
+        // Time-aware automation
+        triggerTimeAwareEvents(vaultRoot, today, {
+          lastDailyBackfillDate,
+          lastWeeklyReviewDate,
+          onDailyBackfill: (newDate) => { lastDailyBackfillDate = newDate; },
+          onWeeklyReview: (newDate) => { lastWeeklyReviewDate = newDate; }
+        });
       } catch (err) {
         console.error(`[sync error] ${err.message}`);
       }
@@ -155,5 +181,39 @@ function spawnHookEvents(vaultRoot, changedFiles) {
     proc.on('error', (err) => {
       console.error(`[hook spawn error] ${err.message}`);
     });
+  }
+}
+
+function triggerTimeAwareEvents(vaultRoot, today, state) {
+  const { lastDailyBackfillDate, lastWeeklyReviewDate, onDailyBackfill, onWeeklyReview } = state;
+
+  // Trigger daily-backfill once per day
+  if (lastDailyBackfillDate !== today) {
+    console.log(`[automation] Triggering daily-backfill for ${today}...`);
+    const payload = { event: 'daily-backfill', date: today, timestamp: new Date().toISOString() };
+    const proc = spawn(process.execPath, [process.argv[1], 'hook', 'daily-backfill'], {
+      cwd: vaultRoot,
+      stdio: ['pipe', 'inherit', 'inherit']
+    });
+    proc.stdin.write(JSON.stringify(payload));
+    proc.stdin.end();
+    onDailyBackfill(today);
+  }
+
+  // Trigger weekly review on Sunday (only once per week)
+  const now = new Date();
+  const dayOfWeek = now.getDay(); // 0 = Sunday
+  const weekIdentifier = `${today}-W${Math.ceil((now.getDate()) / 7)}`;
+
+  if (dayOfWeek === 0 && lastWeeklyReviewDate !== weekIdentifier) {
+    console.log(`[automation] Triggering weekly review...`);
+    const proc = spawn(process.execPath, [process.argv[1], 'review'], {
+      cwd: vaultRoot,
+      stdio: ['inherit', 'inherit', 'inherit']
+    });
+    proc.on('error', (err) => {
+      console.error(`[weekly review error] ${err.message}`);
+    });
+    onWeeklyReview(weekIdentifier);
   }
 }
