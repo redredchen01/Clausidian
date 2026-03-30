@@ -69,8 +69,16 @@ export class IndexManager {
     }
 
     // ── TF-IDF weighted link suggestions (using SimilarityEngine) ──
+    // Enable incremental mode if there are dirty files
+    const incrementalOptions = { ...options };
+    if (this.vault.tracker.hasDirty()) {
+      incrementalOptions.incremental = true;
+      incrementalOptions.dirtySet = this.vault.tracker.getDirtySet();
+    }
     const engine = new SimilarityEngine(this.vault, { includeBody: true, maxResults: 25 });
-    const suggested = engine.scorePairs(notes, options);
+    const suggested = engine.scorePairs(notes, incrementalOptions);
+    // Clear dirty set after rebuild
+    this.vault.tracker.clearDirty();
 
     if (suggested.length) {
       content += `\n## Suggested Links\n\nTF-IDF weighted (rare tags + content overlap score higher):\n\n| Note A | Note B | Score | Shared Tags |\n|--------|--------|-------|-------------|\n`;
