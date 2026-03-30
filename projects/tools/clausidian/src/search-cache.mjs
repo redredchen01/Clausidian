@@ -21,14 +21,23 @@ class SearchCache {
    * Uses simple string concatenation for O(1) speed on typical inputs.
    * Supports vault-aware isolation to prevent cross-vault collisions.
    * @param {string} keyword - Search keyword
-   * @param {string|null} vaultName - Vault name for isolation (defaults to 'default')
-   * @param {Object} options - Search options
+   * @param {string|Object|null} vaultName - Vault name for isolation, or options object for backward compat
+   * @param {Object} options - Search options (used when vaultName is a string)
    * @returns {string} Cache key
    */
   _getCacheKey(keyword, vaultName = null, options = {}) {
-    const { type, tag, status, regex } = options;
+    // Handle backward compatibility: if vaultName is an object, treat it as options
+    let actualVaultName = vaultName;
+    let actualOptions = options;
+
+    if (typeof vaultName === 'object' && vaultName !== null && typeof options === 'object') {
+      actualVaultName = null;
+      actualOptions = vaultName;
+    }
+
+    const { type, tag, status, regex } = actualOptions;
     // Prefix with vault name for isolation (defaults to 'default' for backward compatibility)
-    const prefix = vaultName || 'default';
+    const prefix = actualVaultName || 'default';
     // Simple concatenation is fast and deterministic
     return `${prefix}|${keyword}|${type || ''}|${tag || ''}|${status || ''}|${regex ? 'regex' : ''}`;
   }
