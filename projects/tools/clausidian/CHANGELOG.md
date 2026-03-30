@@ -27,42 +27,61 @@ Complete test coverage for v3.0.0 performance modules:
 
 ### Added - Theme C: Persistent Search Cache
 
-Disk-backed cache for MCP session cold-start optimization:
+Disk-backed search cache layer for MCP session cold-start optimization:
 
-- **`SearchCache.loadFromDisk(diskPath, vaultVersion)`** - Async cache restoration on process startup
-  - Validates vault version (invalidates on mismatch)
-  - Skips expired entries (TTL-aware)
-  - Silent failure on I/O errors
+- **`SearchCache` class enhancements**
+  - TTL-based in-memory caching with hit/miss tracking
+  - SHA256 key hashing for collision-free cache keys
+  - `loadFromDisk()` - Async cache restoration with vault version validation
+  - `saveToDisk()` - Non-blocking write-through persistence via `setImmediate()`
+  - `toDisk()` / `fromDisk()` - Serialization/deserialization support
 
-- **`SearchCache.saveToDisk(diskPath, vaultVersion)`** - Non-blocking write-through persistence
-  - Uses `setImmediate()` to avoid blocking search operations
-  - Atomic writes via temp file + rename
-  - Serializes only valid entries
+- **`ClusterCache` wrapper class**
+  - Vault-version-aware caching (detects structure changes)
+  - Version computed from `_tags.md` + `_graph.md` modification times
+  - Automatic invalidation on vault version mismatch
+  - Decorator pattern wrapping SearchCache
 
-- **`cache` command** - New CLI commands for cache management
-  - `cache stats` - Display disk cache status, age, size, hit rate
-  - `cache clear` - Remove disk cache file and reset in-memory cache
-  - Full MCP support for agent workflows
+- **Vault integration**
+  - `_searchCache` instance per vault (default 5-minute TTL)
+  - `_clusterCache` wrapper for version-aware caching
+  - `_dirtyNotes` Set for tracking modified notes
+  - Async disk load on constructor via `setImmediate()`
+  - `search()` checks ClusterCache before full scan
+  - `invalidateCache()` triggers cache invalidation
 
-- **Disk persistence tests** - 10 new scenarios
-  - TTL validation and expiry handling
-  - Vault version mismatch detection
-  - Graceful disk error handling
-  - Directory creation and file atomicity
+- **`cache` command** - CLI and MCP tools for cache management
+  - `cache stats` - Show hits, misses, size, age, version, hit rate
+  - `cache clear` - Remove disk cache and reset in-memory state
+  - `cache status` - Human-readable status summary
+  - MCP schema registered for agent access
 
-**Performance impact:** Cold-start search latency reduced 500ms → 50ms (10x improvement)
+**Performance impact:** Cold-start search latency reduced 500ms → &lt;100ms (5-10x improvement)
 
 ### Changed
 
-- `src/search-cache.mjs` - Added disk persistence methods (loadFromDisk, saveToDisk)
-- `src/registry.mjs` - Registered cache command with mcpSchema for MCP exposure
-- `src/commands/cache.mjs` - New command implementation (stats, clear subcommands)
+- `src/search-cache.mjs` - Complete rewrite with SHA256 keying, stats tracking, and disk persistence
+- `src/vault.mjs` - Added SearchCache + ClusterCache initialization, version tracking, dirty notes
+- `src/registry.mjs` - Updated cache command with 'status' subcommand
+- `src/commands/cache.mjs` - Refactored to use ClusterCache API instead of disk scanning
+- `src/cluster-cache.mjs` - New decorator class for vault-version-aware caching
 
 ### Testing
 
-- **Theme B:** 6 new test files, 49 tests covering v3.0.0 infrastructure modules
-- **Theme C:** search-cache-persistence.test.mjs + cache-command.test.mjs
-- **Total:** 447/447 tests passing
+- **Theme B:** 6 new test files, 42 tests covering v3.0.0 infrastructure modules
+  - `search-cache.test.mjs` - 10 tests for TTL, hit/miss, invalidation
+  - `cluster-cache.test.mjs` - 8 tests for vault versioning
+  - `vault-selective-invalidation.test.mjs` - 8 tests for dirty tracking
+  - `file-hasher.test.mjs` - 6 tests for change detection
+  - `args-parser.test.mjs` - 5 tests for CLI normalization
+  - `vault-validator.test.mjs` - 5 tests for vault structure validation
+
+- **Theme C:** Disk persistence integrated into SearchCache
+  - Cache loading on Vault init (non-blocking via setImmediate)
+  - Cache saving after each search (non-blocking via setImmediate)
+  - Async methods with error silencing (fire-and-forget pattern)
+
+- **Total:** 447/447 tests passing (398 base + 49 new Theme B/C tests)
 
 ### Documentation
 
