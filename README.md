@@ -423,6 +423,20 @@ obsidian-agent review --vault ~/my-vault
 obsidian-agent review monthly --vault ~/my-vault
 ```
 
+## Knowledge Precipitation (v0.9+)
+
+Five automated rules that help knowledge settle from journals into permanent notes:
+
+| Rule | Command | What it does |
+|------|---------|-------------|
+| A1: Promotion Suggestions | `review` | Scans weekly journals for topics appearing 2+ days → suggests promotion to projects/resources |
+| A2: Idea Temperature | `health` | Tracks idea freshness: 🆕 new, 🔥 active, 🧊 frozen (14d), 💀 archive (30d) |
+| A3: Staleness Detection | `review monthly` | Flags resources >60d stale, active projects >30d dormant, dead ideas |
+| A4: Conclusion Extraction | `hook session-stop` | Auto-tags journals with #conclusion or #resolved based on content |
+| A5: Link Suggestions | `sync` | Finds note pairs sharing 2+ tags but missing related links |
+
+These rules run automatically as part of existing commands — no extra setup needed. Over time, they ensure your vault stays organized: ideas get promoted or archived, stale notes get flagged, and connections between notes are surfaced.
+
 ## Environment Variables
 
 | Variable | Description | Default |
