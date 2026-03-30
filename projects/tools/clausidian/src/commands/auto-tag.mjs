@@ -75,10 +75,12 @@ export function autoTag(vaultRoot, options = {}) {
 
     // Output results
     if (dryRun) {
-      console.log(`\n=== Auto-Tag Suggestions (${untagged.length} untagged) ===\n`);
+      console.log(`📋 auto-tag 建議`);
+      let index = 1;
       for (const s of suggestions) {
-        console.log(`[[${s.file}]] (${s.type}):`);
-        console.log(`  tags: [${s.suggestedTags.join(', ')}]`);
+        console.log(`${index}. ${s.file}`);
+        console.log(`   → ${s.suggestedTags.join(', ')}`);
+        index++;
       }
       if (suggestions.length === 0) {
         console.log('(No tag suggestions found)');
