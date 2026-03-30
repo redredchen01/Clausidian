@@ -12,7 +12,7 @@
 
 ## Pending
 
-- [ ] 2026-03-30 | P1 | /pypi-publish | 消除手動 twine upload，一鍵打包+上傳 PyPI | pypi-auto-publish
+- [x] 2026-03-30 | P1 | /pypi-publish | 消除手動 twine upload，一鍵打包+上傳 PyPI | pypi-auto-publish | built: 2026-03-30
 - [ ] 2026-03-30 | P1 | /agent-trace | append-only JSONL agent 操作追蹤，查詢+周報整合 | agent-trace-system
 - [ ] 2026-03-30 | P1 | /site-doctor | 複合站點診斷：可用性+SEO+效能+競品對標 | site-doctor-skill
 - [ ] 2026-03-30 | P2 | /prompt-audit | 掃描所有 skill/prompt 找反模式，A/B 框架建議 |
