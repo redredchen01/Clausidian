@@ -63,6 +63,7 @@ class SearchCache {
 
   /**
    * Cache search results
+   * Trigger async disk write if diskPath is set
    * @param {string} keyword - Search keyword
    * @param {Object} opts - Search options
    * @param {Array} results - Search results
@@ -75,6 +76,13 @@ class SearchCache {
       keyword,
       opts
     });
+
+    // Non-blocking write-through to disk via setImmediate
+    if (this.diskPath) {
+      setImmediate(() => this.saveToDisk(this.diskPath).catch(() => {
+        // Silent fail on disk write errors
+      }));
+    }
   }
 
   /**
