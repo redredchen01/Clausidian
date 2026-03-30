@@ -488,13 +488,63 @@ Upgraded from obsidian-agent to clausidian — same CLI interface, 48 tools via 
 
 For details, see the main README.
 
+## Documentation
+
+Complete documentation:
+
+- **[API Reference](./docs/API.md)** — All 50+ commands with parameters, examples, and error handling
+- **[User Guide](./docs/USER_GUIDE.md)** — Daily workflows, PARA system, best practices, troubleshooting
+- **[Developer Guide](./docs/DEVELOPER_GUIDE.md)** — How to add commands, extend MCP, write tests, release process
+- **[Architecture](./ARCHITECTURE.md)** — System design, module structure, data flow
+- **[Contributing](./CONTRIBUTING.md)** — Development workflow and code style
+
+---
+
+## Version History
+
+### v2.5.0 (March 2026) — Smart AI Features
+
+**Added:**
+- `smart-suggest` — AI-powered improvement recommendations (stale notes, tag consolidation, missing links)
+- Search result caching — 5-minute TTL for improved performance
+- Support for 10K+ note vaults
+- `--type` filter for all list/search commands
+
+**Improved:**
+- TypeScript JSDoc coverage across all modules
+- CI/CD pipeline with cross-platform testing (macOS, Linux, Windows)
+- Error messages with actionable hints
+- Performance optimizations for large vaults
+
+**Documentation:**
+- Expanded ARCHITECTURE.md with module descriptions
+- Complete Contributing guide with dev workflow
+- 168 unit tests, zero breaking changes
+
+### v2.0.0 (Evolved from obsidian-agent)
+
+**Renamed:** `obsidian-agent` → `clausidian` (agent-agnostic vault CLI)
+
+**Features:**
+- 48 CLI commands + MCP server for Claude Code, Cursor, Copilot
+- YAML frontmatter conventions for all notes
+- Auto-linking, tag management, knowledge graph
+- BM25 full-text search
+- Knowledge precipitation (A1-A5 rules)
+
+---
+
 ## Development
 
 ```bash
-npm test
+npm install
+npm test              # 168 tests
+npm run test:docs     # Validate documentation
 ```
 
 Requires Node.js >= 18. Tests use `node:test` — zero dev dependencies.
+
+See [Developer Guide](./docs/DEVELOPER_GUIDE.md) for contribution instructions.
 
 ## License
 

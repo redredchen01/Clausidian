@@ -43,7 +43,7 @@ export function read(vaultRoot, noteName, { section } = {}) {
     }
 
     if (startIdx === -1) {
-      throw new Error(`Section not found: "${section}"`);
+      return { file: `${note.dir}/${note.file}.md`, section, content: '' };
     }
 
     const sectionContent = lines.slice(startIdx, endIdx).join('\n').trim();

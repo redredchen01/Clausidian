@@ -23,12 +23,13 @@ export function archive(vaultRoot, noteName) {
     return { status: 'already_archived' };
   }
 
+  const updatedStr = todayStr();
   vault.updateNote(note.dir, note.file, {
     status: 'archived',
-    updated: todayStr(),
+    updated: updatedStr,
   });
   idx.rebuildTags();
 
   console.log(`Archived ${note.dir}/${note.file}.md`);
-  return { status: 'archived', file: `${note.dir}/${note.file}.md` };
+  return { status: 'archived', file: `${note.dir}/${note.file}.md`, updated: updatedStr };
 }

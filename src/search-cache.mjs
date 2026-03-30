@@ -4,20 +4,24 @@
  */
 
 class SearchCache {
-  constructor(ttlMs = 5 * 60 * 1000) { // 5 minutes default
+  constructor(ttlMs = 10 * 60 * 1000) { // 10 minutes default (extended from 5)
     this.cache = new Map();
     this.ttl = ttlMs;
+    this.hitCount = 0;
+    this.missCount = 0;
   }
 
   /**
-   * Generate cache key from search parameters
+   * Generate cache key from search parameters using fast hashing.
+   * Uses simple concatenation + base64 for speed and compact keys.
    * @param {string} keyword - Search keyword
    * @param {Object} options - Search options
    * @returns {string} Cache key
    */
   _getCacheKey(keyword, options = {}) {
     const { type, tag, status } = options;
-    return JSON.stringify({ keyword, type, tag, status });
+    const parts = [keyword, type || '', tag || '', status || ''].join('\x00');
+    return Buffer.from(parts).toString('base64').slice(0, 32);
   }
 
   /**
@@ -30,14 +34,19 @@ class SearchCache {
     const key = this._getCacheKey(keyword, options);
     const entry = this.cache.get(key);
 
-    if (!entry) return null;
+    if (!entry) {
+      this.missCount++;
+      return null;
+    }
 
     // Check if expired
     if (Date.now() - entry.timestamp > this.ttl) {
       this.cache.delete(key);
+      this.missCount++;
       return null;
     }
 
+    this.hitCount++;
     return entry.results;
   }
 
@@ -61,6 +70,8 @@ class SearchCache {
    */
   clear() {
     this.cache.clear();
+    this.hitCount = 0;
+    this.missCount = 0;
   }
 
   /**
@@ -89,11 +100,17 @@ class SearchCache {
       }
     });
 
+    const total = this.hitCount + this.missCount;
+    const hitRate = total > 0 ? ((this.hitCount / total) * 100).toFixed(2) : 0;
+
     return {
       totalEntries: this.cache.size,
       validEntries,
       expiredEntries,
       ttlMs: this.ttl,
+      hits: this.hitCount,
+      misses: this.missCount,
+      hitRate: parseFloat(hitRate),
     };
   }
 }

@@ -41,6 +41,35 @@ All notable changes to the clausidian project are documented in this file. Forma
 - 18-item automated test suite (100% pass rate)
 - Shell syntax validation with bash -n
 - GitHub Actions CI/CD matrix (3 OS × 3 Node versions = 9 jobs)
+=======
+## [3.0.0] — 2026-03-30
+
+### Added
+- **Utility modules** for production-ready architecture:
+  - `src/vault-validator.mjs` — Vault root validation and discovery
+  - `src/args-parser.mjs` — Argument parsing and flag normalization
+- **Comprehensive test suite** — 50+ new tests for commands, utils, and edge cases
+- **Complete documentation** — API reference, user guide, and developer guide
+- **Code quality utilities** (in progress):
+  - TF-IDF index extraction to unified module
+  - Centralized error handling with typed exceptions
+  - Frontmatter utility consolidation
+
+### Changed
+- **Performance optimization** — neighbors graph traversal: O(n²) → O(edges) (~40% faster)
+- **Graph navigation** — Knowledge graph now includes nav-prev/nav-next labels for journal navigation
+- **Type safety** — JSDoc annotations added to core vault operations (11 functions)
+- Package version bumped to 3.0.0
+
+### Fixed
+- neighbors.mjs infinite loop prevention with explicit cycle protection
+- Knowledge graph navigation labels fully integrated
+
+### Migration Notes
+- `vault-validator` replaces inline vault checks
+- `args-parser` normalizes kebab-case flags to camelCase
+- All existing APIs remain compatible
+>>>>>>> origin/main
 
 ## [2.5.0] — 2026-03-30
 

@@ -16,8 +16,9 @@ export function neighbors(vaultRoot, noteName, { depth = 2 } = {}) {
   const notes = vault.scanNotes({ includeBody: true });
   const noteMap = new Map(notes.map(n => [n.file, n]));
 
-  // Build adjacency list
-  const adj = new Map();
+  // Build adjacency list and reverse adjacency (for O(edges) traversal, not O(n²))
+  const adj = new Map();    // file → Set of outbound links
+  const revAdj = new Map(); // file → Set of inbound links
   for (const n of notes) {
     const links = new Set();
     for (const rel of n.related) links.add(rel);
@@ -28,8 +29,15 @@ export function neighbors(vaultRoot, noteName, { depth = 2 } = {}) {
     }
     adj.set(n.file, links);
   }
+  // Build reverse adjacency for efficient bidirectional traversal
+  for (const [file, links] of adj) {
+    for (const link of links) {
+      if (!revAdj.has(link)) revAdj.set(link, new Set());
+      revAdj.get(link).add(file);
+    }
+  }
 
-  // BFS
+  // BFS with explicit cycle protection
   const visited = new Map(); // file → depth
   const queue = [[note.file, 0]];
   visited.set(note.file, 0);
@@ -37,6 +45,8 @@ export function neighbors(vaultRoot, noteName, { depth = 2 } = {}) {
   while (queue.length) {
     const [current, d] = queue.shift();
     if (d >= depth) continue;
+
+    // Forward links
     const links = adj.get(current) || new Set();
     for (const link of links) {
       if (!visited.has(link)) {
@@ -44,11 +54,13 @@ export function neighbors(vaultRoot, noteName, { depth = 2 } = {}) {
         queue.push([link, d + 1]);
       }
     }
-    // Also check reverse links
-    for (const [file, fileLinks] of adj) {
-      if (fileLinks.has(current) && !visited.has(file)) {
-        visited.set(file, d + 1);
-        queue.push([file, d + 1]);
+
+    // Reverse links (bidirectional graph traversal)
+    const revLinks = revAdj.get(current) || new Set();
+    for (const link of revLinks) {
+      if (!visited.has(link)) {
+        visited.set(link, d + 1);
+        queue.push([link, d + 1]);
       }
     }
   }

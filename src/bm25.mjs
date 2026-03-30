@@ -163,14 +163,19 @@ export class BM25Index {
       }
     }
 
+    // Pre-compile filter predicates to avoid repeated checks
+    const typeFilter = type ? (m) => m.type === type : null;
+    const tagFilter = tag ? (m) => (m.tags || []).includes(tag) : null;
+    const statusFilter = status ? (m) => m.status === status : null;
+
     // Collect and filter results
     const results = [];
     for (let i = 0; i < this.docCount; i++) {
       if (scores[i] <= 0) continue;
       const meta = this.docMeta[i];
-      if (type && meta.type !== type) continue;
-      if (status && meta.status !== status) continue;
-      if (tag && !(meta.tags || []).includes(tag)) continue;
+      if (typeFilter && !typeFilter(meta)) continue;
+      if (statusFilter && !statusFilter(meta)) continue;
+      if (tagFilter && !tagFilter(meta)) continue;
       results.push({ ...meta, score: Math.round(scores[i] * 100) / 100 });
     }
 
