@@ -41,6 +41,30 @@ export class IndexManager {
   }
 
   /**
+   * Render clusters as markdown content.
+   * @param {Array} sortedClusters - Sorted list of clusters
+   * @param {Map} allNotesMap - Map of file -> note for fast lookup
+   * @returns {string} Markdown content for clusters section
+   */
+  _renderClusters(sortedClusters, allNotesMap) {
+    if (!sortedClusters.length) return '';
+
+    let content = `\n## Clusters\n\n`;
+    for (let i = 0; i < sortedClusters.length; i++) {
+      const c = sortedClusters[i];
+      const connCount = {};
+      for (const file of c) {
+        const n = allNotesMap.get(file);
+        connCount[file] = n ? n.related.length : 0;
+      }
+      const hub = c.sort((a, b) => (connCount[b] || 0) - (connCount[a] || 0))[0];
+      content += `### Cluster ${i + 1}: ${hub} (${c.length} notes)\n`;
+      content += c.map(f => `- [[${f}]]`).join('\n') + '\n\n';
+    }
+    return content;
+  }
+
+  /**
    * Compute vault version hash from current file state.
    * Used to invalidate cluster cache when vault structure changes.
    * @returns {string} Simple hash of vault state
@@ -243,21 +267,7 @@ export class IndexManager {
           .filter(c => c.length >= 2)
           .sort((a, b) => b.length - a.length);
 
-        if (sortedClusters.length) {
-          content += `\n## Clusters\n\n`;
-          for (let i = 0; i < sortedClusters.length; i++) {
-            const c = sortedClusters[i];
-            // Label by the most-connected node
-            const connCount = {};
-            for (const file of c) {
-              const n = allNotesMap.get(file);
-              connCount[file] = n ? n.related.length : 0;
-            }
-            const hub = c.sort((a, b) => (connCount[b] || 0) - (connCount[a] || 0))[0];
-            content += `### Cluster ${i + 1}: ${hub} (${c.length} notes)\n`;
-            content += c.map(f => `- [[${f}]]`).join('\n') + '\n\n';
-          }
-        }
+        content += this._renderClusters(sortedClusters, allNotesMap);
 
         this.vault.write('_graph.md', content);
         return {
@@ -298,21 +308,7 @@ export class IndexManager {
       .filter(c => c.length >= 2)
       .sort((a, b) => b.length - a.length);
 
-    if (sortedClusters.length) {
-      content += `\n## Clusters\n\n`;
-      for (let i = 0; i < sortedClusters.length; i++) {
-        const c = sortedClusters[i];
-        // Label by the most-connected node
-        const connCount = {};
-        for (const file of c) {
-          const n = allNotesMap.get(file);
-          connCount[file] = n ? n.related.length : 0;
-        }
-        const hub = c.sort((a, b) => (connCount[b] || 0) - (connCount[a] || 0))[0];
-        content += `### Cluster ${i + 1}: ${hub} (${c.length} notes)\n`;
-        content += c.map(f => `- [[${f}]]`).join('\n') + '\n\n';
-      }
-    }
+    content += this._renderClusters(sortedClusters, allNotesMap);
 
     this.vault.write('_graph.md', content);
     return {
