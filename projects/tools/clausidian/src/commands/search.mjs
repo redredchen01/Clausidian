@@ -2,9 +2,13 @@
  * search — search notes by keyword with optional filters
  */
 import { Vault } from '../vault.mjs';
+import { SearchCache } from '../search-cache.mjs';
+
+// Global cache instance (shared across searches in same CLI invocation)
+let searchCache = new SearchCache();
 
 export function search(vaultRoot, keyword, { type, tag, status, regex } = {}) {
-  const vault = new Vault(vaultRoot);
+  const vault = new Vault(vaultRoot, { searchCache });
 
   if (!keyword) {
     throw new Error('Usage: clausidian search <keyword> [--type TYPE] [--tag TAG] [--status STATUS] [--regex]');

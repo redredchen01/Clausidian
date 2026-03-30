@@ -7,11 +7,12 @@ import { resolve, join, dirname } from 'path';
 const DEFAULT_DIRS = ['areas', 'projects', 'resources', 'journal', 'ideas'];
 
 export class Vault {
-  constructor(root, { dirs } = {}) {
+  constructor(root, { dirs, searchCache = null } = {}) {
     this.root = resolve(root);
     this.dirs = dirs || this._detectDirs() || DEFAULT_DIRS;
     this._notesCache = null;
     this._notesCacheWithBody = null;
+    this.searchCache = searchCache;
   }
 
   _detectDirs() {
@@ -134,6 +135,12 @@ export class Vault {
   // ── Search notes by keyword (relevance-scored) ─────
 
   search(keyword, { type, tag, status, regex = false } = {}) {
+    // Check cache if available
+    if (this.searchCache) {
+      const cached = this.searchCache.get(keyword, { type, tag, status, regex });
+      if (cached) return cached;
+    }
+
     const notes = this.scanNotes({ includeBody: true });
     const results = [];
 
@@ -166,7 +173,14 @@ export class Vault {
         results.push({ ...rest, _score: score });
       }
     }
-    return results.sort((a, b) => b._score - a._score).map(({ _score, ...rest }) => rest);
+    const sorted = results.sort((a, b) => b._score - a._score).map(({ _score, ...rest }) => rest);
+
+    // Cache the results if cache is available
+    if (this.searchCache) {
+      this.searchCache.set(keyword, { type, tag, status, regex }, sorted);
+    }
+
+    return sorted;
   }
 
   // ── Find backlinks (notes that link TO a given note) ─
