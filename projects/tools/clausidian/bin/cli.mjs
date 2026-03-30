@@ -2,10 +2,12 @@
 
 /**
  * clausidian CLI — AI agent toolkit for Obsidian vaults
- * v1.1.0 — registry-based dispatch
+ * v1.2.0 — multi-vault support with VaultRegistry
  */
 
 import { getCommand, getCommandNames } from '../src/registry.mjs';
+import { VaultRegistry } from '../src/vault-registry.mjs';
+import { resolveVault as resolveVaultPath } from '../src/vault-resolver.mjs';
 
 const args = process.argv.slice(2);
 const command = args[0];
@@ -40,8 +42,21 @@ function parseFlags(args) {
   return { flags, positional };
 }
 
-function resolveVault(flags) {
-  return flags.vault || process.env.OA_VAULT || process.cwd();
+async function resolveVaultContext(flags) {
+  const registry = new VaultRegistry();
+  try {
+    await registry.load();
+  } catch (err) {
+    // E1: Registry corruption — fallback to OA_VAULT
+    if (flags.vault) {
+      throw new Error(
+        `Failed to load vault registry: ${err.message}\n` +
+        `Cannot use --vault flag. Fallback to: OA_VAULT=/path/to/vault`
+      );
+    }
+  }
+
+  return resolveVaultPath(flags, registry, process.cwd());
 }
 
 async function main() {
@@ -80,6 +95,24 @@ async function main() {
   const origLog = console.log;
   if (jsonMode) console.log = () => {};
 
+  // ── Resolve vault with registry ──
+  let vaultCtx;
+  try {
+    vaultCtx = await resolveVaultContext(flags);
+  } catch (err) {
+    console.error(`Error: ${err.message}`);
+    process.exit(1);
+  }
+
+  // ── Attach vault context to flags ──
+  const enhancedFlags = {
+    ...flags,
+    _vault: {
+      name: vaultCtx.vaultName,
+      source: vaultCtx.source,
+    },
+  };
+
   let result;
   if (cmd.subcommands) {
     // Dispatch to subcommand
@@ -93,11 +126,20 @@ async function main() {
     }
     // Remove subcommand from positional args
     positional.shift();
-    result = await subcommand.run(resolveVault(flags), flags, positional);
+    result = await subcommand.run(vaultCtx.vaultPath, enhancedFlags, positional);
   } else if (cmd.run) {
-    result = await cmd.run(resolveVault(flags), flags, positional);
+    result = await cmd.run(vaultCtx.vaultPath, enhancedFlags, positional);
   } else {
     throw new Error(`Command ${command} has no run function or subcommands`);
+  }
+
+  // ── Attach vault field to result for agents ──
+  if (result && typeof result === 'object' && !Array.isArray(result)) {
+    result = {
+      ...result,
+      _vaultName: vaultCtx.vaultName,
+      _vaultSource: vaultCtx.source,
+    };
   }
 
   if (jsonMode && result !== undefined) {
