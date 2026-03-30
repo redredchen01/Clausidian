@@ -269,6 +269,7 @@ related: ["[[other-note]]", "[[another-note]]"]
 | `watch` | Auto-rebuild indices on file changes |
 | `serve` | Start MCP server (stdio transport) |
 | `hook <event>` | Handle agent hook events |
+| `bridge-status` | Show Obsidian CLI bridge status |
 
 ### Flags
 
@@ -295,6 +296,7 @@ related: ["[[other-note]]", "[[another-note]]"]
 | `--dry-run` | Preview changes without applying (for link, relink) |
 | `--days <N>` | Days to look back for timeline (default: 30) |
 | `--limit <N>` | Max entries for timeline (default: 50) |
+| `--no-bridge` | Skip Obsidian CLI bridge for this command |
 
 ## Fuzzy Note Lookup
 
@@ -451,12 +453,27 @@ Five automated rules that help knowledge settle from journals into permanent not
 
 These rules run automatically as part of existing commands — no extra setup needed. Over time, they ensure your vault stays organized: ideas get promoted or archived, stale notes get flagged, and connections between notes are surfaced.
 
+## Obsidian CLI Bridge (v1.2+)
+
+When [Obsidian 1.12+ CLI](https://help.obsidian.md/cli) is installed, obsidian-agent automatically bridges supported commands (search, read, backlinks, orphans, tags, random) to the official CLI for richer results that leverage Obsidian's indexing.
+
+Commands unique to obsidian-agent (health, graph, review, PARA init, link, suggest, focus, batch ops, etc.) always run natively — these have no official CLI equivalent.
+
+```bash
+obsidian-agent bridge-status         # Check if official CLI is detected
+obsidian-agent search foo --no-bridge # Force native search
+OA_NO_OFFICIAL_CLI=1 obsidian-agent search foo  # Disable bridge globally
+```
+
+The bridge is transparent: if the official CLI fails or is unavailable, obsidian-agent falls back to its native implementation automatically.
+
 ## Environment Variables
 
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `OA_VAULT` | Default vault path | cwd |
 | `OA_TIMEZONE` | Timezone for dates | UTC |
+| `OA_NO_OFFICIAL_CLI` | Set to `1` to disable Obsidian CLI bridge | (auto-detect) |
 
 ## Agent Compatibility
 

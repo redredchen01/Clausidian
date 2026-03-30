@@ -1,11 +1,20 @@
 ---
-name: obsidian
-version: 1.0.0
+name: obsidian-agent
 description: |
-  Obsidian 知识库管理 — 通过 MCP 工具操作 PARA 结构 vault。
+  AI agent toolkit for Obsidian vaults — PARA structured knowledge management.
+  46 MCP tools for journal, notes, search, review, graph, health, and more.
+  Zero dependencies. Works headless (no Obsidian app required).
+  Bridges to Obsidian 1.12 official CLI when available.
   Use when: "记笔记", "写日记", "搜知识库", "记录想法", "obsidian",
   "vault", "journal", "capture", "search notes", "weekly review",
   "知识管理", "查笔记", "整理笔记", "回顾", "log work"
+license: MIT
+compatibility: Designed for Claude Code, Cursor, Copilot, Cline, Windsurf, Codex
+metadata:
+  author: redredchen01
+  version: "1.2.0"
+  homepage: https://github.com/redredchen01/obsidian-agent
+  tools: 46
 ---
 
 # /obsidian — Obsidian Vault 管理
@@ -82,6 +91,7 @@ description: |
 | 聚焦建议 | `focus` | `{}` — 按优先级建议下一步工作 |
 | 在 Obsidian 打开 | `open` | `{note?, reveal?}` — macOS only |
 | 剪贴板快捷笔记 | `quicknote` | `{prefix?}` — 从剪贴板捕获 |
+| CLI 桥接状态 | `bridge_status` | `{}` — 检查官方 CLI 是否可用 |
 | 周回顾 | **CLI:** `obsidian-agent review` | |
 | 月回顾 | **CLI:** `obsidian-agent review monthly` | |
 | 导入笔记 | **CLI:** `obsidian-agent import <file>` | |
@@ -208,6 +218,18 @@ description: |
 4. quicknote()                          — 剪贴板内容 → idea 笔记
 5. obsidian-agent launchd install       — 安装定时任务 (daily backfill + weekly review)
 6. obsidian-agent launchd status        — 查看定时任务状态
+```
+
+## Obsidian CLI Bridge
+
+When Obsidian 1.12+ CLI is available, obsidian-agent automatically bridges supported
+commands (search, read, backlinks, etc.) to the official CLI for richer results.
+Unique features (health, graph, review, PARA, link, suggest, etc.) stay native.
+
+```bash
+obsidian-agent bridge-status         # Check bridge status
+OA_NO_OFFICIAL_CLI=1                 # Disable bridge (env var)
+obsidian-agent search foo --no-bridge # Skip bridge for one command
 ```
 
 ## CLI Fallback

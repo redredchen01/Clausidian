@@ -63,6 +63,8 @@ const TOOLS = [
   // macOS tools
   { name: 'open', description: 'Open note in Obsidian.app (macOS)', inputSchema: { type: 'object', properties: { note: { type: 'string' }, reveal: { type: 'boolean' } } } },
   { name: 'quicknote', description: 'Capture clipboard as idea note', inputSchema: { type: 'object', properties: { prefix: { type: 'string' } } } },
+  // bridge
+  { name: 'bridge_status', description: 'Show Obsidian CLI bridge status (official CLI detection)', inputSchema: { type: 'object', properties: {} } },
 ];
 
 // ── Dispatch table ───────────────────────────────────
@@ -116,6 +118,8 @@ const DISPATCH = {
   // macOS
   async open(root, a) { const { open } = await import('./commands/open.mjs'); return open(root, a.note, { reveal: a.reveal }); },
   async quicknote(root, a) { const { quicknote } = await import('./commands/quicknote.mjs'); return quicknote(root, { prefix: a.prefix }); },
+  // bridge
+  async bridge_status() { const { bridgeStatus } = await import('./obsidian-cli.mjs'); return bridgeStatus(); },
 };
 
 // ── Server class ─────────────────────────────────────

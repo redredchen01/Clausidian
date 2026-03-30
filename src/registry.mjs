@@ -740,6 +740,27 @@ const COMMANDS = [
       return launchd(root, pos[0], flags);
     },
   },
+  // ── Bridge ──
+  {
+    name: 'bridge-status',
+    description: 'Show Obsidian CLI bridge status (official CLI detection)',
+    usage: 'bridge-status',
+    mcpName: 'bridge_status',
+    mcpSchema: {},
+    async run() {
+      const { bridgeStatus } = await import('./obsidian-cli.mjs');
+      const s = bridgeStatus();
+      if (s.officialCli.available) {
+        console.log(`Obsidian CLI: ✓ detected (${s.officialCli.version})`);
+        console.log(`  Path: ${s.officialCli.path}`);
+      } else {
+        console.log(`Obsidian CLI: ✗ not available (${s.officialCli.reason})`);
+      }
+      console.log(`Bridge mode: ${s.envOverride}`);
+      console.log(`Bridgeable commands: ${s.bridgeableCommands.join(', ')}`);
+      return s;
+    },
+  },
 ];
 
 // ── Lookup helpers ──────────────────────────────────────

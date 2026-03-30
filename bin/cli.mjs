@@ -2,7 +2,7 @@
 
 /**
  * obsidian-agent CLI — AI agent toolkit for Obsidian vaults
- * v1.1.0 — registry-based dispatch
+ * v1.2.0 — registry-based dispatch + Obsidian CLI bridge
  */
 
 import { getCommand, getCommandNames } from '../src/registry.mjs';
@@ -80,7 +80,34 @@ async function main() {
   const origLog = console.log;
   if (jsonMode) console.log = () => {};
 
-  const result = await cmd.run(resolveVault(flags), flags, positional);
+  let result;
+
+  // ── Obsidian CLI bridge: try official CLI for supported commands ──
+  if (command && command !== 'help' && command !== 'serve' && command !== 'setup' && !flags['no-bridge']) {
+    const { tryBridge } = await import('../src/obsidian-cli.mjs');
+    const bridge = tryBridge(command, positional, flags);
+    if (bridge.bridged) {
+      if (jsonMode) {
+        result = { output: bridge.result, via: bridge.via };
+      } else {
+        console.log(bridge.result);
+        result = { output: bridge.result, via: bridge.via };
+      }
+      if (jsonMode && result !== undefined) {
+        console.log = origLog;
+        console.log(JSON.stringify(result, null, 2));
+      }
+      if (flags.copy && result !== undefined) {
+        const { copyToClipboard } = await import('../src/clipboard.mjs');
+        const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+        if (copyToClipboard(text)) console.error('Copied to clipboard.');
+      }
+      process.exit(0);
+    }
+    // Fallback to native implementation
+  }
+
+  result = await cmd.run(resolveVault(flags), flags, positional);
 
   if (jsonMode && result !== undefined) {
     console.log = origLog;
