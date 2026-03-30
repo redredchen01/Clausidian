@@ -3,8 +3,11 @@
  */
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'fs';
 import { resolve, join, dirname, basename } from 'path';
+import crypto from 'crypto';
 import { SimilarityEngine } from './similarity-engine.mjs';
 import { IncrementalTracker } from './incremental-tracker.mjs';
+import { SearchCache } from './search-cache.mjs';
+import { ClusterCache } from './cluster-cache.mjs';
 
 const DEFAULT_DIRS = ['areas', 'projects', 'resources', 'journal', 'ideas'];
 
@@ -14,8 +17,18 @@ export class Vault {
     this.dirs = dirs || this._detectDirs() || DEFAULT_DIRS;
     this._notesCache = null;
     this._notesCacheWithBody = null;
-    this.searchCache = searchCache;
     this.tracker = new IncrementalTracker();
+
+    // Initialize SearchCache and ClusterCache
+    this._searchCache = searchCache || new SearchCache(this, { ttl: 5 * 60 * 1000 });
+    this._clusterCache = new ClusterCache(this);
+    this._vaultVersion = this._computeVaultVersion();
+
+    // Track dirty notes for selective invalidation
+    this._dirtyNotes = new Set();
+
+    // Keep legacy searchCache reference for backward compatibility
+    this.searchCache = this._searchCache;
   }
 
   _detectDirs() {
@@ -29,9 +42,43 @@ export class Vault {
     return null;
   }
 
+  /**
+   * Compute vault version based on _tags.md and _graph.md mtime
+   * @private
+   * @returns {string} SHA256 hash of combined mtime values
+   */
+  _computeVaultVersion() {
+    try {
+      const tagsPath = this.path('_tags.md');
+      const graphPath = this.path('_graph.md');
+
+      if (existsSync(tagsPath) && existsSync(graphPath)) {
+        const stats1 = require('fs').statSync(tagsPath);
+        const stats2 = require('fs').statSync(graphPath);
+        const combined = `${stats1.mtime.getTime()}|${stats2.mtime.getTime()}`;
+        return crypto.createHash('sha256').update(combined).digest('hex');
+      }
+    } catch {
+      // Ignore errors, return default
+    }
+    return 'unknown';
+  }
+
   invalidateCache() {
     this._notesCache = null;
     this._notesCacheWithBody = null;
+
+    // Invalidate search caches
+    if (this._searchCache) {
+      this._searchCache.invalidate();
+    }
+    if (this._clusterCache) {
+      this._clusterCache.invalidate(this._dirtyNotes);
+    }
+
+    // Reset dirty notes after invalidation
+    this._dirtyNotes.clear();
+    this._vaultVersion = this._computeVaultVersion();
   }
 
   // ── Path helpers ─────────────────────────────────────

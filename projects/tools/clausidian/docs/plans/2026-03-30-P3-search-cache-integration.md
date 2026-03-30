@@ -8,6 +8,8 @@ updated: 2026-03-30
 
 # P3 — SearchCache Integration & Code Optimization
 
+> **狀態：** active · **相關文檔：** [v3.1.0 MVP 計劃](2026-03-30-001-feat-clausidian-v3-1-0-mvp-plan.md) · [P3 代碼整合分析](2026-03-30-P3-CONSOLIDATION-ANALYSIS.md) ✅ · [測試場景摘要](../TEST-SCENARIOS-SUMMARY.md) · [ARCHITECTURE.md](../../ARCHITECTURE.md)
+
 ## Problem
 
 - Search results are not cached, causing repeated searches to re-scan all notes

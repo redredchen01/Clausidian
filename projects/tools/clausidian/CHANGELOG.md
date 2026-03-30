@@ -2,6 +2,8 @@
 
 All notable changes to Clausidian are documented in this file.
 
+> **Related:** [README.md](README.md) · [ARCHITECTURE.md](ARCHITECTURE.md)
+
 ## [v3.1.0] - 2026-03-30
 
 ### Added - Theme A: MCP Completeness

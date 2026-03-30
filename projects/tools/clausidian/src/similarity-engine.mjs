@@ -56,9 +56,15 @@ export class SimilarityEngine {
     const tagIDF = this.getTFIDF(notes);
 
     // Build keyword sets per note (with optional body limit)
+    // Default: slice body to 500 chars for performance; includeBody=false disables body entirely
     const noteKeywords = new Map();
     for (const n of nonJournal) {
-      const bodyText = this.includeBody ? (n.body || '') : (n.body || '').slice(0, 500);
+      let bodyText = '';
+      if (this.includeBody !== false) {
+        // includeBody unset or true: use 500 char default
+        // This reduces O(N²×W²) keyword overlap calculation
+        bodyText = (n.body || '').slice(0, 500);
+      }
       const text = `${n.title} ${n.summary} ${bodyText}`;
       const words = extractKeywords(text);
       noteKeywords.set(n.file, words);

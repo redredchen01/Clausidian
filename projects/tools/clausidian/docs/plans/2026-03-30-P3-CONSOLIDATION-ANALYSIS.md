@@ -8,6 +8,8 @@ updated: 2026-03-30
 
 # P3 Code Consolidation Analysis Report
 
+> **狀態：** ✅ 完成 · **相關文檔：** [v3.1.0 MVP 計劃](2026-03-30-001-feat-clausidian-v3-1-0-mvp-plan.md) · [P3 快取集成計劃](2026-03-30-P3-search-cache-integration.md) · [CHANGELOG.md](../../CHANGELOG.md)
+
 ## Executive Summary
 
 Completed Priority 1 & 2 code consolidation, eliminating **95+ lines of duplicate TF-IDF and scoring logic** across 5 files. All 143 tests passing.
