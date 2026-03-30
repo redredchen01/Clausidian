@@ -13,23 +13,27 @@ Complete guide for developing Session Wrap Backend and Dashboard (v3.9.0).
 ### Setup
 
 ```bash
-# Clone repository
-git clone https://github.com/redredchen01/session-wrap-backend.git
-cd session-wrap-backend
+# If working inside the YD 2026 workspace
+cd ~/YD\ 2026/projects/tools/session-wrap-backend
+
+# Or clone this repo standalone
+# git clone https://github.com/redredchen01/session-wrap-backend.git
+# cd session-wrap-backend
 
 # Backend setup
 npm install
 cp .env.example .env
 npm run db:init
 
-# Frontend setup
+# Frontend setup (from the backend project root)
 cd web
 npm install
 npm run build
+cd ..
 
 # Start development
 npm run dev              # Terminal 1: Backend on :3000
-cd web && npm run dev    # Terminal 2: Frontend on :5173
+cd web && npm run dev    # Terminal 2: Frontend on :5173 (from project root)
 ```
 
 ### Environment Variables
@@ -543,7 +547,7 @@ clinic doctor npm start
 ### Linting
 
 ```bash
-cd web
+cd ~/YD\ 2026/projects/tools/session-wrap-backend/web
 npm run lint            # Check code
 npm run lint -- --fix   # Auto-fix issues
 ```
@@ -551,14 +555,14 @@ npm run lint -- --fix   # Auto-fix issues
 ### Type Checking
 
 ```bash
-cd web
+cd ~/YD\ 2026/projects/tools/session-wrap-backend/web
 npm run type-check      # TypeScript strict mode
 ```
 
 ### Coverage Report
 
 ```bash
-cd web
+cd ~/YD\ 2026/projects/tools/session-wrap-backend/web
 npm run test:coverage   # Generate coverage
 # Open coverage/index.html in browser
 ```
