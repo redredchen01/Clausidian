@@ -80,6 +80,8 @@ description: |
 | 图谱探索 | `neighbors` | `{note, depth?: 2}` — N 跳内的关联笔记 |
 | 随机笔记 | `random` | `{count?: 1, type?, status?}` — 偶遇式发现 |
 | 聚焦建议 | `focus` | `{}` — 按优先级建议下一步工作 |
+| 在 Obsidian 打开 | `open` | `{note?, reveal?}` — macOS only |
+| 剪贴板快捷笔记 | `quicknote` | `{prefix?}` — 从剪贴板捕获 |
 | 周回顾 | **CLI:** `obsidian-agent review` | |
 | 月回顾 | **CLI:** `obsidian-agent review monthly` | |
 | 导入笔记 | **CLI:** `obsidian-agent import <file>` | |
@@ -196,6 +198,17 @@ description: |
 4. **链接:** `[[filename]]` 不加 `.md` 后缀
 5. **修改后:** 更新 `updated` 字段，call `sync` 重建索引
 6. **Related:** 主动维护双向链接
+
+## macOS 专属功能
+
+```
+1. open({note: "my-note"})              — 在 Obsidian.app 打开笔记
+2. open({reveal: true, note: "my-note"})— 在 Finder 中显示
+3. open()                               — 打开整个 vault
+4. quicknote()                          — 剪贴板内容 → idea 笔记
+5. obsidian-agent launchd install       — 安装定时任务 (daily backfill + weekly review)
+6. obsidian-agent launchd status        — 查看定时任务状态
+```
 
 ## CLI Fallback
 

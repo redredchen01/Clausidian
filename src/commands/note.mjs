@@ -11,6 +11,10 @@ export function note(vaultRoot, title, type, { tags = [], goal = '', summary = '
   const tpl = new TemplateEngine(vaultRoot);
   const idx = new IndexManager(vault);
 
+  if (!title || !title.trim()) {
+    throw new Error('Note title cannot be empty.');
+  }
+
   const validTypes = ['area', 'project', 'resource', 'idea'];
   if (!validTypes.includes(type)) {
     throw new Error(`Invalid type: ${type}. Must be one of: ${validTypes.join(', ')}`);

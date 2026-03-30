@@ -8,6 +8,7 @@ import { Vault } from '../vault.mjs';
 import { TemplateEngine } from '../templates.mjs';
 import { IndexManager } from '../index-manager.mjs';
 import { todayStr, weekdayShort, prevDate, nextDate } from '../dates.mjs';
+import { notify } from '../notify.mjs';
 
 function run(cmd) {
   try { return execSync(cmd, { encoding: 'utf8', timeout: 30000 }).trim(); }
@@ -97,6 +98,7 @@ export function sessionStop(vaultRoot, { scanRoot } = {}) {
     // A4: Tag conclusions and resolved issues
     updated = tagConclusions(updated);
     vault.write('journal', `${date}.md`, updated);
+    notify('Obsidian Agent', `Session logged to ${date}`);
     console.log(JSON.stringify({ status: 'appended', date }));
   } else {
     const root = scanRoot || dirname(vaultRoot);
@@ -114,6 +116,7 @@ export function sessionStop(vaultRoot, { scanRoot } = {}) {
 
     vault.write('journal', `${date}.md`, content);
     idx.updateDirIndex('journal', date, summary);
+    notify('Obsidian Agent', `Journal created for ${date}`);
     console.log(JSON.stringify({ status: 'created', date }));
   }
 }
@@ -167,5 +170,6 @@ export function dailyBackfill(vaultRoot, { date, scanRoot, force } = {}) {
   idx.updateDirIndex('journal', d, summary);
   idx.sync();
 
+  notify('Obsidian Agent', `Backfill: journal/${d}.md (${commits.length} commits)`);
   console.log(JSON.stringify({ status: 'created', date: d, commits: commits.length }));
 }

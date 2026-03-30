@@ -399,6 +399,38 @@ async function main() {
       break;
     }
 
+    // ── macOS commands ───────────────────────────────
+
+    case 'open': {
+      const { open } = await import('../src/commands/open.mjs');
+      result = open(resolveVault(flags), positional[0], { reveal: flags.reveal === true });
+      break;
+    }
+
+    case 'quicknote': {
+      const { quicknote } = await import('../src/commands/quicknote.mjs');
+      result = quicknote(resolveVault(flags), { prefix: flags.prefix || '' });
+      break;
+    }
+
+    case 'launchd': {
+      const subcmd = positional[0];
+      if (subcmd === 'install') {
+        const { launchdInstall } = await import('../src/commands/launchd.mjs');
+        result = launchdInstall(resolveVault(flags), { scanRoot: flags['scan-root'] });
+      } else if (subcmd === 'uninstall') {
+        const { launchdUninstall } = await import('../src/commands/launchd.mjs');
+        result = launchdUninstall();
+      } else if (subcmd === 'status') {
+        const { launchdStatus } = await import('../src/commands/launchd.mjs');
+        result = launchdStatus();
+      } else {
+        console.error('Usage: obsidian-agent launchd <install|uninstall|status>');
+        process.exit(1);
+      }
+      break;
+    }
+
     // ── existing utility commands ────────────────────
 
     case 'setup': {
@@ -516,6 +548,10 @@ Commands:
   random [count]           Pick random note(s) for review
   focus                    Suggest what to work on next
 
+  open [note]              Open note/vault in Obsidian.app (macOS)
+  quicknote                Capture clipboard as idea note
+  launchd <subcmd>         Manage macOS LaunchAgents (install|uninstall|status)
+
   setup [vault-path]       Install MCP server + skill
   watch                    Auto-rebuild indices on file changes
   health                   Vault health scoring report
@@ -535,6 +571,8 @@ Flags:
   --set-status <status>    For batch update
   --add <tag>              For batch tag (add tag)
   --remove <tag>           For batch tag (remove tag)
+  --copy                   Copy result to clipboard
+  --reveal                 Reveal in Finder (with 'open' command)
   --json                   Output as JSON (machine-readable)
 `);
       break;
@@ -548,6 +586,7 @@ Flags:
         'rename','move','merge','duplicates','broken-links','batch','export','import',
         'link','timeline','validate','pin','unpin','relink','suggest','daily',
         'count','agenda','changelog','neighbors','random','focus',
+        'open','quicknote','launchd',
       ];
       const similar = cmds.filter(c => c.startsWith(command?.slice(0, 2) || '') || levenshtein(c, command) <= 2);
       console.error(`Unknown command: ${command}`);
@@ -560,6 +599,14 @@ Flags:
   if (jsonMode && result !== undefined) {
     console.log = origLog;
     console.log(JSON.stringify(result, null, 2));
+  }
+
+  if (flags.copy && result !== undefined) {
+    const { copyToClipboard } = await import('../src/clipboard.mjs');
+    const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+    if (copyToClipboard(text)) {
+      console.error('Copied to clipboard.');
+    }
   }
 }
 
