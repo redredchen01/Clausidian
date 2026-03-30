@@ -35,12 +35,10 @@ export function stale(vaultRoot, options = {}) {
     }
 
     // Display results
-    console.log(`\n=== Stale Notes (inactive > ${threshold} days) ===\n`);
+    console.log(`📊 過期筆記（${threshold} 天以上未更新）\n`);
     for (const note of staleNotes) {
-      console.log(`[[${note.file}]] (${note.type})`);
-      console.log(`  Last updated: ${note.updated} (${note.daysOld} days ago)`);
+      console.log(`${note.file} [${note.type}] | 最後更新: ${note.updated} | ${note.daysOld} 天`);
     }
-    console.log(`\nTotal: ${staleNotes.length} stale note(s)\n`);
 
     // Archive if requested
     let archived = 0;
