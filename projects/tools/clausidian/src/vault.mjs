@@ -3,6 +3,7 @@
  */
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'fs';
 import { resolve, join, dirname } from 'path';
+import { buildTagIDF } from './scoring.mjs';
 
 const DEFAULT_DIRS = ['areas', 'projects', 'resources', 'journal', 'ideas'];
 
@@ -253,15 +254,7 @@ export class Vault {
     const nonJournal = notes.filter(n => n.type !== 'journal');
 
     // Build tag IDF weights
-    const tagDF = {};
-    for (const n of nonJournal) {
-      for (const t of n.tags) tagDF[t] = (tagDF[t] || 0) + 1;
-    }
-    const totalNotes = nonJournal.length || 1;
-    const tagIDF = {};
-    for (const [tag, df] of Object.entries(tagDF)) {
-      tagIDF[tag] = Math.log(totalNotes / df);
-    }
+    const tagIDF = buildTagIDF(notes, 'journal');
 
     const titleWords = title.toLowerCase().split(/[\s-]+/).filter(w => w.length > 2);
 
