@@ -80,7 +80,25 @@ async function main() {
   const origLog = console.log;
   if (jsonMode) console.log = () => {};
 
-  const result = await cmd.run(resolveVault(flags), flags, positional);
+  let result;
+  if (cmd.subcommands) {
+    // Dispatch to subcommand
+    const subcommandName = positional[0];
+    const subcommand = cmd.subcommands[subcommandName];
+    if (!subcommand) {
+      const available = Object.keys(cmd.subcommands).join(', ');
+      console.error(`Unknown subcommand: ${subcommandName}`);
+      console.error(`Available: ${available}`);
+      process.exit(1);
+    }
+    // Remove subcommand from positional args
+    positional.shift();
+    result = await subcommand.run(resolveVault(flags), flags, positional);
+  } else if (cmd.run) {
+    result = await cmd.run(resolveVault(flags), flags, positional);
+  } else {
+    throw new Error(`Command ${command} has no run function or subcommands`);
+  }
 
   if (jsonMode && result !== undefined) {
     console.log = origLog;

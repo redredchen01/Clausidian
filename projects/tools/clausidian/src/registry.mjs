@@ -760,6 +760,49 @@ const COMMANDS = [
       return quicknote(root, { title: flags.title });
     },
   },
+  // ── Bridge (cross-system integrations) ──
+  {
+    name: 'bridge',
+    description: 'Sync external systems (Google Calendar, Gmail, GitHub) to vault',
+    usage: 'bridge <gcal|gmail|github> [--date DATE]',
+    subcommands: {
+      gcal: {
+        mcpName: 'bridge_gcal',
+        description: 'Sync Google Calendar events to journal',
+        mcpSchema: {
+          date: { type: 'string', description: 'Date to sync (YYYY-MM-DD, default: today)' },
+        },
+        async run(root, flags) {
+          const { bridgeGcal } = await import('./commands/bridge.mjs');
+          return bridgeGcal(root, { date: flags.date });
+        },
+      },
+      gmail: {
+        mcpName: 'bridge_gmail',
+        description: 'Sync Gmail messages to vault',
+        mcpSchema: {
+          label: { type: 'string', description: 'Gmail label (default: important)' },
+          days: { type: 'number', description: 'Look back N days (default: 1)' },
+        },
+        async run(root, flags) {
+          const { bridgeGmail } = await import('./commands/bridge.mjs');
+          return bridgeGmail(root, { label: flags.label, days: flags.days });
+        },
+      },
+      github: {
+        mcpName: 'bridge_github',
+        description: 'Sync GitHub activity to vault',
+        mcpSchema: {
+          repo: { type: 'string', description: 'Repository (owner/repo)' },
+          days: { type: 'number', description: 'Look back N days (default: 1)' },
+        },
+        async run(root, flags) {
+          const { bridgeGithub } = await import('./commands/bridge.mjs');
+          return bridgeGithub(root, { repo: flags.repo, days: flags.days });
+        },
+      },
+    },
+  },
   {
     name: 'launchd',
     description: 'Install/uninstall macOS LaunchAgents for automated vault maintenance',
