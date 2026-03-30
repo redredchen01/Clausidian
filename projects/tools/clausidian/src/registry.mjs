@@ -542,6 +542,32 @@ const COMMANDS = [
     },
   },
   {
+    name: 'auto-tag',
+    description: 'Auto-suggest TF-IDF tags for untagged notes',
+    usage: 'auto-tag [--dry-run]',
+    mcpSchema: { dry_run: { type: 'boolean', description: 'Preview suggestions only' } },
+    async run(root, flags) {
+      const { autoTag } = await import('./commands/auto-tag.mjs');
+      return autoTag(root, { dryRun: flags['dry-run'] === true || flags.dry_run === true });
+    },
+  },
+  {
+    name: 'stale',
+    description: 'Find notes inactive for N days',
+    usage: 'stale [--threshold N] [--auto-archive]',
+    mcpSchema: {
+      threshold: { type: 'number', description: 'Days threshold (default: 30)' },
+      auto_archive: { type: 'boolean', description: 'Archive stale notes' },
+    },
+    async run(root, flags) {
+      const { stale } = await import('./commands/stale.mjs');
+      return stale(root, {
+        threshold: flags.threshold ? parseInt(flags.threshold) : undefined,
+        autoArchive: flags['auto-archive'] === true || flags.auto_archive === true,
+      });
+    },
+  },
+  {
     name: 'count',
     description: 'Word/line/note count statistics',
     usage: 'count',

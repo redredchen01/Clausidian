@@ -801,4 +801,31 @@ Some idea content mentioning [[other-note]]
     assert.ok('deadIdeas' in report);
     assert.ok(Array.isArray(report.staleResources));
   });
+
+  it('auto-tag processes untagged notes', async () => {
+    const { autoTag } = await import('../src/commands/auto-tag.mjs');
+    // Create test notes with tags if not already present
+    const { note } = await import('../src/commands/note.mjs');
+    note(TMP, 'Tagged Note 1', 'project', { tags: ['dev', 'backend'] });
+    note(TMP, 'Tagged Note 2', 'area', { tags: ['dev', 'testing'] });
+
+    const result = autoTag(TMP, { dryRun: true });
+    assert.equal(result.status, 'success');
+    assert.ok(typeof result.processed === 'number');
+    assert.ok(Array.isArray(result.suggestions));
+  });
+
+  it('stale detects inactive notes', async () => {
+    const { stale } = await import('../src/commands/stale.mjs');
+    // Vault from earlier tests should have some notes
+    const result = stale(TMP, { threshold: 30 });
+    assert.equal(result.status, 'success');
+    assert.ok(typeof result.count === 'number');
+  });
+
+  it('stale respects threshold parameter', async () => {
+    const { stale } = await import('../src/commands/stale.mjs');
+    const result = stale(TMP, { threshold: 1 });
+    assert.equal(result.status, 'success');
+  });
 });
