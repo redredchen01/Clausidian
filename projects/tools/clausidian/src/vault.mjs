@@ -29,6 +29,10 @@ export class Vault {
 
     // Keep legacy searchCache reference for backward compatibility
     this.searchCache = this._searchCache;
+
+    // Load cache from disk asynchronously (non-blocking)
+    const cacheFilePath = this.path('.clausidian', 'cache.json');
+    setImmediate(() => this._searchCache.loadFromDisk(cacheFilePath));
   }
 
   _detectDirs() {
