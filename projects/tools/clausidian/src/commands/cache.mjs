@@ -1,65 +1,79 @@
 /**
- * cache — manage search cache (stats, clear)
+ * cache — manage persistent search cache (stats, clear, status)
  */
 
 import { join } from 'path';
-import { existsSync, statSync, unlinkSync } from 'fs';
+import { existsSync, unlinkSync } from 'fs';
+import { Vault } from '../vault.mjs';
 
+/**
+ * Main cache command dispatcher
+ * @param {string} vaultRoot - Vault root path
+ * @param {Object} options - Command options
+ * @param {string} options.subcommand - Subcommand: stats, clear, or status
+ */
 export async function cache(vaultRoot, { subcommand } = {}) {
   if (subcommand === 'stats') {
     return cacheStats(vaultRoot);
   } else if (subcommand === 'clear') {
     return cacheClear(vaultRoot);
+  } else if (subcommand === 'status') {
+    return cacheStatus(vaultRoot);
   } else {
-    throw new Error(`Unknown cache subcommand: ${subcommand}. Use 'stats' or 'clear'.`);
+    throw new Error(`Unknown cache subcommand: ${subcommand}. Use 'stats', 'clear', or 'status'.`);
   }
 }
 
+/**
+ * Show cache statistics (hits, misses, size, hit rate)
+ */
 function cacheStats(vaultRoot) {
-  const cacheDir = join(vaultRoot, '.clausidian');
-  const cachePath = join(cacheDir, 'cache.json');
-  const exists = existsSync(cachePath);
+  const vault = new Vault(vaultRoot);
+  const stats = vault._clusterCache.stats();
 
-  const stats = {
-    diskCacheExists: exists,
-  };
-
-  if (exists) {
-    try {
-      const stat = statSync(cachePath);
-      const ageMs = Date.now() - stat.mtimeMs;
-      const ageMins = Math.floor(ageMs / (60 * 1000));
-      stats.diskCacheAgeMins = ageMins;
-      stats.diskCacheSizeBytes = stat.size;
-    } catch (err) {
-      // Silent fail
-    }
-  }
+  const hitRate = stats.hits + stats.misses === 0
+    ? 'N/A'
+    : `${((stats.hits / (stats.hits + stats.misses)) * 100).toFixed(1)}%`;
 
   return {
-    status: 'stats',
-    cache: stats,
+    hits: stats.hits,
+    misses: stats.misses,
+    size: `${(stats.size / 1024).toFixed(2)} KB`,
+    age: `${Math.floor(stats.age / 1000)} seconds`,
+    vaultVersion: stats.vaultVersion.slice(0, 8) + '...',
+    hitRate
   };
 }
 
+/**
+ * Clear all cached search results
+ */
 function cacheClear(vaultRoot) {
+  const vault = new Vault(vaultRoot);
   const cacheDir = join(vaultRoot, '.clausidian');
   const cachePath = join(cacheDir, 'cache.json');
 
-  if (existsSync(cachePath)) {
-    try {
+  try {
+    if (existsSync(cachePath)) {
       unlinkSync(cachePath);
-      return {
-        status: 'cleared',
-        message: 'Disk cache cleared',
-      };
-    } catch (err) {
-      throw new Error(`Failed to clear cache: ${err.message}`);
     }
+    vault._clusterCache.invalidate();
+    return { success: true, message: 'Cache cleared' };
+  } catch (err) {
+    return { success: false, message: `Failed to clear cache: ${err.message}` };
   }
+}
 
-  return {
-    status: 'already_cleared',
-    message: 'No disk cache found',
-  };
+/**
+ * Show cache status in human-readable format
+ */
+function cacheStatus(vaultRoot) {
+  const vault = new Vault(vaultRoot);
+  const stats = vault._clusterCache.stats();
+
+  const hitRate = stats.hits + stats.misses === 0
+    ? 'N/A'
+    : `${((stats.hits / (stats.hits + stats.misses)) * 100).toFixed(1)}%`;
+
+  return `Cache — Size: ${(stats.size / 1024).toFixed(2)} KB | Hits: ${stats.hits} | Misses: ${stats.misses} | Hit Rate: ${hitRate}`;
 }

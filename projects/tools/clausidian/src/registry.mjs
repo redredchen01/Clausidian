@@ -831,10 +831,10 @@ const COMMANDS = [
   },
   {
     name: 'cache',
-    description: 'Manage search cache (stats, clear)',
-    usage: 'cache <stats|clear>',
+    description: 'Manage persistent search cache (stats, clear, status)',
+    usage: 'cache <stats|clear|status>',
     mcpSchema: {
-      subcommand: { type: 'string', enum: ['stats', 'clear'], description: 'Subcommand: stats or clear' },
+      subcommand: { type: 'string', enum: ['stats', 'clear', 'status'], description: 'Subcommand: stats, clear, or status' },
     },
     mcpRequired: ['subcommand'],
     async run(root, flags) {
