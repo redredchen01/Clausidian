@@ -49,6 +49,32 @@ async function main() {
 
   let result;
 
+  // ── Obsidian CLI bridge: try official CLI for supported commands ──
+  if (command && command !== 'help' && command !== 'serve' && command !== 'setup' && !flags['no-bridge']) {
+    const { tryBridge } = await import('../src/obsidian-cli.mjs');
+    const bridge = tryBridge(command, positional, flags);
+    if (bridge.bridged) {
+      if (jsonMode) {
+        result = { output: bridge.result, via: bridge.via };
+      } else {
+        console.log(bridge.result);
+        result = { output: bridge.result, via: bridge.via };
+      }
+      // Skip native execution
+      if (jsonMode && result !== undefined) {
+        console.log = origLog;
+        console.log(JSON.stringify(result, null, 2));
+      }
+      if (flags.copy && result !== undefined) {
+        const { copyToClipboard } = await import('../src/clipboard.mjs');
+        const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+        if (copyToClipboard(text)) console.error('Copied to clipboard.');
+      }
+      process.exit(0);
+    }
+    // Fallback to native implementation
+  }
+
   switch (command) {
     case 'init': {
       const { init } = await import('../src/commands/init.mjs');
@@ -557,6 +583,7 @@ Commands:
   health                   Vault health scoring report
   serve                    Start MCP server (stdio transport)
   hook <event>             Handle agent hook events
+  bridge-status            Show Obsidian CLI bridge status
 
 Flags:
   --vault <path>           Vault root (default: cwd or $OA_VAULT)
@@ -574,7 +601,27 @@ Flags:
   --copy                   Copy result to clipboard
   --reveal                 Reveal in Finder (with 'open' command)
   --json                   Output as JSON (machine-readable)
+  --no-bridge              Skip Obsidian CLI bridge for this command
+
+Environment:
+  OA_VAULT                 Default vault path
+  OA_NO_OFFICIAL_CLI       Set to 1 to disable official CLI bridge
 `);
+      break;
+    }
+
+    case 'bridge-status': {
+      const { bridgeStatus } = await import('../src/obsidian-cli.mjs');
+      result = bridgeStatus();
+      const s = result;
+      if (s.officialCli.available) {
+        console.log(`Obsidian CLI: ✓ detected (${s.officialCli.version})`);
+        console.log(`  Path: ${s.officialCli.path}`);
+      } else {
+        console.log(`Obsidian CLI: ✗ not available (${s.officialCli.reason})`);
+      }
+      console.log(`Bridge mode: ${s.envOverride}`);
+      console.log(`Bridgeable commands: ${s.bridgeableCommands.join(', ')}`);
       break;
     }
 

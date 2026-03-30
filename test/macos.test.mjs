@@ -138,7 +138,7 @@ describe('MCP server includes new tools', () => {
     const names = resp.result.tools.map(t => t.name);
     assert.ok(names.includes('open'));
     assert.ok(names.includes('quicknote'));
-    assert.equal(resp.result.tools.length, 42);
+    assert.equal(resp.result.tools.length, 46);
     rmSync(TMP, { recursive: true, force: true });
   });
 });
