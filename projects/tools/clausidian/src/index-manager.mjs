@@ -62,8 +62,8 @@ export class IndexManager {
         relCount++;
       }
       if (note.dir === 'journal' && note.file.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        content += `| [[${note.file}]] | [[${prevDate(note.file)}]] | nav |\n`;
-        content += `| [[${note.file}]] | [[${nextDate(note.file)}]] | nav |\n`;
+        content += `| [[${note.file}]] | [[${prevDate(note.file)}]] | nav-prev |\n`;
+        content += `| [[${note.file}]] | [[${nextDate(note.file)}]] | nav-next |\n`;
       }
     }
 
