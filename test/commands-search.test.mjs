@@ -303,7 +303,7 @@ describe('commands: search and filtering', () => {
 
     it('truncated results show count', async () => {
       const { search } = await import('../src/commands/search.mjs');
-      const result = search(TMP, '', {});
+      const result = search(TMP, 'a', {});
       assert.ok(Array.isArray(result.results));
       assert.ok(result.results.length <= 20);
     });

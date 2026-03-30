@@ -21,6 +21,7 @@ describe('commands: update and frontmatter mutations', () => {
     note(TMP, 'Update Target Three', 'resource', { tags: ['docs', 'reference'] });
     note(TMP, 'Status Change Test', 'idea', { tags: ['workflow'] });
     note(TMP, 'Tag Update Test', 'area', { tags: ['original'] });
+    note(TMP, 'Status Transition Test', 'project', { tags: ['workflow'] });
   });
 
   after(() => {
