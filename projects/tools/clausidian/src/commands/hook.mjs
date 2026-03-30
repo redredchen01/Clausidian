@@ -9,6 +9,7 @@ import { TemplateEngine } from '../templates.mjs';
 import { IndexManager } from '../index-manager.mjs';
 import { todayStr, weekdayShort, prevDate, nextDate } from '../dates.mjs';
 import { notify } from '../notify.mjs';
+import { buildTagIDF, scoreRelatedness } from '../scoring.mjs';
 
 function run(cmd) {
   try { return execSync(cmd, { encoding: 'utf8', timeout: 30000 }).trim(); }
@@ -171,32 +172,6 @@ export function dailyBackfill(vaultRoot, { date, scanRoot, force } = {}) {
 }
 
 // ── Event-driven pipeline: note-created, note-updated, note-deleted, index-rebuilt ──
-
-function scoreRelatedness(note1, note2, tagIDF) {
-  let score = 0;
-  const shared = [];
-
-  // TF-IDF weighted tag overlap
-  for (const t of note1.tags) {
-    if (note2.tags.includes(t)) {
-      score += tagIDF[t] || 1;
-      shared.push(t);
-    }
-  }
-
-  // Simple keyword co-occurrence (if body available)
-  if (note1.body && note2.body) {
-    const words1 = new Set((note1.body.toLowerCase().match(/[a-z\u4e00-\u9fff]{3,}/g) || []).slice(0, 50));
-    const words2 = new Set((note2.body.toLowerCase().match(/[a-z\u4e00-\u9fff]{3,}/g) || []).slice(0, 50));
-    let overlap = 0;
-    for (const w of words1) {
-      if (words2.has(w)) overlap++;
-    }
-    score += Math.min(overlap * 0.1, 2);
-  }
-
-  return { score, shared };
-}
 
 export function noteCreated(vaultRoot, payload = {}) {
   const vault = new Vault(vaultRoot);

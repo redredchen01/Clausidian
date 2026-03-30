@@ -3,12 +3,17 @@
  * Improves performance for repeated searches
  */
 
+import { promises as fs } from 'fs';
+import { dirname } from 'path';
+
 class SearchCache {
   constructor(ttlMs = 10 * 60 * 1000) { // 10 minutes default
     this.cache = new Map();
     this.ttl = ttlMs;
     this.hitCount = 0;
     this.missCount = 0;
+    this.diskPath = null;
+    this.vaultVersion = null;
   }
 
   /**
@@ -62,6 +67,10 @@ class SearchCache {
       results,
       timestamp: Date.now(),
     });
+    // Non-blocking write-through to disk
+    if (this.diskPath && this.vaultVersion) {
+      setImmediate(() => this.saveToDisk(this.diskPath, this.vaultVersion));
+    }
   }
 
   /**
@@ -112,6 +121,82 @@ class SearchCache {
       misses: this.missCount,
       hitRate: parseFloat(hitRate),
     };
+  }
+
+  /**
+   * Load cache from disk (async)
+   * Called on process startup to restore cache if valid
+   * @param {string} diskPath - Path to cache.json file
+   * @param {string} vaultVersion - Current vault version
+   */
+  async loadFromDisk(diskPath, vaultVersion) {
+    this.diskPath = diskPath;
+    this.vaultVersion = vaultVersion;
+
+    try {
+      const data = await fs.readFile(diskPath, 'utf8');
+      const cached = JSON.parse(data);
+
+      // Validate vault version match
+      if (cached.vaultVersion !== vaultVersion) {
+        return; // Silent fail: version mismatch
+      }
+
+      // Skip if cache is too old
+      const age = Date.now() - cached.timestamp;
+      if (age > this.ttl) {
+        return; // Silent fail: expired
+      }
+
+      // Restore valid entries only
+      if (cached.entries && Array.isArray(cached.entries)) {
+        cached.entries.forEach(([key, entry]) => {
+          // Skip expired entries
+          const entryAge = Date.now() - entry.timestamp;
+          if (entryAge <= this.ttl) {
+            this.cache.set(key, entry);
+          }
+        });
+      }
+    } catch (err) {
+      // Silent fail on any I/O error: file missing, parse error, etc.
+    }
+  }
+
+  /**
+   * Save cache to disk (async, non-blocking)
+   * Write-through: serialize valid entries only
+   * @param {string} diskPath - Path to cache.json file
+   * @param {string} vaultVersion - Current vault version
+   */
+  async saveToDisk(diskPath, vaultVersion) {
+    try {
+      // Serialize only valid entries
+      const entries = [];
+      this.cache.forEach((entry, key) => {
+        const age = Date.now() - entry.timestamp;
+        if (age <= this.ttl) {
+          entries.push([key, entry]);
+        }
+      });
+
+      const data = {
+        vaultVersion,
+        timestamp: Date.now(),
+        entries,
+      };
+
+      // Ensure directory exists
+      const dir = dirname(diskPath);
+      await fs.mkdir(dir, { recursive: true });
+
+      // Write atomically: write to temp, then rename
+      const tmpPath = `${diskPath}.tmp`;
+      await fs.writeFile(tmpPath, JSON.stringify(data));
+      await fs.rename(tmpPath, diskPath);
+    } catch (err) {
+      // Silent fail on any I/O error
+    }
   }
 }
 

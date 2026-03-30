@@ -830,6 +830,19 @@ const COMMANDS = [
     },
   },
   {
+    name: 'cache',
+    description: 'Manage search cache (stats, clear)',
+    usage: 'cache <stats|clear>',
+    mcpSchema: {
+      subcommand: { type: 'string', enum: ['stats', 'clear'], description: 'Subcommand: stats or clear' },
+    },
+    mcpRequired: ['subcommand'],
+    async run(root, flags) {
+      const { cache } = await import('./commands/cache.mjs');
+      return cache(root, { subcommand: flags.subcommand });
+    },
+  },
+  {
     name: 'launchd',
     description: 'Install/uninstall macOS LaunchAgents for automated vault maintenance',
     usage: 'launchd <install|uninstall|status>',

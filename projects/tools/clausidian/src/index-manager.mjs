@@ -2,6 +2,7 @@
  * Index manager — maintains _tags.md, _graph.md, and directory _index.md files
  */
 import { todayStr, prevDate, nextDate } from './dates.mjs';
+import { buildTagIDF, extractKeywords, calculateKeywordOverlap } from './scoring.mjs';
 
 export class IndexManager {
   constructor(vault) {
@@ -69,25 +70,13 @@ export class IndexManager {
 
     // ── TF-IDF weighted link suggestions ──
     const nonJournal = notes.filter(n => n.dir !== 'journal' && n.tags.length > 0);
-    const totalNotes = nonJournal.length;
-
-    // Build tag document frequency (how many notes have each tag)
-    const tagDF = {};
-    for (const n of nonJournal) {
-      for (const t of n.tags) tagDF[t] = (tagDF[t] || 0) + 1;
-    }
-
-    // IDF weight: rarer tags score higher — log(N / df)
-    const tagIDF = {};
-    for (const [tag, df] of Object.entries(tagDF)) {
-      tagIDF[tag] = Math.log(totalNotes / df);
-    }
+    const tagIDF = buildTagIDF(notes, 'journal');
 
     // Build keyword sets per note (title + summary words, 3+ chars)
     const noteKeywords = new Map();
     for (const n of nonJournal) {
-      const text = `${n.title} ${n.summary} ${n.body || ''}`.toLowerCase();
-      const words = new Set(text.match(/[a-z\u4e00-\u9fff]{3,}/g) || []);
+      const text = `${n.title} ${n.summary} ${n.body || ''}`;
+      const words = extractKeywords(text);
       noteKeywords.set(n.file, words);
     }
 
@@ -119,15 +108,7 @@ export class IndexManager {
         }
 
         // Keyword co-occurrence bonus (capped at +2)
-        const kwA = noteKeywords.get(a.file);
-        const kwB = noteKeywords.get(b.file);
-        let kwOverlap = 0;
-        if (kwA && kwB) {
-          for (const w of kwA) {
-            if (kwB.has(w)) kwOverlap++;
-          }
-          score += Math.min(kwOverlap * 0.1, 2);
-        }
+        score += calculateKeywordOverlap(noteKeywords.get(a.file), noteKeywords.get(b.file));
 
         // Minimum: at least 1 shared tag AND score > threshold
         if (shared.length >= 1 && score >= 1.5) {

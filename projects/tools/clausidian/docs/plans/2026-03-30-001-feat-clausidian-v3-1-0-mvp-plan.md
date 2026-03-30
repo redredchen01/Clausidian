@@ -127,6 +127,19 @@ Node.js `node:test` framework (v18.13.0+):
 - **Q**: Which vault version identifier should invalidate cache?
   **A**: Hash of `_tags.md` + `_graph.md` modification times. Simple, zero-cost to compute on each search, tightly coupled to actual vault state.
 
+### Clarifications from Confidence Check (Refinement Pass)
+
+The following clarifications were added after confidence check to prevent implementation ambiguity:
+
+1. **Version hash algorithm** — `SHA256(stat(_tags.md).mtime + '|' + stat(_graph.md).mtime)` (Unit 9, Unit 11)
+2. **Entry key format** — Use `SHA256(JSON.stringify({keyword, opts}))` instead of raw JSON to prevent key collisions (Unit 11)
+3. **Dirty note tracking** — `vault._dirtyNotes` Set initialized in constructor, populated by `write/delete/rename/merge`, cleared after invalidation (Unit 9, Unit 12)
+4. **ClusterCache.stats() signature** — returns `{ hits, misses, size, age, timestamp, vaultVersion }` (Unit 9, Unit 10)
+5. **Cache command in registry** — Complete structure provided, including MCP subcommand definitions and implementation signatures (Unit 10)
+6. **SearchCache.set() vs cache()** — renamed to `set()` for clarity; `get()` both retrieves and increments hit counter (Unit 8)
+7. **Save strategy** — Async write-through: `setImmediate(() => cache.saveToDisk())` after each `set()` call (Unit 11)
+8. **Load error handling** — Corrupted cache.json caught by try-catch, fresh cache initialized, error logged at debug level (Unit 11)
+
 ---
 
 ## High-Level Technical Design
@@ -465,21 +478,30 @@ Theme C — Persistent Cache:
 - Create: `src/search-cache.mjs` (100-150 lines estimated)
 
 **Approach:**
-- SearchCache wraps Vault.search() results
+- SearchCache wraps Vault.search() results with in-memory storage
 - Constructor: `new SearchCache(vault, { ttl: 300000 })`
+- Internal storage: `Map<hashKey, { results, timestamp }>`
 - Methods:
-  - `cache(keyword, opts, results)` — store result
-  - `get(keyword, opts)` — retrieve if hit, null if miss or expired
+  - `set(keyword, opts, results)` — store result, increment hits on next call
+  - `get(keyword, opts)` — retrieve if hit and not expired, null otherwise, increment hits on success
   - `invalidate()` — clear all entries
-  - `stats()` — return `{ hits, misses, size, age }`
-  - `toDisk()` → JSON serializable state
-  - `fromDisk(state)` — restore state
+  - `stats()` — return `{ hits, misses, size, age, timestamp, vaultVersion }`
+    - `size` = total bytes of all cached results (rough estimate: JSON.stringify(entries).length)
+    - `age` = milliseconds since last stat call
+    - `vaultVersion` = current vault version hash
+  - `toDisk()` → JSON serializable state for persistence
+  - `fromDisk(state)` — restore state from persistence layer
 
-**Approach:**
-- Use Map for fast lookup: `key = JSON.stringify([keyword, opts])`
-- Track hit/miss counters, timestamps
-- TTL check on get: `if (now - timestamp > ttl) { delete & return null }`
-- Stats computed on-demand from counter state
+**Internal implementation notes:**
+- Use Map for O(1) lookup: key = `crypto.createHash('sha256').update(JSON.stringify({keyword, opts})).digest('hex')`
+- Track counters: `_hits`, `_misses` (incremented on get() success/failure)
+- Track timestamps: each entry stores `{ results, timestamp }`
+- TTL check on get: `if (now - entry.timestamp > ttl) { delete entry; return null }`
+- Stats computed on-demand from `_hits`, `_misses`, Map size
+
+**Memory management:**
+- No automatic eviction (optional: add max-size limit in future)
+- Invalidation is explicit via `invalidate()` or `fromDisk()` version mismatch
 
 **Patterns to follow:**
 - Existing Vault cache pattern (`_notesCache`, `_notesCacheWithBody`)
@@ -505,16 +527,32 @@ Theme C — Persistent Cache:
 
 **Files:**
 - Create: `src/cluster-cache.mjs` (80-120 lines estimated)
-- Modify: `src/vault.mjs` — add `_clusterCache` instance, call `cache.invalidate()` on changes
+- Modify: `src/vault.mjs` — add `_clusterCache` instance, add `_dirtyNotes` Set, call `cache.invalidate()` on changes
 
 **Approach:**
-- ClusterCache constructor: `new ClusterCache(vault, { ttl, versionCheck: () => hash(...) })`
-- Version check function computes hash from `_tags.md` + `_graph.md` mod times
-- Methods:
-  - `get(keyword, opts)` — check version, return from SearchCache if match
-  - `invalidate()` — clear SearchCache and update version
+- **Vault changes (Unit 12 integration):**
+  - Add `this._dirtyNotes = new Set()` in Vault constructor
+  - Each `write()`, `delete()`, `rename()`, `merge()` call appends note path to `_dirtyNotes`
+  - `invalidateCache()` passes `_dirtyNotes` to `_clusterCache.invalidate(notes)`
+
+- ClusterCache constructor: `new ClusterCache(vault, { ttl, versionCheck: () => computeVaultVersion() })`
+- **Vault version computation:** Hash of `_tags.md` + `_graph.md` modification times:
+  ```javascript
+  computeVaultVersion() {
+    const stats1 = fs.statSync(join(vault.root, '_tags.md'));
+    const stats2 = fs.statSync(join(vault.root, '_graph.md'));
+    const combined = `${stats1.mtime.getTime()}|${stats2.mtime.getTime()}`;
+    return crypto.createHash('sha256').update(combined).digest('hex');
+  }
+  ```
+
+- ClusterCache methods:
+  - `get(keyword, opts)` — check version matches, return from SearchCache if match
+  - `invalidate(dirtyNotes)` — optionally clear only entries matching dirtyNotes (selective), update version
+  - `stats()` — returns `{ hits, misses, size, age, vaultVersion }`
   - `toDisk()`, `fromDisk()` — persist including version
-- Integration: `vault.write()` calls `this._clusterCache.invalidate()`
+
+- Integration: `vault.write()` calls `this._clusterCache.invalidate(this._dirtyNotes)` after file write
 
 **Patterns to follow:**
 - Decorator pattern (ClusterCache wraps SearchCache)
@@ -539,32 +577,83 @@ Theme C — Persistent Cache:
 **Dependencies:** Unit 8, Unit 9
 
 **Files:**
-- Create: `src/commands/cache.mjs` (80-100 lines estimated)
-- Modify: `src/registry.mjs` — add cache command + mcpSchema
+- Create: `src/commands/cache.mjs` (80-120 lines estimated)
+- Modify: `src/registry.mjs` — add cache command before COMMANDS export (around line 815)
 
-**Approach:**
-- Command structure:
-  ```
-  cache stats  → return JSON: { hits, misses, size, age, vaultVersion }
-  cache clear  → wipe .clausidian/cache.json, return success
-  cache status → human-readable: "Cache size: X, Hit rate: Y%, Age: Z seconds"
-  ```
-- MCP schema:
-  ```javascript
-  {
-    name: 'cache',
-    subcommands: {
-      stats: {
-        mcpName: 'cache_stats',
-        description: '...',
-        mcpSchema: {},
-        async run(root, flags) { ... }
-      },
-      clear: { ... },
-      status: { ... }
+**Approach — Command definition structure:**
+
+```javascript
+// In src/commands/cache.mjs
+export async function cacheStats(vault) {
+  const stats = vault.cache.stats();
+  return {
+    hits: stats.hits,
+    misses: stats.misses,
+    size: `${(stats.size / 1024).toFixed(2)} KB`,
+    age: `${Math.floor((Date.now() - stats.timestamp) / 1000)} seconds`,
+    vaultVersion: stats.vaultVersion.slice(0, 8) + '...',
+    hitRate: stats.hits + stats.misses === 0
+      ? 'N/A'
+      : `${((stats.hits / (stats.hits + stats.misses)) * 100).toFixed(1)}%`
+  };
+}
+
+export async function cacheClear(vault) {
+  const path = join(vault.root, '.clausidian', 'cache.json');
+  if (fs.existsSync(path)) {
+    fs.unlinkSync(path);
+    vault.cache.invalidate();
+    return { success: true, message: 'Cache cleared' };
+  }
+  return { success: true, message: 'Cache already empty' };
+}
+
+export async function cacheStatus(vault) {
+  const stats = vault.cache.stats();
+  return `Cache — Size: ${(stats.size / 1024).toFixed(2)} KB | Hits: ${stats.hits} | Misses: ${stats.misses} | Hit Rate: ${((stats.hits / (stats.hits + stats.misses)) * 100).toFixed(1)}%`;
+}
+```
+
+**Registry entry (insert after line 493, within `// ── Stats & analysis ──` section):**
+```javascript
+{
+  name: 'cache',
+  description: 'Manage persistent search cache',
+  usage: 'cache [stats|clear|status]',
+  subcommands: {
+    stats: {
+      mcpName: 'cache_stats',
+      description: 'Show cache statistics (hits, misses, size)',
+      mcpSchema: {},
+      mcpRequired: [],
+      async run(root, flags, pos) {
+        const { cacheStats } = await import('./commands/cache.mjs');
+        return cacheStats(new Vault(root));
+      }
+    },
+    clear: {
+      mcpName: 'cache_clear',
+      description: 'Clear all cached search results',
+      mcpSchema: { confirm: { type: 'boolean', description: 'Confirm cache clear' } },
+      mcpRequired: [],
+      async run(root, flags, pos) {
+        const { cacheClear } = await import('./commands/cache.mjs');
+        return cacheClear(new Vault(root));
+      }
+    },
+    status: {
+      mcpName: 'cache_status',
+      description: 'Show cache status (human-readable)',
+      mcpSchema: {},
+      mcpRequired: [],
+      async run(root, flags, pos) {
+        const { cacheStatus } = await import('./commands/cache.mjs');
+        return cacheStatus(new Vault(root));
+      }
     }
   }
-  ```
+}
+```
 
 **Patterns to follow:**
 - Existing registry.mjs command structure (e.g., batch subcommands)
@@ -600,28 +689,46 @@ Theme C — Persistent Cache:
 
 **Approach:**
 - Persistence location: `<vault>/.clausidian/cache.json`
-- Format:
+- **Entry key format**: Use SHA256 hash of normalized search params to avoid JSON key collision:
+  ```javascript
+  const entryKey = crypto.createHash('sha256')
+    .update(JSON.stringify({ keyword, opts: JSON.parse(JSON.stringify(opts)) }))
+    .digest('hex')
+  ```
+- **Serialization format**:
   ```json
   {
     "version": "1",
-    "vaultVersion": "sha256:...",
+    "vaultVersion": "sha256:a1b2c3...",
     "ttl": 300000,
     "hits": 42,
     "misses": 8,
     "entries": [
-      { "key": "[\"keyword\",{...}]", "results": [...], "timestamp": 1234567890 }
+      {
+        "keyHash": "sha256:abc123...",
+        "keyword": "obsidian",
+        "opts": { "type": "note", "status": "active" },
+        "results": [{ "path": "notes/foo.md", "score": 95 }, ...],
+        "timestamp": 1711828200000
+      }
     ],
-    "savedAt": 1234567890
+    "savedAt": 1711828200000
   }
   ```
-- Load strategy:
-  - On Vault init: `cache.loadFromDisk()`
-  - Check: `if (currentVaultVersion !== cachedVaultVersion) { ignore cache }`
-  - Check: `if (now - savedAt > ttl) { expire cache }`
-  - Restore: populate SearchCache entries from disk
-- Save strategy:
-  - After cache hit: async `saveToDisk()` (fire-and-forget)
-  - No wait, no error handling (failures don't break search)
+
+- **Load strategy:**
+  - On Vault init: `cache.loadFromDisk()` → read `.clausidian/cache.json`
+  - Validation checks:
+    - `if (currentVaultVersion !== cachedVaultVersion)` → log "vault version mismatch", clear cache, return empty
+    - `if (now - savedAt > ttl)` → log "cache expired", clear cache, return empty
+    - `if (fs.readFileSync() throws or JSON.parse fails)` → log error, initialize fresh cache
+  - On success: populate SearchCache._entries from entries array
+
+- **Save strategy:**
+  - Trigger: After each successful `cache.set(keyword, opts, results)` call
+  - Async write: `setImmediate(() => cache.saveToDisk())` (fire-and-forget, no await)
+  - No error handling — if write fails, search still works, cache just not persisted
+  - Optional: Log failures at debug level for troubleshooting
 
 **Patterns to follow:**
 - Node.js fs promises API (async/await)
@@ -646,7 +753,7 @@ Theme C — Persistent Cache:
 
 ### **Unit 12: Integration — vault.mjs updates** *(Theme C)*
 
-**Goal:** Integrate SearchCache and ClusterCache into Vault class. Update search path, invalidation hooks.
+**Goal:** Integrate SearchCache and ClusterCache into Vault class. Update search path, invalidation hooks, add dirty tracking.
 
 **Requirements:** R3, R4
 
@@ -655,34 +762,93 @@ Theme C — Persistent Cache:
 **Files:**
 - Modify: `src/vault.mjs`
   - Add: `this._clusterCache` instance in constructor
-  - Add: call `_clusterCache.loadFromDisk()` after init
+  - Add: `this._dirtyNotes = new Set()` for selective invalidation tracking
   - Modify: `invalidateCache()` → also calls `_clusterCache.invalidate()`
   - Modify: `search()` → check `_clusterCache.get()` before full search
+  - Modify: `write()`, `delete()`, `rename()`, `merge()` → append note path to `_dirtyNotes`
+  - Modify: import ClusterCache, SearchCache, crypto, fs at top
 
-**Approach:**
-- In constructor:
-  ```javascript
-  this._clusterCache = new ClusterCache(this, {
-    ttl: 300000, // 5 min
-    versionCheck: () => this._computeVaultVersion()
-  });
-  await this._clusterCache.loadFromDisk();
-  ```
-- In search():
-  ```javascript
-  const cached = this._clusterCache.get(keyword, opts);
-  if (cached !== null) return cached;
-
-  const results = this._doSearch(keyword, opts);
-  this._clusterCache.cache(keyword, opts, results);
-  return results;
-  ```
-- In invalidateCache():
-  ```javascript
+**Approach — Constructor:**
+```javascript
+constructor(rootPath) {
+  this.root = resolve(rootPath);
   this._notesCache = null;
   this._notesCacheWithBody = null;
-  this._clusterCache.invalidate(); // also clears search cache
-  ```
+
+  // New cache layers
+  this._dirtyNotes = new Set();  // Track modified notes since last invalidation
+  this._clusterCache = new ClusterCache(this, {
+    ttl: 300000, // 5 minutes
+    versionCheck: () => this._computeVaultVersion()
+  });
+
+  // Load cache from disk (async, but don't await — load happens in background)
+  this._clusterCache.loadFromDisk();
+}
+
+_computeVaultVersion() {
+  // Returns SHA256 hash of _tags.md + _graph.md modification times
+  const tagsPath = join(this.root, '_tags.md');
+  const graphPath = join(this.root, '_graph.md');
+
+  if (!fs.existsSync(tagsPath) || !fs.existsSync(graphPath)) {
+    return 'uninitialized';
+  }
+
+  const stat1 = fs.statSync(tagsPath);
+  const stat2 = fs.statSync(graphPath);
+  const combined = `${stat1.mtime.getTime()}|${stat2.mtime.getTime()}`;
+  return crypto.createHash('sha256').update(combined).digest('hex');
+}
+```
+
+**Approach — search() method:**
+```javascript
+search(keyword, { type, tag, status, regex = false } = {}) {
+  // Check cache first
+  const cached = this._clusterCache.get(keyword, { type, tag, status, regex });
+  if (cached !== null) return cached;
+
+  // Full search (existing logic unchanged)
+  const notes = this.scanNotes({ includeBody: true });
+  const results = this._doSearch(notes, keyword, { type, tag, status, regex });
+
+  // Cache result
+  this._clusterCache.set(keyword, { type, tag, status, regex }, results);
+
+  return results;
+}
+```
+
+**Approach — invalidateCache() and mutations:**
+```javascript
+invalidateCache() {
+  this._notesCache = null;
+  this._notesCacheWithBody = null;
+  this._clusterCache.invalidate(Array.from(this._dirtyNotes));
+  this._dirtyNotes.clear();
+}
+
+write(relPath, content, opts = {}) {
+  const fullPath = join(this.root, relPath);
+  this._dirtyNotes.add(relPath);  // Track modification
+  // ... existing write logic ...
+  this.invalidateCache();  // Existing call, now also invalidates cluster cache
+}
+
+delete(relPath) {
+  this._dirtyNotes.add(relPath);
+  // ... existing delete logic ...
+  this.invalidateCache();
+}
+
+rename(oldPath, newPath) {
+  this._dirtyNotes.add(oldPath);
+  this._dirtyNotes.add(newPath);
+  // ... existing rename logic ...
+  this.invalidateCache();
+}
+```
 
 **Patterns to follow:**
 - Existing two-layer cache model (_notesCache, _notesCacheWithBody)
