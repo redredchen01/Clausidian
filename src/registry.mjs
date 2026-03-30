@@ -740,6 +740,67 @@ const COMMANDS = [
       return launchd(root, pos[0], flags);
     },
   },
+  // ── Bases ──
+  {
+    name: 'base',
+    description: 'Manage Obsidian Bases (.base) — structured data views over vault notes',
+    usage: 'base <create|read|query> <name>',
+    subcommands: {
+      create: {
+        mcpName: 'base_create',
+        description: 'Create a new .base file with filters and views',
+        mcpSchema: { name: { type: 'string', description: 'Base filename' } },
+        mcpRequired: ['name'],
+        async run(root, flags) {
+          const { baseCreate } = await import('./commands/base.mjs');
+          return baseCreate(root, flags.name, flags);
+        },
+      },
+      read: {
+        mcpName: 'base_read',
+        description: 'Read and parse a .base file',
+        mcpSchema: { name: { type: 'string', description: 'Base filename' } },
+        mcpRequired: ['name'],
+        async run(root, flags) {
+          const { baseRead } = await import('./commands/base.mjs');
+          return baseRead(root, flags.name);
+        },
+      },
+      query: {
+        mcpName: 'base_query',
+        description: 'Query vault notes using a base definition',
+        mcpSchema: {
+          name: { type: 'string', description: 'Base filename' },
+          view: { type: 'string', description: 'View name to use (default: first view)' },
+        },
+        mcpRequired: ['name'],
+        async run(root, flags) {
+          const { baseQuery } = await import('./commands/base.mjs');
+          return baseQuery(root, flags.name, { view: flags.view });
+        },
+      },
+    },
+    async run(root, flags, pos) {
+      const sub = pos[0];
+      const name = flags.name || pos[1];
+      switch (sub) {
+        case 'create': {
+          const { baseCreate } = await import('./commands/base.mjs');
+          return baseCreate(root, name, flags);
+        }
+        case 'read': {
+          const { baseRead } = await import('./commands/base.mjs');
+          return baseRead(root, name);
+        }
+        case 'query': {
+          const { baseQuery } = await import('./commands/base.mjs');
+          return baseQuery(root, name, { view: flags.view });
+        }
+        default:
+          throw new Error('Usage: base <create|read|query> <name>');
+      }
+    },
+  },
   // ── Canvas ──
   {
     name: 'canvas',

@@ -277,6 +277,9 @@ related: ["[[other-note]]", "[[another-note]]"]
 | `canvas add-edge <name>` | Add an edge between canvas nodes |
 | `embed-search <query>` | Semantic search via Ollama/OpenAI embeddings (optional) |
 | `embed-status` | Show embedding provider status |
+| `base create <name>` | Create an Obsidian Base (.base) file |
+| `base read <name>` | Read and parse a .base file |
+| `base query <name>` | Query vault notes using base filters |
 
 ### Flags
 
@@ -374,6 +377,32 @@ obsidian-agent canvas read my-board            # display structure
 ```
 
 Supports all node types (text, file, link, group) and edges with labels and colors.
+
+## Obsidian Bases (v1.5+)
+
+Read, write, and query [Obsidian Bases](https://help.obsidian.md/bases) (`.base` files) — structured data views over vault notes:
+
+```bash
+obsidian-agent base create project-tracker    # create .base file
+obsidian-agent base read project-tracker      # display structure
+obsidian-agent base query project-tracker     # query matching notes
+obsidian-agent base query project-tracker --view "Active"  # specific view
+```
+
+Bases use YAML with filters, views, and formulas. obsidian-agent can execute filter expressions headlessly:
+
+```yaml
+# project-tracker.base
+filters:
+  and:
+    - file.hasTag("project")
+    - status != "archived"
+views:
+  - type: table
+    name: Active Projects
+```
+
+Supported filter expressions: `file.hasTag()`, `file.inFolder()`, `== / !=` comparisons.
 
 ## Embedding Search (v1.4+, Optional)
 

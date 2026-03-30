@@ -2,7 +2,8 @@
 name: obsidian-agent
 description: |
   AI agent toolkit for Obsidian vaults — PARA structured knowledge management.
-  46 MCP tools for journal, notes, search, review, graph, health, and more.
+  55+ MCP tools for journal, notes, search (keyword + BM25 + embedding),
+  review, graph, health, canvas, bases, and more.
   Zero dependencies. Works headless (no Obsidian app required).
   Bridges to Obsidian 1.12 official CLI when available.
   Use when: "记笔记", "写日记", "搜知识库", "记录想法", "obsidian",
@@ -12,9 +13,9 @@ license: MIT
 compatibility: Designed for Claude Code, Cursor, Copilot, Cline, Windsurf, Codex
 metadata:
   author: redredchen01
-  version: "1.2.0"
+  version: "1.5.0"
   homepage: https://github.com/redredchen01/obsidian-agent
-  tools: 46
+  tools: 55+
 ---
 
 # /obsidian — Obsidian Vault 管理
@@ -91,6 +92,16 @@ metadata:
 | 聚焦建议 | `focus` | `{}` — 按优先级建议下一步工作 |
 | 在 Obsidian 打开 | `open` | `{note?, reveal?}` — macOS only |
 | 剪贴板快捷笔记 | `quicknote` | `{prefix?}` — 从剪贴板捕获 |
+| BM25 智能搜索 | `smart_search` | `{query, type?, tag?, limit?}` — 多词语义匹配 |
+| 向量搜索 | `embed_search` | `{query, provider?}` — Ollama/OpenAI 嵌入搜索 |
+| 向量状态 | `embed_status` | `{}` — 检查嵌入提供商 |
+| 创建画布 | `canvas_create` | `{name}` — 创建 .canvas 文件 |
+| 读取画布 | `canvas_read` | `{name}` — 读取画布结构 |
+| 添加画布节点 | `canvas_add_node` | `{name, type, text?/file?/url?}` |
+| 添加画布连线 | `canvas_add_edge` | `{name, from, to, label?}` |
+| 创建 Base | `base_create` | `{name}` — 创建 .base 文件 |
+| 读取 Base | `base_read` | `{name}` — 读取 Base 结构 |
+| 查询 Base | `base_query` | `{name, view?}` — 按 Base 定义查询笔记 |
 | CLI 桥接状态 | `bridge_status` | `{}` — 检查官方 CLI 是否可用 |
 | 周回顾 | **CLI:** `obsidian-agent review` | |
 | 月回顾 | **CLI:** `obsidian-agent review monthly` | |
