@@ -1,7 +1,7 @@
 ---
 title: "refactor: YD 2026 全面治理 — 清理幽靈項目、修復 git、加品質基建"
 type: refactor
-status: active
+status: completed
 date: 2026-03-30
 ---
 
