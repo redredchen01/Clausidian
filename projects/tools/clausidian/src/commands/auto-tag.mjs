@@ -22,8 +22,11 @@ export function autoTag(vaultRoot, options = {}) {
       return { status: 'success', processed: 0, dryRun, suggestions: [] };
     }
 
-    // Build tag IDF from tagged notes
+    // Build tag IDF from all notes
     const tagIDF = buildTagIDF(allNotes, 'journal');
+
+    // Get all tagged notes
+    const tagged = allNotes.filter(t => t.dir !== 'journal' && t.tags.length > 0);
 
     // Process each untagged note
     const suggestions = [];

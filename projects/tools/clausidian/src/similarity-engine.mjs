@@ -44,7 +44,11 @@ export class SimilarityEngine {
    * @returns {Array<Object>} Suggested links sorted by score
    */
   scorePairs(notes, options = {}) {
-    const nonJournal = notes.filter(n => n.type !== 'journal' && n.tags.length > 0);
+    // Filter non-journal notes with tags (handle both n.type and n.dir properties)
+    const nonJournal = notes.filter(n => {
+      const isJournal = n.type === 'journal' || n.dir === 'journal';
+      return !isJournal && n.tags && n.tags.length > 0;
+    });
 
     if (nonJournal.length < 2) return [];
 

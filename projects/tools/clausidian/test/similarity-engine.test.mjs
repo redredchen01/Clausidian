@@ -1,10 +1,10 @@
 /**
  * Test similarity-engine — unified scoring logic
  */
-import assert from 'assert';
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
 import { Vault } from '../src/vault.mjs';
 import { SimilarityEngine } from '../src/similarity-engine.mjs';
-import { TMP } from './helpers.mjs';
 
 // Mock notes for testing
 const mockNotes = [
@@ -57,7 +57,7 @@ const mockNotes = [
 
 describe('SimilarityEngine', () => {
   it('should score pairs with shared tags', () => {
-    const vault = new Vault(TMP);
+    const vault = { scanNotes: () => mockNotes };
     const engine = new SimilarityEngine(vault);
 
     const pairs = engine.scorePairs(mockNotes);
@@ -70,7 +70,7 @@ describe('SimilarityEngine', () => {
   });
 
   it('should ignore journal notes', () => {
-    const vault = new Vault(TMP);
+    const vault = { scanNotes: () => mockNotes };
     const engine = new SimilarityEngine(vault);
 
     const pairs = engine.scorePairs(mockNotes);
@@ -81,7 +81,7 @@ describe('SimilarityEngine', () => {
   });
 
   it('should not score notes without tags', () => {
-    const vault = new Vault(TMP);
+    const vault = { scanNotes: () => mockNotes };
     const engine = new SimilarityEngine(vault);
 
     const pairs = engine.scorePairs(mockNotes);
@@ -92,7 +92,7 @@ describe('SimilarityEngine', () => {
   });
 
   it('should score based on TF-IDF weights', () => {
-    const vault = new Vault(TMP);
+    const vault = { scanNotes: () => mockNotes };
     const engine = new SimilarityEngine(vault);
 
     const pairs = engine.scorePairs(mockNotes);
@@ -104,7 +104,7 @@ describe('SimilarityEngine', () => {
   });
 
   it('should respect maxResults limit', () => {
-    const vault = new Vault(TMP);
+    const vault = { scanNotes: () => mockNotes };
     const engine = new SimilarityEngine(vault, { maxResults: 2 });
 
     const pairs = engine.scorePairs(mockNotes);
@@ -113,7 +113,7 @@ describe('SimilarityEngine', () => {
   });
 
   it('should cache TF-IDF weights', () => {
-    const vault = new Vault(TMP);
+    const vault = { scanNotes: () => mockNotes };
     const engine = new SimilarityEngine(vault);
 
     // First call
@@ -128,7 +128,7 @@ describe('SimilarityEngine', () => {
   });
 
   it('should invalidate cache when notes change', () => {
-    const vault = new Vault(TMP);
+    const vault = { scanNotes: () => mockNotes };
     const engine = new SimilarityEngine(vault);
 
     // First call
@@ -144,7 +144,7 @@ describe('SimilarityEngine', () => {
   });
 
   it('findRelated should score by title and tags', () => {
-    const vault = new Vault(TMP);
+    const vault = { scanNotes: () => mockNotes };
     vault.scanNotes = () => mockNotes;
 
     const engine = new SimilarityEngine(vault);
@@ -158,7 +158,7 @@ describe('SimilarityEngine', () => {
   });
 
   it('findRelated should cap results', () => {
-    const vault = new Vault(TMP);
+    const vault = { scanNotes: () => mockNotes };
     vault.scanNotes = () => mockNotes;
 
     const engine = new SimilarityEngine(vault);
@@ -168,7 +168,7 @@ describe('SimilarityEngine', () => {
   });
 
   it('should support incremental scoring', () => {
-    const vault = new Vault(TMP);
+    const vault = { scanNotes: () => mockNotes };
     const engine = new SimilarityEngine(vault);
 
     // Full scan
