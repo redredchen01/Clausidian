@@ -843,6 +843,21 @@ const COMMANDS = [
     },
   },
   {
+    name: 'vault',
+    description: 'Manage registered vaults (list, register, default, info, remove)',
+    usage: 'vault <list|register|default|info|remove> [--name NAME] [--path PATH]',
+    mcpSchema: {
+      subcommand: { type: 'string', enum: ['list', 'register', 'default', 'info', 'remove'], description: 'Subcommand' },
+      name: { type: 'string', description: 'Vault name (for register, default, info, remove)' },
+      path: { type: 'string', description: 'Vault path (for register)' },
+    },
+    mcpRequired: ['subcommand'],
+    async run(root, flags) {
+      const { vault } = await import('./commands/vault.mjs');
+      return vault(root, { subcommand: flags.subcommand, name: flags.name, path: flags.path });
+    },
+  },
+  {
     name: 'launchd',
     description: 'Install/uninstall macOS LaunchAgents for automated vault maintenance',
     usage: 'launchd <install|uninstall|status>',
