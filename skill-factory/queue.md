@@ -16,6 +16,9 @@
 
 ## Built
 
+- [x] 2026-03-31 | P1 | /site-doctor-skill | 一鍵全套站點診斷，整合 Lighthouse + SEO + 斷鏈 + CrUX + SSL | site-doctor-skill | built: 2026-03-31
+- [x] 2026-03-31 | P1 | /competitor-intel-skill | 競品情報自動簡報，定期監控、趨勢識別、週報推送 | competitor-intel-skill | built: 2026-03-31
+
 - [x] 2026-03-31 | P1 | /api-aggregation-notifier | 通用框架：多源 API 數據聚合 → 轉換表格 → Slack dispatch | api-aggregation-framework | built: 2026-03-31
 - [x] 2026-03-30 | P1 | /pypi-publish | 消除手動 twine upload，一鍵打包+上傳 PyPI | pypi-auto-publish | built: 2026-03-30
 - [x] 2026-03-30 | P1 | /agent-trace | append-only JSONL agent 操作追蹤，查詢+周報整合 | agent-trace-system | built: 2026-03-30
