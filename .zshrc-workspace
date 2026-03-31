@@ -10,6 +10,7 @@ export WORKSPACE_ROOT="${YD_WORKSPACE:-/Users/dex/YD 2026}"
 alias p1="cd '$WORKSPACE_ROOT/projects/production/gwx'"
 alias p2="cd '$WORKSPACE_ROOT/projects/production/claude_code_telegram_bot'"
 alias p3="cd '$WORKSPACE_ROOT/projects/experimental/NS_0327'"
+alias p4="cd '$WORKSPACE_ROOT/projects/production/video-watermark-removal-system'"
 alias pw="cd '$WORKSPACE_ROOT'"
 alias pj="cd '$WORKSPACE_ROOT/projects'"
 
@@ -31,11 +32,16 @@ alias tg-smoke="p2 && npm run smoke"
 alias ns-install="p3 && python3 -m pip install -e ."
 alias ns-test="p3 && python3 -m pytest"
 
+# VWRS (Video Watermark Removal System)
+alias vwrs-install="p4 && pip install -r requirements.txt && pip install -e ."
+alias vwrs-help="p4 && python -m src.vwrs --help"
+alias vwrs-test="p4 && python -m pytest tests/"
+
 # 查看項目狀態
 yd-status() {
   echo "📊 YD 2026 Workspace Status"
   echo "================================"
-  for dir in projects/production/gwx projects/production/claude_code_telegram_bot projects/experimental/NS_0327; do
+  for dir in projects/production/gwx projects/production/claude_code_telegram_bot projects/experimental/NS_0327 projects/production/video-watermark-removal-system; do
     cd "$WORKSPACE_ROOT/$dir" 2>/dev/null || continue
     project=$(basename "$dir")
     echo "✓ $project: $(git log -1 --format='%h %s' 2>/dev/null || echo 'no git')"
