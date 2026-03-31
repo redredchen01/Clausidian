@@ -311,6 +311,76 @@ export class Vault {
     return sorted;
   }
 
+  // ── Initiative B: Parallel search (B2.3 executor) ────
+
+  /**
+   * Search multiple patterns in parallel
+   * Falls back to sequential search if parallel is disabled
+   * @param {Array<string>} patterns - Array of search patterns
+   * @param {Object} options - Search options (timeout, etc.)
+   * @returns {Promise<Array>} Combined results from all patterns
+   */
+  async searchParallel(patterns, options = {}) {
+    if (!this.enableParallel || patterns.length === 0) {
+      // Fallback: sequential search
+      return patterns.flatMap(p => this.search(p, options));
+    }
+
+    // Initialize executor if needed
+    this._initializeParallelExecutor();
+
+    const result = await this.parallelExecutor.executeParallel(
+      patterns,
+      { timeout: options.timeout || 5000 }
+    );
+
+    // Track metrics
+    this.searchMetrics.queries++;
+    if (result.source === 'cache') {
+      this.searchMetrics.cacheHits++;
+    }
+    this.searchMetrics.parallelUsed++;
+
+    return result.results;
+  }
+
+  // ── Initiative B: Metrics export ───────────────────
+
+  /**
+   * Get aggregated search metrics from all B modules
+   * @returns {Object} Metrics including query counts, cache stats, executor stats
+   */
+  getSearchMetrics() {
+    return {
+      // Vault-level metrics
+      totalQueries: this.searchMetrics.queries,
+      cacheHits: this.searchMetrics.cacheHits,
+      parallelUsed: this.searchMetrics.parallelUsed,
+      cacheHitRate: this.searchMetrics.queries > 0
+        ? (this.searchMetrics.cacheHits / this.searchMetrics.queries * 100).toFixed(2) + '%'
+        : '0%',
+
+      // B2.1 Indexer metrics
+      indexerMetrics: this.indexer ? this.indexer.getIncrementalStats() : null,
+
+      // B2.2 Query cache metrics
+      cacheMetrics: this.queryCache ? this.queryCache.getCacheStats() : null,
+
+      // B2.3 Executor metrics
+      executorMetrics: this.parallelExecutor ? this.parallelExecutor.getMetrics() : null
+    };
+  }
+
+  /**
+   * Reset all search metrics to zero
+   */
+  resetSearchMetrics() {
+    this.searchMetrics = { queries: 0, cacheHits: 0, parallelUsed: 0 };
+    if (this.indexer) this.indexer.resetCache();
+    if (this.queryCache) this.queryCache.resetStats();
+    if (this.parallelExecutor) this.parallelExecutor.resetMetrics();
+  }
+
   // ── Find backlinks (notes that link TO a given note) ─
 
   backlinks(noteName) {
