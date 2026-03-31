@@ -1,6 +1,6 @@
 # Clausidian
 
-CLI toolkit for AI agents to manage Obsidian vaults. Zero dependencies. Works with **any** AI agent — Claude Code, Cursor, Copilot, Cline, Windsurf, Codex, and more.
+**Claude Code's Obsidian integration** — AI agent toolkit for vault management with zero dependencies. Works seamlessly with Claude Code and all major AI agents.
 
 **Languages:** [English](README.md) | [中文](README.zh.md)
 
@@ -13,6 +13,22 @@ CLI toolkit for AI agents to manage Obsidian vaults. Zero dependencies. Works wi
 | [docs/](docs/README.md) | Test plans, feature plans, analysis reports |
 | [scaffold/AGENT.md](scaffold/AGENT.md) | Agent quick-reference (commands, conventions) |
 | [skill/SKILL.md](skill/SKILL.md) | `/obsidian` skill for Claude Code |
+
+## Claude Code Integration
+
+**One command setup:**
+
+```bash
+clausidian setup ~/my-vault
+```
+
+This automatically:
+1. Installs the `/obsidian` skill to `~/.claude/skills/obsidian/`
+2. Registers the MCP server in `~/.claude/.mcp.json`
+3. After restart, use `/obsidian` command in Claude Code sessions to manage your vault
+4. Registers 44+ MCP tools for programmatic vault operations
+
+All 55+ `clausidian` CLI commands are available as `/obsidian` subcommands.
 
 ## Why
 
@@ -370,17 +386,6 @@ clausidian patch "my-project" --heading "Notes" --replace "Updated notes here"
 clausidian patch "my-project" --heading "TODO"
 ```
 
-## Claude Code Setup (One Command)
-
-```bash
-clausidian setup ~/my-vault
-```
-
-This automatically:
-1. Installs the `/obsidian` skill to `~/.claude/skills/obsidian/`
-2. Registers the MCP server in `~/.claude/.mcp.json`
-3. After restart, type `/obsidian` in any Claude Code session to manage your vault
-
 ## MCP Server
 
 Run as an [MCP](https://modelcontextprotocol.io/) server for AI assistants (Claude Desktop, Cursor, etc.):
@@ -470,19 +475,6 @@ These rules run automatically as part of existing commands — no extra setup ne
 | `OA_VAULT` | Default vault path | cwd |
 | `OA_TIMEZONE` | Timezone for dates | UTC |
 
-## Agent Compatibility
-
-`clausidian init` generates config files for multiple agents:
-
-| Agent | Config Location |
-|-------|----------------|
-| Claude Code | `.claude/commands/` (slash commands) |
-| Cursor | `.cursor/rules/obsidian.md` |
-| GitHub Copilot | `.github/copilot/instructions.md` |
-| Any agent | `AGENT.md` (universal instructions) |
-
-All agents read `AGENT.md` which tells them to use the `clausidian` CLI. No agent-specific code needed.
-
 ## Customization
 
 ### Templates
@@ -512,6 +504,21 @@ npm test
 ```
 
 Requires Node.js >= 18. Tests use `node:test` — zero dev dependencies.
+
+<details>
+<summary><strong>Other AI Agents (Cursor, Copilot, etc.)</strong></summary>
+
+`clausidian init` generates config files for multiple AI agents:
+
+| Agent | Config Location |
+|-------|----------------|
+| Cursor | `.cursor/rules/obsidian.md` |
+| GitHub Copilot | `.github/copilot/instructions.md` |
+| Any agent | `AGENT.md` (universal instructions) |
+
+All agents read `AGENT.md` which tells them to use the `clausidian` CLI. No agent-specific code needed.
+
+</details>
 
 ## License
 

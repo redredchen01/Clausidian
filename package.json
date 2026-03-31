@@ -1,7 +1,7 @@
 {
   "name": "clausidian",
   "version": "3.5.0",
-  "description": "CLI toolkit for AI agents to manage Obsidian vaults — journal, notes, search, index sync, and more",
+  "description": "Claude Code's Obsidian integration — AI agent toolkit for vault management, journal, notes, search, index sync, and more",
   "type": "module",
   "bin": {
     "clausidian": "bin/cli.mjs"
@@ -16,9 +16,9 @@
     "skill/"
   ],
   "keywords": [
+    "claude-code",
     "obsidian",
     "ai-agent",
-    "claude-code",
     "mcp",
     "knowledge-base",
     "cli",

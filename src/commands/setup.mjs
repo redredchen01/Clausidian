@@ -50,16 +50,20 @@ export function setup(vaultPath) {
   // 4. Set OA_VAULT in shell profile (suggest, don't force)
   const shellNote = `export OA_VAULT="${vault}"`;
 
-  console.log('\nClaude Code setup complete!\n');
+  console.log('\n✨ Claude Code Integration Setup Complete!\n');
   for (const r of results) console.log(`  ✓ ${r}`);
   console.log(`\nTo set OA_VAULT permanently, add to your shell profile:`);
   console.log(`  ${shellNote}\n`);
-  console.log('Next steps:');
-  console.log('  1. Restart Claude Code (to load MCP server + /obsidian skill)');
-  console.log('  2. Type /obsidian in any session to manage your vault');
-  console.log('  3. Use hooks: session-start, pre-tool-use, session-stop');
-  console.log('  4. Sync to memory: clausidian memory sync --dry-run');
-  console.log('  5. Add to CLAUDE.md: clausidian claude-md inject --global\n');
+  console.log('✨ Claude Code — Next Steps:');
+  console.log('  1. Restart Claude Code (load MCP server + /obsidian skill)');
+  console.log('  2. Use /obsidian in sessions to manage your vault');
+  console.log('  3. Enable hooks in ~/.claude/settings.json:');
+  console.log('     - session-start: load today\'s context');
+  console.log('     - pre-tool-use: track file edits');
+  console.log('     - session-stop: capture learnings & decisions');
+  console.log('  4. Optional — enhance workflow:');
+  console.log('     clausidian memory sync --dry-run       # sync vault → Claude memory');
+  console.log('     clausidian claude-md inject --global   # add vault context to CLAUDE.md\n');
 
   return { status: 'ok', vault, results };
 }
