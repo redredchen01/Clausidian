@@ -1,0 +1,292 @@
+# API Aggregation Notifier - Linear + GitHub 配置示例
+#
+# 此配置演示如何從 Linear 和 GitHub 聚合 bug 數據
+# 並發送到多個 Slack 頻道，按優先級和狀態分類
+
+name: "Daily Cross-Platform Issue Report"
+schedule: "0 9 * * 1-5"  # 每周一至五早上 9 點
+
+# ============================================================================
+# 數據源配置
+# ============================================================================
+
+sources:
+
+  # Linear API 配置
+  - name: "linear"
+    type: "graphql"
+    endpoint: "https://api.linear.app/graphql"
+    auth: "header:Authorization: Bearer ${LINEAR_API_KEY}"
+    query: |
+      query {
+        issues(
+          first: 100
+          filter: {
+            state: { name: { in: [Backlog, Todo, "In Progress", "In Review"] } }
+          }
+          orderBy: [PRIORITY, CREATED_AT]
+        ) {
+          edges {
+            node {
+              id
+              identifier
+              title
+              priority
+              state { name }
+              status { name }
+              assignee { name email }
+              team { name }
+              createdAt
+              updatedAt
+              labels { nodes { name } }
+            }
+          }
+        }
+      }
+    field_mapping:
+      id: "source_id"
+      identifier: "ID"
+      title: "Title"
+      priority: "Priority"
+      state.name: "State"
+      status.name: "Status"
+      assignee.name: "Owner"
+      assignee.email: "OwnerEmail"
+      team.name: "Team"
+      createdAt: "Created"
+      updatedAt: "Updated"
+      labels.nodes[].name: "Labels"
+
+  # GitHub API 配置
+  - name: "github"
+    type: "rest"
+    endpoint: "https://api.github.com/repos/{owner}/{repo}/issues"
+    auth: "header:Authorization: token ${GITHUB_TOKEN}"
+    params:
+      state: "open"
+      labels: "bug,enhancement"
+      per_page: 100
+      sort: "updated"
+      direction: "desc"
+    field_mapping:
+      number: "ID"
+      title: "Title"
+      labels[].name: "Labels"
+      user.login: "Reporter"
+      assignee.login: "Owner"
+      assignee.email: "OwnerEmail"
+      created_at: "Created"
+      updated_at: "Updated"
+      milestone.title: "Milestone"
+      priority: "Priority"
+
+# ============================================================================
+# 數據轉換配置
+# ============================================================================
+
+aggregation:
+
+  # 字段值標準化（將不同 API 的值映射到統一格式）
+  normalize:
+    priority:
+      "Urgent": "🔴 Urgent"
+      "URGENT": "🔴 Urgent"
+      "High": "🟠 High"
+      "HIGH": "🟠 High"
+      "Medium": "🟡 Medium"
+      "MEDIUM": "🟡 Medium"
+      "Low": "🟢 Low"
+      "LOW": "🟢 Low"
+
+    status:
+      "Backlog": "📋 Backlog"
+      "Todo": "📝 Todo"
+      "In Progress": "🔄 In Progress"
+      "In Review": "👀 In Review"
+      "Done": "✅ Done"
+      "open": "🔓 Open"
+      "closed": "🔒 Closed"
+
+  # 篩選器定義（用於根據條件篩選數據）
+  filters:
+
+    # 所有項目
+    - name: "all"
+      description: "所有 issue"
+      conditions: []
+
+    # 緊急和高優先級
+    - name: "urgent_and_high"
+      description: "Urgent 和 High 優先級"
+      conditions:
+        - field: "Priority"
+          operator: "in"
+          value: ["🔴 Urgent", "🟠 High"]
+
+    # 未完成的項目
+    - name: "open_issues"
+      description: "所有未完成的 issue"
+      conditions:
+        - field: "Status"
+          operator: "not_in"
+          value: ["✅ Done", "🔒 Closed"]
+
+    # 無人認領的 issue
+    - name: "unassigned"
+      description: "無人認領"
+      conditions:
+        - field: "Owner"
+          operator: "empty"
+        - field: "Status"
+          operator: "not_in"
+          value: ["✅ Done"]
+
+    # 超過 7 天未更新
+    - name: "stale_issues"
+      description: "超過 7 天未更新"
+      conditions:
+        - field: "Updated"
+          operator: "before"
+          value: "now - 7 days"
+
+  # 排序規則
+  sorting:
+    primary: "Priority"      # 主排序字段
+    secondary: "Created"     # 次排序字段
+    reverse: true            # 降序排列（重要的在前）
+
+  # 分組規則（先按 Team，再按 Status）
+  grouping:
+    - field: "Team"          # 按團隊分組
+    - field: "Status"        # 再按狀態分組
+
+# ============================================================================
+# Slack 配置
+# ============================================================================
+
+slack:
+  webhook_url: "${SLACK_WEBHOOK_URL}"
+
+  # 多頻道配置（每個頻道可有不同的格式和篩選）
+  channels:
+
+    # 每日綜合報告
+    - name: "#daily-report"
+      format: "table"           # 表格格式
+      filter: "open_issues"     # 應用 open_issues 篩選器
+      max_items: 30
+      description: "每日 issue 報告"
+
+    # 緊急告警頻道
+    - name: "#critical-alerts"
+      format: "list"            # 列表格式
+      filter: "urgent_and_high" # 只顯示緊急和高優先級
+      max_items: 50
+      thread: true              # 每個 issue 作為 thread
+      description: "緊急 issue 告警"
+
+    # 無人認領的 issue
+    - name: "#unassigned-issues"
+      format: "list"
+      filter: "unassigned"
+      max_items: 20
+      description: "無人認領的 issue"
+
+    # Stale issues 提醒
+    - name: "#stale-issues"
+      format: "table"
+      filter: "stale_issues"
+      max_items: 15
+      description: "7 天未更新的 issue"
+
+  # 消息模板
+  templates:
+    header: "📊 Daily Cross-Platform Report — {date}"
+
+    # 表格欄位配置
+    table_header:
+      - field: "ID"
+        width: 12
+        color: "white"
+      - field: "Title"
+        width: 40
+        color: "white"
+      - field: "Priority"
+        width: 10
+        color: "yellow"
+      - field: "Status"
+        width: 12
+        color: "cyan"
+      - field: "Owner"
+        width: 15
+        color: "green"
+      - field: "Team"
+        width: 12
+        color: "blue"
+
+# ============================================================================
+# Email 配置（可選）
+# ============================================================================
+
+email:
+  enabled: false                          # 改為 true 啟用 email
+  to: ["team@company.com", "lead@company.com"]
+  from: "reports@company.com"
+  subject: "Daily Cross-Platform Issue Report"
+  format: "html"                          # html | csv | table
+
+  # 郵件模板
+  header: "Daily Cross-Platform Issue Report"
+  footer: "Generated by API Aggregation Notifier"
+
+# ============================================================================
+# 文件輸出配置（可選）
+# ============================================================================
+
+export:
+  enabled: false                          # 改為 true 啟用文件輸出
+  formats: ["csv", "json", "html"]
+  directory: "/tmp/aggregation-exports"
+  retention_days: 7                       # 自動刪除 7 天前的文件
+
+# ============================================================================
+# 錯誤處理配置
+# ============================================================================
+
+error_handling:
+  retry_attempts: 3                       # API 失敗時的重試次數
+  retry_delay: "5s"                       # 重試延遲
+  exponential_backoff: true               # 指數退避（5s, 10s, 20s）
+  on_failure: "notify_channel"            # 失敗時的動作
+  notify_channel: "#error-alerts"         # 發送錯誤通知的頻道
+  timeout: "30s"                          # API 查詢超時時間
+
+# ============================================================================
+# 日誌配置
+# ============================================================================
+
+logging:
+  enabled: true
+  level: "info"                           # debug | info | warning | error
+  file: "/var/log/api-aggregator.log"
+  max_size: "100MB"
+  retention_days: 30
+
+# ============================================================================
+# 其他配置
+# ============================================================================
+
+# 並行查詢優化
+parallel:
+  enabled: true
+  max_concurrent: 5                       # 最多同時查詢 5 個 API
+
+# 緩存配置
+cache:
+  enabled: true
+  ttl: "5m"                               # 緩存有效期
+
+# 統計信息
+statistics:
+  enabled: true
+  track: ["total_issues", "by_priority", "by_status", "by_team"]

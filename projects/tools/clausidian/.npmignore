@@ -1,0 +1,7 @@
+test/
+tmp/
+.github/
+.git/
+*.tgz
+coverage/
+.nyc_output/

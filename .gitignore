@@ -1,0 +1,67 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.env.local
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+*.log.*
+logs/
+log/
+
+# Database
+postgres_data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary
+*.tmp
+.pytest_cache/
+__pycache__/
+
+# Local (not tracked)
+/Archived/
+/.claude/
+/obsidian/
+NS_0327
+/projects/production/gwx/
+/projects/production/claude_code_telegram_bot/
+.zshrc-wrap
+scripts/login-agents.sh
+.session-wrap-trigger.json
+
+# Nested project metadata / local agent state
+.git/
+.agents/
+.claude/
+.codex/
+.coverage
+.venv/
+.pytest_cache/
+
+# Database & cache files
+*.rdb
+dump.db
+*.sqlite
+*.db
+
+# Temporary & generated
+*.env.backup*
+.env.local
+checkpoints/

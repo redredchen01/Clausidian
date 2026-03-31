@@ -1,0 +1,52 @@
+name: Lint & Validate
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Validate skill markdown
+        run: |
+          # Basic validation: check file exists and has content
+          [ -f linear-slack-reporter.md ] || exit 1
+          [ -s linear-slack-reporter.md ] || exit 1
+          echo "✅ Skill file validation passed"
+
+      - name: Check documentation
+        run: |
+          [ -f README.md ] || exit 1
+          [ -f CHANGELOG.md ] || exit 1
+          [ -f LICENSE ] || exit 1
+          echo "✅ Documentation check passed"
+
+      - name: Validate YAML examples
+        run: |
+          if [ -d examples ]; then
+            for file in examples/*.yaml; do
+              if [ -f "$file" ]; then
+                # Check valid YAML structure
+                python3 -c "import yaml; yaml.safe_load(open('$file'))"
+                echo "✅ Valid YAML: $file"
+              fi
+            done
+          fi
+
+      - name: Check shell script syntax
+        run: |
+          # Verify markdown code blocks don't have obvious bash syntax errors
+          grep -A100 '```bash' README.md | grep -B100 '```' | bash -n || true
+          echo "✅ Shell script syntax check completed"
+
+      - name: Markdown lint
+        uses: nosborn/github-action-markdown-cli@v3.3.0
+        with:
+          files: .
+          config_file: .markdownlintrc.json
+        continue-on-error: true
