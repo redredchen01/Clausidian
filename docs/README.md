@@ -2,16 +2,21 @@
 
 Reference materials and guides for Clausidian.
 
-## Core Documents
+## 📋 Quick Start
+
+- **[OPTIMIZATION-ROADMAP.md](OPTIMIZATION-ROADMAP.md)** — Deep optimization analysis, critical issues, and action items (18-26h effort)
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** — System design overview, performance layers, MCP integration
+
+## 🏗️ Core Documents
 
 | Document | Purpose |
 |----------|---------|
+| [ARCHITECTURE.md](ARCHITECTURE.md) | System design, cache layers, performance optimization, MCP integration |
 | [CI-CD.md](CI-CD.md) | GitHub Actions workflow configuration |
 | [VAULT_INDEXING.md](VAULT_INDEXING.md) | Vault indexing and search architecture |
 | [VAULT_CACHING.md](VAULT_CACHING.md) | Caching strategies and performance optimization |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | System design overview |
 
-## Test Plans
+## 🧪 Test Plans
 
 | Document | Purpose |
 |----------|---------|
@@ -19,6 +24,6 @@ Reference materials and guides for Clausidian.
 | [test-scenarios-quick-reference.md](test-scenarios-quick-reference.md) | Quick reference for test scenarios |
 | [test-scenarios-theme-c-persistent-cache.md](test-scenarios-theme-c-persistent-cache.md) | Persistent cache test scenarios |
 
-## Archive
+## 📚 Archive
 
 Historical planning documents and project status reports are available in [archive/](archive/).
