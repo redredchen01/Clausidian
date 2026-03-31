@@ -10,6 +10,8 @@ description: |
 
 # /obsidian — Obsidian Vault 管理
 
+> **Related:** [README.md](../README.md) · [scaffold/AGENT.md](../scaffold/AGENT.md) · [scaffold/CONVENTIONS.md](../scaffold/CONVENTIONS.md)
+
 通过 clausidian MCP 工具操作知识库。从任何项目目录都能用。
 
 ## Setup

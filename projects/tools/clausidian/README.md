@@ -2,6 +2,16 @@
 
 CLI toolkit for AI agents to manage Obsidian vaults. Zero dependencies. Works with **any** AI agent — Claude Code, Cursor, Copilot, Cline, Windsurf, Codex, and more.
 
+## Documentation
+
+| Document | Purpose |
+|----------|---------|
+| [ARCHITECTURE.md](ARCHITECTURE.md) | System design, cache layers, performance optimization |
+| [CHANGELOG.md](CHANGELOG.md) | Version history and release notes |
+| [docs/](docs/README.md) | Test plans, feature plans, analysis reports |
+| [scaffold/AGENT.md](scaffold/AGENT.md) | Agent quick-reference (commands, conventions) |
+| [skill/SKILL.md](skill/SKILL.md) | `/obsidian` skill for Claude Code |
+
 ## Why
 
 AI agents are great at managing knowledge, but they need structure. `clausidian` provides:

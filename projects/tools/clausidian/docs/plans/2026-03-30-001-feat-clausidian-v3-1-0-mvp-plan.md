@@ -18,6 +18,8 @@ Complete v3.1.0 MVP delivery: **Theme B** closes test coverage gaps for 9 infras
 - ✅ Vault-aware cache invalidation (safe across restarts)
 - ✅ New `cache` command for stats and cleanup
 
+> **相關文檔：** [P3 代碼整合分析](2026-03-30-P3-CONSOLIDATION-ANALYSIS.md) ✅ · [P3 快取集成計劃](2026-03-30-P3-search-cache-integration.md) · [測試場景摘要](../TEST-SCENARIOS-SUMMARY.md) · [ARCHITECTURE.md](../../ARCHITECTURE.md) · [CHANGELOG.md](../../CHANGELOG.md)
+
 ---
 
 ## Problem Frame

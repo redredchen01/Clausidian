@@ -6,6 +6,8 @@ updated: 2026-03-27
 
 # Conventions
 
+> **Related:** [AGENT.md](AGENT.md) · [clausidian README](../README.md) · [scaffold/](.)
+
 ## Required Frontmatter
 
 ```yaml

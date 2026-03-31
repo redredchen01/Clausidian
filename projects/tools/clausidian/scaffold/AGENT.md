@@ -1,5 +1,7 @@
 # Obsidian Knowledge Base — Agent Instructions
 
+> **Source:** [clausidian README](https://github.com/clausidian/clausidian) · [CONVENTIONS.md](CONVENTIONS.md) · [scaffold/](.)
+
 This is an agent-managed Obsidian vault. You (the AI agent) operate this vault via the `clausidian` CLI.
 
 ## Quick Start

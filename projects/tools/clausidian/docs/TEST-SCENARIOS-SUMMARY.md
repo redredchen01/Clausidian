@@ -140,17 +140,17 @@ Concurrency & Multi-Session (2 scenarios)
 
 #### 🧑‍💼 產品經理 / QA 工程師
 1. 本文檔（此摘要）
-2. `test-scenarios-quick-reference.md` — § 測試場景總覽 + § 優先級定義
-3. `test-scenarios-theme-c-persistent-cache.md` — § 1（Happy Path）+ § 4（Integration）
+2. [test-scenarios-quick-reference.md](test-scenarios-quick-reference.md) — § 測試場景總覽 + § 優先級定義
+3. [test-scenarios-theme-c-persistent-cache.md](test-scenarios-theme-c-persistent-cache.md) — § 1（Happy Path）+ § 4（Integration）
 
 #### 🧑‍💻 開發人員
-1. `test-scenarios-theme-c-persistent-cache.md` — 全文（設計參考）
-2. `test-scenarios-quick-reference.md` — § 執行檢查清單 + § 效能基準
+1. [test-scenarios-theme-c-persistent-cache.md](test-scenarios-theme-c-persistent-cache.md) — 全文（設計參考）
+2. [test-scenarios-quick-reference.md](test-scenarios-quick-reference.md) — § 執行檢查清單 + § 效能基準
 3. 本文檔 — § 測試執行流程 + § 實施檢查清單
 
 #### 🧪 測試工程師
-1. `test-scenarios-quick-reference.md` — 優先級表 + 快速檢查清單
-2. `test-scenarios-theme-c-persistent-cache.md` — 詳細場景
+1. [test-scenarios-quick-reference.md](test-scenarios-quick-reference.md) — 優先級表 + 快速檢查清單
+2. [test-scenarios-theme-c-persistent-cache.md](test-scenarios-theme-c-persistent-cache.md) — 詳細場景
 3. 在實際環境運行測試，參考故障排除表
 
 ---
@@ -405,10 +405,11 @@ console.log(`Improvement: ${improvement}x faster`);
 
 | 文檔 | 位置 | 相關性 |
 |------|------|--------|
-| 本摘要 | `docs/TEST-SCENARIOS-SUMMARY.md` | 執行指南 |
-| 完整場景 | `docs/test-scenarios-theme-c-persistent-cache.md` | 詳細規格 |
-| 快速參考 | `docs/test-scenarios-quick-reference.md` | 速查表 |
-| 完整規劃 | `docs/plans/2026-03-30-001-feat-clausidian-v3-1-0-mvp-plan.md` | 設計文檔 |
+| 本摘要 | [TEST-SCENARIOS-SUMMARY.md](TEST-SCENARIOS-SUMMARY.md) | 執行指南 |
+| 完整場景 | [test-scenarios-theme-c-persistent-cache.md](test-scenarios-theme-c-persistent-cache.md) | 詳細規格 |
+| 快速參考 | [test-scenarios-quick-reference.md](test-scenarios-quick-reference.md) | 速查表 |
+| 完整規劃 | [2026-03-30-001-feat-clausidian-v3-1-0-mvp-plan.md](plans/2026-03-30-001-feat-clausidian-v3-1-0-mvp-plan.md) | 設計文檔 |
+| 架構設計 | [ARCHITECTURE.md](../ARCHITECTURE.md) | 系統架構 |
 | 實現代碼 | `src/search-cache.mjs` | SearchCache 類 |
 | 實現代碼 | `src/vault.mjs` | Vault 整合 |
 | 實現代碼 | `src/commands/cache.mjs` | 快取命令 |

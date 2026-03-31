@@ -2,6 +2,8 @@
 
 High-level system design and performance optimization layers introduced in v3.0.0+.
 
+> **Related:** [README.md](README.md) · [CHANGELOG.md](CHANGELOG.md) · [Test Scenarios](docs/TEST-SCENARIOS-SUMMARY.md) · [v3.1.0 Plan](docs/plans/2026-03-30-001-feat-clausidian-v3-1-0-mvp-plan.md)
+
 ## System Overview
 
 ```
