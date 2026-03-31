@@ -2,6 +2,8 @@
 
 CLI toolkit for AI agents to manage Obsidian vaults. Zero dependencies. Works with **any** AI agent — Claude Code, Cursor, Copilot, Cline, Windsurf, Codex, and more.
 
+**Languages:** [English](README.md) | [中文](README.zh.md)
+
 ## Documentation
 
 | Document | Purpose |
