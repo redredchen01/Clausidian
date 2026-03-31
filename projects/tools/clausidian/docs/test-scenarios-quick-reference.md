@@ -11,6 +11,8 @@ tags: [cache, test, quick-ref, theme-c]
 
 簡明表格版本，便於快速查找和執行。
 
+> **測試文檔組：** [執行摘要](TEST-SCENARIOS-SUMMARY.md) · **快速參考**（此文件）· [完整場景定義](test-scenarios-theme-c-persistent-cache.md) · [v3.1.0 計劃](plans/2026-03-30-001-feat-clausidian-v3-1-0-mvp-plan.md)
+
 ---
 
 ## 測試場景總覽

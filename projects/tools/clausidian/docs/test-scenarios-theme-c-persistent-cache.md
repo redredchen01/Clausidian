@@ -9,6 +9,8 @@ tags: [cache, persistence, test, integration, theme-c]
 
 # Clausidian v3.1.0 Theme C — Persistent Cache Test Scenarios
 
+> **測試文檔組：** [執行摘要](TEST-SCENARIOS-SUMMARY.md) · [快速參考](test-scenarios-quick-reference.md) · **完整場景定義**（此文件）· [v3.1.0 計劃](plans/2026-03-30-001-feat-clausidian-v3-1-0-mvp-plan.md)
+
 ## 概述
 
 本文檔為 Clausidian v3.1.0 Theme C 持久搜尋快取架構提供完整的測試場景清單。目標是讓實現者直接使用具體的測試輸入、動作和預期輸出，無需額外的設計工作。
