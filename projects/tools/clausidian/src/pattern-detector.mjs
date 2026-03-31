@@ -330,12 +330,8 @@ export class PatternDetector {
     }
     return '/automation-engine';
   }
-}
 
-}
-export default PatternDetector;
-
-  // === Algorithms 3-4 implementations ===
+  // === Algorithms 3-4: code pattern extraction & quality scoring ===
 
   extractCodeBlocks(note) {
     const blocks = [];
@@ -367,9 +363,7 @@ export default PatternDetector;
     const kw = new Set(['function', 'async', 'await', 'return', 'if', 'else', 'for', 'while', 'const', 'let', 'var', 'class', 'new', 'this', 'try', 'catch']);
     let vc = 0;
     for (const v of vars) {
-      if (!kw.has(v)) {
-        g = g.replace(new RegExp(`\\b${v}\\b`, 'g'), vc < 3 ? `?${v}?` : `?var${vc}?`);
-      }
+      if (!kw.has(v)) g = g.replace(new RegExp(`\\b${v}\\b`, 'g'), vc < 3 ? `?${v}?` : `?var${vc}?`);
       vc++;
     }
     return g;
@@ -448,3 +442,6 @@ export default PatternDetector;
     for (let i = 0; i < opps.length; i++) opps[i].rank = i + 1;
     return {opportunities: opps.slice(0, 20), totalScored: opps.length, recommendation: opps.length > 0 && opps[0].score > 7 ? 'IMMEDIATE' : 'PLANNED'};
   }
+}
+
+export default PatternDetector;
