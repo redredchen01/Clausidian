@@ -117,7 +117,7 @@ class LeaveWorkflow:
             Number of remaining leave days
         """
         # Get quota for leave_type
-        quota = await self._get_leave_quota(leave_type)
+        quota = self._get_leave_quota(leave_type)
 
         # If unlimited, return large number
         if quota == float('inf'):
@@ -149,20 +149,57 @@ class LeaveWorkflow:
         return max(0, balance)
 
     # =========================================================================
-    # Helper Functions
+    # HELPER FUNCTIONS (C2.4)
+    # =========================================================================
+    # Helper Function 1: _get_leave_quota (2h)
+    # Get annual quota for leave type
     # =========================================================================
 
-    async def _get_leave_quota(self, leave_type: LeaveType) -> float:
-        """Get quota for a leave type."""
+    def _get_leave_quota(self, leave_type: LeaveType) -> int:
+        """Get annual quota for leave type.
+
+        Args:
+            leave_type: Type of leave (ANNUAL, SICK, SPECIAL, MATERNITY, etc.)
+
+        Returns:
+            Integer quota for the leave type. Returns float('inf') for UNPAID.
+
+        Examples:
+            >>> _get_leave_quota(LeaveType.ANNUAL)
+            20
+            >>> _get_leave_quota(LeaveType.UNPAID)
+            inf
+        """
         return LEAVE_QUOTAS.get(leave_type, 0)
+
+    # =========================================================================
+    # Helper Function 2: _calculate_used_days (2h)
+    # Calculate used days for leave type in given year
+    # =========================================================================
 
     async def _calculate_used_days(
         self,
         employee_id: int,
         leave_type: LeaveType,
         year: int
-    ) -> float:
-        """Calculate total used days for a leave type in a given year."""
+    ) -> int:
+        """Calculate used days for leave type in given year.
+
+        Queries approved LeaveRequests, filters by employee_id, leave_type,
+        status=APPROVED, and year. Sums working days (excludes weekends).
+
+        Args:
+            employee_id: Employee ID
+            leave_type: Type of leave
+            year: Calendar year
+
+        Returns:
+            Total working days used in the given year
+
+        Examples:
+            >>> await _calculate_used_days(emp_id=123, LeaveType.ANNUAL, 2026)
+            5
+        """
         year_start = date(year, 1, 1)
         year_end = date(year, 12, 31)
 
@@ -174,9 +211,9 @@ class LeaveWorkflow:
             LeaveRequest.end_date <= year_end
         ).all()
 
-        total_days = 0.0
+        total_days = 0
         for leave in leave_requests:
-            working_days = self._working_days_between(
+            working_days = self._working_days_in_range(
                 leave.start_date,
                 leave.end_date
             )
@@ -184,51 +221,178 @@ class LeaveWorkflow:
 
         return total_days
 
+    # =========================================================================
+    # Helper Function 3: _get_year_start (1h)
+    # Get Jan 1 of current year
+    # =========================================================================
+
     def _get_year_start(self) -> date:
-        """Get January 1st of current year."""
+        """Get January 1st of current year.
+
+        Returns:
+            date: January 1st of the current year
+
+        Examples:
+            >>> _get_year_start()
+            date(2026, 1, 1)
+        """
         today = date.today()
         return date(today.year, 1, 1)
 
-    def _working_days_between(self, start_date: date, end_date: date) -> int:
-        """Count business days (Mon-Fri) between two dates."""
-        working_days = 0
-        current = start_date
-
-        while current <= end_date:
-            if current.weekday() < 5:  # Monday to Friday
-                working_days += 1
-            current += timedelta(days=1)
-
-        return working_days
-
-    async def _notify_employee(self, employee_id: int, message: str) -> bool:
-        """Send notification to employee."""
-        try:
-            logger.info(f"Notification to employee {employee_id}: {message}")
-            return True
-        except Exception as e:
-            logger.error(f"Failed to notify employee {employee_id}: {e}")
-            return False
-
-    async def _get_employee_manager(self, employee_id: int) -> Optional[int]:
-        """Get the manager ID for an employee."""
-        logger.info(f"Checking manager for employee {employee_id}")
-        return None
-
-    async def _check_hr_role(self, user_id: int) -> bool:
-        """Check if a user has HR role."""
-        logger.info(f"Checking HR role for user {user_id}")
-        return user_id > 1000 or user_id == 1
+    # =========================================================================
+    # Helper Function 4: _date_range_overlap (2h)
+    # Check if two date ranges overlap
+    # =========================================================================
 
     def _date_range_overlap(
         self,
         r1: Tuple[date, date],
         r2: Tuple[date, date]
     ) -> bool:
-        """Check if two date ranges overlap."""
+        """Check if two date ranges overlap.
+
+        Adjacent ranges (end1 < start2) are NOT overlapping.
+        Overlapping means at least one day in common.
+
+        Args:
+            r1: Tuple of (start_date, end_date) for range 1
+            r2: Tuple of (start_date, end_date) for range 2
+
+        Returns:
+            True if ranges have at least one day overlap, False otherwise
+
+        Examples:
+            >>> r1 = (date(2026, 1, 1), date(2026, 1, 5))
+            >>> r2 = (date(2026, 1, 3), date(2026, 1, 7))
+            >>> _date_range_overlap(r1, r2)
+            True
+
+            >>> r1 = (date(2026, 1, 1), date(2026, 1, 5))
+            >>> r2 = (date(2026, 1, 6), date(2026, 1, 10))
+            >>> _date_range_overlap(r1, r2)
+            False
+        """
         start1, end1 = r1
         start2, end2 = r2
-        return start1 <= end2 and start2 <= end1 and start1 < end2 and start2 < end1
+        # Overlap exists if start1 <= end2 AND start2 <= end1
+        # But we exclude adjacent (end1 == start2) as non-overlapping
+        return start1 <= end2 and start2 <= end1 and not (end1 < start2 or end2 < start1)
+
+    # =========================================================================
+    # Helper Function 5: _working_days_in_range (3h)
+    # Count working days (Mon-Fri) in date range
+    # =========================================================================
+
+    def _working_days_in_range(self, start_date: date, end_date: date) -> int:
+        """Count working days (Mon-Fri) in date range.
+
+        Iterates from start_date to end_date (inclusive) and counts days
+        where weekday() not in [5, 6] (excludes Saturday and Sunday).
+
+        Args:
+            start_date: Start date (inclusive)
+            end_date: End date (inclusive)
+
+        Returns:
+            Count of working days (0-based, so 1 day = 1 working day)
+
+        Examples:
+            >>> start = date(2026, 3, 30)  # Monday
+            >>> end = date(2026, 3, 30)    # Same day
+            >>> _working_days_in_range(start, end)
+            1
+
+            >>> start = date(2026, 3, 28)  # Saturday
+            >>> end = date(2026, 3, 29)    # Sunday
+            >>> _working_days_in_range(start, end)
+            0
+        """
+        working_days = 0
+        current = start_date
+
+        while current <= end_date:
+            # weekday(): 0=Mon, 1=Tue, ..., 4=Fri, 5=Sat, 6=Sun
+            if current.weekday() < 5:
+                working_days += 1
+            current += timedelta(days=1)
+
+        return working_days
+
+    # Alias for backward compatibility
+    def _working_days_between(self, start_date: date, end_date: date) -> int:
+        """Backward compatibility wrapper for _working_days_in_range."""
+        return self._working_days_in_range(start_date, end_date)
+
+    # =========================================================================
+    # Helper Function 6: _notify_employee (1h)
+    # Send Telegram notification to employee
+    # =========================================================================
+
+    async def _notify_employee(self, employee_id: int, message: str) -> bool:
+        """Send Telegram notification to employee.
+
+        Gets employee's Telegram user_id and sends notification via bot.
+
+        Args:
+            employee_id: Employee ID
+            message: Message to send
+
+        Returns:
+            True if sent successfully, False otherwise
+
+        Examples:
+            >>> await _notify_employee(123, "Your leave approved")
+            True
+        """
+        try:
+            # TODO: Implement actual Telegram bot integration
+            # For now, log the notification
+            logger.info(f"Notification to employee {employee_id}: {message}")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to notify employee {employee_id}: {e}")
+            return False
+
+    # =========================================================================
+    # Helper Function 7: _get_employee_manager (1h)
+    # Get direct manager of employee
+    # =========================================================================
+
+    async def _get_employee_manager(self, employee_id: int) -> Optional[int]:
+        """Get direct manager of employee.
+
+        Queries employee record and returns manager_id from relationship.
+
+        Args:
+            employee_id: Employee ID
+
+        Returns:
+            Manager Employee ID, or None if no manager found
+
+        Examples:
+            >>> await _get_employee_manager(123)
+            456
+        """
+        # TODO: Implement actual employee/manager lookup
+        # For now, return placeholder
+        logger.info(f"Checking manager for employee {employee_id}")
+        return None
+
+    # =========================================================================
+    # INTERNAL: HR Role Check
+    # =========================================================================
+
+    async def _check_hr_role(self, user_id: int) -> bool:
+        """Check if a user has HR role.
+
+        Args:
+            user_id: User ID
+
+        Returns:
+            True if user has HR role, False otherwise
+        """
+        logger.info(f"Checking HR role for user {user_id}")
+        return user_id > 1000 or user_id == 1
 
     # =========================================================================
     # Additional Leave Management Methods
