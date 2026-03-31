@@ -1,3 +1,5 @@
+// YD 2026 workspace root — contains Clausidian as primary project
+// Other projects in: projects/
 {
   "name": "clausidian",
   "version": "3.4.0",
