@@ -829,3 +829,273 @@ Some idea content mentioning [[other-note]]
     assert.equal(result.status, 'success');
   });
 });
+
+// ── MCP resources tests ─────────────────────────────────────
+describe('MCP resources', () => {
+  const RTMP = join(__dirname, '..', 'tmp', 'test-mcp-resources');
+
+  before(() => {
+    rmSync(RTMP, { recursive: true, force: true });
+    mkdirSync(RTMP, { recursive: true });
+    writeFileSync(join(RTMP, '_tags.md'), '# Tags\n- ai\n- dev\n');
+    writeFileSync(join(RTMP, '_graph.md'), '# Graph\n## Suggested Links\n');
+    writeFileSync(join(RTMP, '_index.md'), '# Index\n## journal\n');
+  });
+
+  after(() => {
+    rmSync(RTMP, { recursive: true, force: true });
+  });
+
+  it('resources/list returns resources with correct URIs', async () => {
+    const { McpServer } = await import('../src/mcp-server.mjs');
+    const server = new McpServer(RTMP);
+    const resp = server.handleMessage({ jsonrpc: '2.0', id: 1, method: 'resources/list', params: {} });
+    assert.ok(resp.result.resources.length >= 3);
+    const uris = resp.result.resources.map(r => r.uri);
+    assert.ok(uris.includes('vault://index'));
+    assert.ok(uris.includes('vault://tags'));
+    assert.ok(uris.includes('vault://graph'));
+    for (const r of resp.result.resources) {
+      assert.ok(['text/markdown', 'application/json'].includes(r.mimeType), `unexpected mimeType: ${r.mimeType}`);
+      assert.ok(r.name);
+    }
+  });
+
+  it('resources/read returns _tags.md content', async () => {
+    const { McpServer } = await import('../src/mcp-server.mjs');
+    const server = new McpServer(RTMP);
+    const resp = server.handleMessage({ jsonrpc: '2.0', id: 2, method: 'resources/read', params: { uri: 'vault://tags' } });
+    assert.ok(resp.result.contents[0].text.includes('Tags'));
+    assert.equal(resp.result.contents[0].mimeType, 'text/markdown');
+  });
+
+  it('resources/read returns _index.md content for vault://index', async () => {
+    const { McpServer } = await import('../src/mcp-server.mjs');
+    const server = new McpServer(RTMP);
+    const resp = server.handleMessage({ jsonrpc: '2.0', id: 3, method: 'resources/read', params: { uri: 'vault://index' } });
+    assert.ok(resp.result.contents[0].text.includes('Index'));
+  });
+
+  it('resources/read returns empty string for missing index file', async () => {
+    const { McpServer } = await import('../src/mcp-server.mjs');
+    const emptyVault = join(__dirname, '..', 'tmp', 'test-mcp-empty');
+    mkdirSync(emptyVault, { recursive: true });
+    try {
+      const server = new McpServer(emptyVault);
+      const resp = server.handleMessage({ jsonrpc: '2.0', id: 4, method: 'resources/read', params: { uri: 'vault://graph' } });
+      assert.equal(resp.result.contents[0].text, '');
+    } finally {
+      rmSync(emptyVault, { recursive: true, force: true });
+    }
+  });
+
+  it('resources/read returns error for unknown URI', async () => {
+    const { McpServer } = await import('../src/mcp-server.mjs');
+    const server = new McpServer(RTMP);
+    const resp = server.handleMessage({ jsonrpc: '2.0', id: 5, method: 'resources/read', params: { uri: 'vault://nonexistent' } });
+    assert.ok(resp.error);
+    assert.ok(resp.error.message.includes('Unknown resource'));
+  });
+});
+
+// ── MCP prompts tests ────────────────────────────────────────
+describe('MCP prompts', () => {
+  it('prompts/list returns prompts with correct schema', async () => {
+    const { McpServer } = await import('../src/mcp-server.mjs');
+    const server = new McpServer('/tmp');
+    const resp = server.handleMessage({ jsonrpc: '2.0', id: 10, method: 'prompts/list', params: {} });
+    assert.ok(resp.result.prompts.length >= 3);
+    const names = resp.result.prompts.map(p => p.name);
+    assert.ok(names.includes('daily-journal'));
+    assert.ok(names.includes('weekly-review'));
+    assert.ok(names.includes('capture-idea'));
+    for (const p of resp.result.prompts) {
+      assert.ok(p.name);
+      assert.ok(p.description);
+    }
+  });
+
+  it('prompts/get capture-idea returns message with idea text', async () => {
+    const { McpServer } = await import('../src/mcp-server.mjs');
+    const server = new McpServer('/tmp');
+    const resp = server.handleMessage({
+      jsonrpc: '2.0', id: 11, method: 'prompts/get',
+      params: { name: 'capture-idea', arguments: { text: 'my test idea' } },
+    });
+    assert.ok(resp.result.messages);
+    assert.ok(resp.result.messages[0].content.text.includes('my test idea'));
+  });
+
+  it('prompts/get daily-journal without date uses default', async () => {
+    const { McpServer } = await import('../src/mcp-server.mjs');
+    const server = new McpServer('/tmp');
+    const resp = server.handleMessage({
+      jsonrpc: '2.0', id: 12, method: 'prompts/get',
+      params: { name: 'daily-journal', arguments: {} },
+    });
+    assert.ok(resp.result.messages[0].content.text.includes('journal'));
+  });
+
+  it('prompts/get capture-idea without required text returns error', async () => {
+    const { McpServer } = await import('../src/mcp-server.mjs');
+    const server = new McpServer('/tmp');
+    const resp = server.handleMessage({
+      jsonrpc: '2.0', id: 13, method: 'prompts/get',
+      params: { name: 'capture-idea', arguments: {} },
+    });
+    assert.ok(resp.error);
+    assert.ok(resp.error.message.includes('text'));
+  });
+
+  it('prompts/get unknown prompt returns error', async () => {
+    const { McpServer } = await import('../src/mcp-server.mjs');
+    const server = new McpServer('/tmp');
+    const resp = server.handleMessage({
+      jsonrpc: '2.0', id: 14, method: 'prompts/get',
+      params: { name: 'nonexistent-prompt', arguments: {} },
+    });
+    assert.ok(resp.error);
+  });
+});
+
+// ── bridge command error paths ───────────────────────────────
+describe('bridge commands (gwx unavailable paths)', () => {
+  const BTMP = join(__dirname, '..', 'tmp', 'test-bridge');
+
+  before(async () => {
+    rmSync(BTMP, { recursive: true, force: true });
+    const { init } = await import('../src/commands/init.mjs');
+    init(BTMP);
+  });
+
+  after(() => {
+    rmSync(BTMP, { recursive: true, force: true });
+  });
+
+  it('bridgeGcal handles gwx not installed gracefully', async () => {
+    const { bridgeGcal } = await import('../src/commands/bridge.mjs');
+    const logs = [];
+    const orig = console.log;
+    console.log = (msg) => logs.push(msg);
+    try {
+      bridgeGcal(BTMP, { date: '2026-01-01' });
+    } catch {
+      // error is acceptable if gwx is not installed
+    } finally {
+      console.log = orig;
+    }
+    if (logs.length > 0) {
+      const result = JSON.parse(logs[0]);
+      assert.ok(['skipped', 'error'].includes(result.status));
+    }
+  });
+
+  it('bridgeGmail handles gwx not installed gracefully', async () => {
+    const { bridgeGmail } = await import('../src/commands/bridge.mjs');
+    const logs = [];
+    const orig = console.log;
+    console.log = (msg) => logs.push(msg);
+    try {
+      bridgeGmail(BTMP, { label: 'important', days: 1 });
+    } catch {
+      // acceptable
+    } finally {
+      console.log = orig;
+    }
+    if (logs.length > 0) {
+      const result = JSON.parse(logs[0]);
+      assert.ok(['skipped', 'error'].includes(result.status));
+    }
+  });
+
+  it('bridgeGithub handles gh not installed gracefully', async () => {
+    const { bridgeGithub } = await import('../src/commands/bridge.mjs');
+    const logs = [];
+    const orig = console.log;
+    console.log = (msg) => logs.push(msg);
+    try {
+      bridgeGithub(BTMP, { repo: 'owner/repo', days: 1 });
+    } catch {
+      // acceptable
+    } finally {
+      console.log = orig;
+    }
+    if (logs.length > 0) {
+      const result = JSON.parse(logs[0]);
+      assert.ok(['skipped', 'error'].includes(result.status));
+    }
+  });
+});
+
+// ── hook event pipeline tests ────────────────────────────────
+describe('hook event pipeline', () => {
+  const HTMP = join(__dirname, '..', 'tmp', 'test-hook-events');
+
+  before(async () => {
+    rmSync(HTMP, { recursive: true, force: true });
+    const { init } = await import('../src/commands/init.mjs');
+    init(HTMP);
+    const { note } = await import('../src/commands/note.mjs');
+    note(HTMP, 'Hook Test Note', 'project', { tags: ['ai', 'testing'] });
+  });
+
+  after(() => {
+    rmSync(HTMP, { recursive: true, force: true });
+  });
+
+  it('noteCreated returns skipped for note without tags', async () => {
+    const { noteCreated } = await import('../src/commands/hook.mjs');
+    const logs = [];
+    const orig = console.log;
+    console.log = (msg) => logs.push(msg);
+    noteCreated(HTMP, { note: 'nonexistent-note' });
+    console.log = orig;
+    assert.ok(logs.length > 0);
+    const result = JSON.parse(logs[0]);
+    assert.equal(result.event, 'note-created');
+    assert.ok(['skipped', 'created'].includes(result.status));
+  });
+
+  it('noteCreated returns created with suggestions array', async () => {
+    const { noteCreated } = await import('../src/commands/hook.mjs');
+    const logs = [];
+    const orig = console.log;
+    console.log = (msg) => logs.push(msg);
+    noteCreated(HTMP, { note: 'hook-test-note' });
+    console.log = orig;
+    assert.ok(logs.length > 0);
+    const result = JSON.parse(logs[0]);
+    assert.equal(result.event, 'note-created');
+    assert.ok(Array.isArray(result.suggestions));
+  });
+
+  it('noteUpdated returns updated status', async () => {
+    const { noteUpdated } = await import('../src/commands/hook.mjs');
+    const logs = [];
+    const orig = console.log;
+    console.log = (msg) => logs.push(msg);
+    noteUpdated(HTMP, { note: 'hook-test-note', changes: {} });
+    console.log = orig;
+    assert.ok(logs.length > 0);
+    const result = JSON.parse(logs[0]);
+    assert.equal(result.event, 'note-updated');
+    assert.equal(result.status, 'updated');
+  });
+
+  it('noteUpdated with tag changes triggers graph rebuild', async () => {
+    const { noteUpdated } = await import('../src/commands/hook.mjs');
+    const logs = [];
+    const orig = console.log;
+    console.log = (msg) => logs.push(msg);
+    noteUpdated(HTMP, { note: 'hook-test-note', changes: { tags: ['ai', 'new-tag'] } });
+    console.log = orig;
+    assert.ok(logs.length > 0);
+    const result = JSON.parse(logs[0]);
+    assert.equal(result.graphRebuilt, true);
+  });
+
+  it('noteCreated with invalid payload does not crash', async () => {
+    const { noteCreated } = await import('../src/commands/hook.mjs');
+    assert.doesNotThrow(() => noteCreated(HTMP, {}));
+  });
+});

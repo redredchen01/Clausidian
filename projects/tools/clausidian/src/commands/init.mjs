@@ -114,6 +114,12 @@ updated: ${new Date().toISOString().slice(0, 10)}
 `);
   }
 
+  // Create .claude/commands/ for Claude Code slash commands
+  const claudeCommandsDir = join(root, '.claude', 'commands');
+  if (!existsSync(claudeCommandsDir)) {
+    mkdirSync(claudeCommandsDir, { recursive: true });
+  }
+
   console.log(`\n✅ Vault initialized at: ${root}\n`);
   console.log('Structure:');
   console.log('  areas/       — Long-term focus areas');
