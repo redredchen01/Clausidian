@@ -65,3 +65,9 @@ dump.db
 *.env.backup*
 .env.local
 checkpoints/
+node_modules/
+.DS_Store
+*.tgz
+coverage/
+tmp/
+.nyc_output/
