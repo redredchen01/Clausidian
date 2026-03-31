@@ -262,3 +262,407 @@ test('Integration: recommended K in valid range', () => {
   assert(result.recommendedK >= 8);
   assert(result.recommendedK <= 12);
 });
+
+// ============ Algorithm 3: Code Pattern Extraction Tests ============
+
+test('Algorithm 3.1: extractCodeBlocks finds javascript code', () => {
+  const note = {
+    file: 'test.md',
+    title: 'Test',
+    body: '```javascript\nconst x = 1;\nconsole.log(x);\n```',
+  };
+  const blocks = detector.extractCodeBlocks(note);
+  assert.strictEqual(blocks.length, 1);
+  assert.strictEqual(blocks[0].language, 'javascript');
+});
+
+test('Algorithm 3.2: extractCodeBlocks finds multiple blocks', () => {
+  const note = {
+    file: 'test.md',
+    body: '```js\nconst a = 1;\n```\n```python\nprint("hello")\n```',
+  };
+  const blocks = detector.extractCodeBlocks(note);
+  assert.strictEqual(blocks.length, 2);
+});
+
+test('Algorithm 3.3: extractCodeBlocks handles code with comments', () => {
+  const note = {
+    body: '```javascript\n// This is a comment\nconst x = 1;\n```',
+  };
+  const blocks = detector.extractCodeBlocks(note);
+  assert(blocks[0].hasComments);
+});
+
+test('Algorithm 3.4: extractCodeBlocks detects async code', () => {
+  const note = {
+    body: '```javascript\nasync function fetch() { await call(); }\n```',
+  };
+  const blocks = detector.extractCodeBlocks(note);
+  assert(blocks[0].hasAsync);
+});
+
+test('Algorithm 3.5: extractCodeBlocks detects error handling', () => {
+  const note = {
+    body: '```javascript\ntry { } catch(e) { }\n```',
+  };
+  const blocks = detector.extractCodeBlocks(note);
+  assert(blocks[0].hasError);
+});
+
+test('Algorithm 3.6: extractCodeBlocks detects retry patterns', () => {
+  const note = {
+    body: '```javascript\nfor(let retry = 0; retry < 3; retry++) { }\n```',
+  };
+  const blocks = detector.extractCodeBlocks(note);
+  assert(blocks[0].hasRetry);
+});
+
+test('Algorithm 3.7: estimateCodeComplexity returns 1-10', () => {
+  const simple = 'const x = 1;';
+  const complex = 'for(let i=0;i<n;i++){if(x>0){while(true){switch(y){case 1:break;}}}}}';
+  const simpleScore = detector.estimateCodeComplexity(simple);
+  const complexScore = detector.estimateCodeComplexity(complex);
+  assert(simpleScore >= 0 && simpleScore <= 10);
+  assert(complexScore > simpleScore);
+});
+
+test('Algorithm 3.8: generalizeCode replaces URLs', () => {
+  const code = 'const url = "https://example.com/api";';
+  const generalized = detector.generalizeCode(code);
+  assert(!generalized.includes('https://'));
+  assert(generalized.includes('?url?'));
+});
+
+test('Algorithm 3.9: generalizeCode replaces numbers', () => {
+  const code = 'const timeout = 5000;';
+  const generalized = detector.generalizeCode(code);
+  assert(!generalized.includes('5000'));
+  assert(generalized.includes('?num?'));
+});
+
+test('Algorithm 3.10: generalizeCode replaces strings', () => {
+  const code = 'const name = "John";';
+  const generalized = detector.generalizeCode(code);
+  assert(!generalized.includes('John'));
+  assert(generalized.includes('?string?'));
+});
+
+test('Algorithm 3.11: codePatternSimilarity identical code is 1.0', () => {
+  const code = 'const x = 1;';
+  const similarity = detector.codePatternSimilarity(code, code);
+  assert(Math.abs(similarity - 1.0) < 0.01);
+});
+
+test('Algorithm 3.12: codePatternSimilarity different code < 1.0', () => {
+  const code1 = 'const x = 1;';
+  const code2 = 'const y = 2;';
+  const similarity = detector.codePatternSimilarity(code1, code2);
+  assert(similarity < 1.0 && similarity > 0);
+});
+
+test('Algorithm 3.13: extractCodePatterns finds patterns', () => {
+  const notesWithCode = [
+    {
+      file: 'api1.md',
+      title: 'API',
+      body: '```javascript\nasync function retry(fn) { for(let i=0;i<3;i++) { try { return await fn(); } catch(e) {} } }\n```',
+    },
+    {
+      file: 'api2.md',
+      title: 'API 2',
+      body: '```javascript\nasync function retry(fn) { for(let i=0;i<3;i++) { try { return await fn(); } catch(e) {} } }\n```',
+    },
+  ];
+  const result = detector.extractCodePatterns(notesWithCode);
+  assert(Array.isArray(result.patterns));
+  assert(result.patterns.length > 0);
+});
+
+test('Algorithm 3.14: extractCodePatterns calculates reusability', () => {
+  const notes = [
+    { file: 'a.md', body: '```js\nconst x = 1;\n```' },
+    { file: 'b.md', body: '```js\nconst x = 1;\n```' },
+  ];
+  const result = detector.extractCodePatterns(notes);
+  for (const pattern of result.patterns) {
+    assert(typeof pattern.reusability === 'number');
+    assert(pattern.reusability >= 0);
+  }
+});
+
+test('Algorithm 3.15: extractCodePatterns estimates savings', () => {
+  const notes = [
+    { file: 'a.md', body: '```js\nconst x = 1;const y = 2;const z = 3;\n```' },
+    { file: 'b.md', body: '```js\nconst x = 1;const y = 2;const z = 3;\n```' },
+  ];
+  const result = detector.extractCodePatterns(notes);
+  assert(result.totalSavings > 0);
+});
+
+test('Algorithm 3.16: extractCodePatterns handles no code blocks', () => {
+  const notes = [
+    { file: 'a.md', body: 'Just text, no code' },
+  ];
+  const result = detector.extractCodePatterns(notes);
+  assert(Array.isArray(result.patterns));
+  assert(result.patterns.length === 0);
+});
+
+test('Algorithm 3.17: extractCodePatterns generalizes top patterns', () => {
+  const notes = [
+    { file: 'a.md', body: '```js\nconst x = 1;\n```' },
+    { file: 'b.md', body: '```js\nconst x = 1;\n```' },
+  ];
+  const result = detector.extractCodePatterns(notes);
+  for (const pattern of result.patterns) {
+    assert(pattern.generalized);
+  }
+});
+
+// ============ Algorithm 4: Quality Scoring Tests ============
+
+test('Algorithm 4.1: scoreImpact returns 1-10', () => {
+  assert.strictEqual(detector.scoreImpact(0), 0);
+  assert.strictEqual(detector.scoreImpact(50), 1);
+  assert.strictEqual(detector.scoreImpact(500), 10);
+  assert(detector.scoreImpact(100) > 1);
+});
+
+test('Algorithm 4.2: scoreCompleteness returns 1-10', () => {
+  assert.strictEqual(detector.scoreCompleteness(0), 0);
+  assert.strictEqual(detector.scoreCompleteness(100), 1);
+  assert.strictEqual(detector.scoreCompleteness(1000), 10);
+});
+
+test('Algorithm 4.3: scoreMaturity returns 1-10', () => {
+  assert(detector.scoreMaturity(1) > 0);
+  assert(detector.scoreMaturity(10) > detector.scoreMaturity(5));
+  assert(detector.scoreMaturity(100) <= 10);
+});
+
+test('Algorithm 4.4: scoreReusability returns 1-10', () => {
+  assert.strictEqual(detector.scoreReusability(0), 0);
+  assert.strictEqual(detector.scoreReusability(5), 10);
+  assert(detector.scoreReusability(3) < detector.scoreReusability(5));
+});
+
+test('Algorithm 4.5: scoreComplexity returns 1-10', () => {
+  assert.strictEqual(detector.scoreComplexity(0), 0);
+  assert.strictEqual(detector.scoreComplexity(50), 10);
+  assert(detector.scoreComplexity(10) > detector.scoreComplexity(5));
+});
+
+test('Algorithm 4.6: calculateQualityScore is deterministic', () => {
+  const score1 = detector.calculateQualityScore(8, 7, 9, 8, 5);
+  const score2 = detector.calculateQualityScore(8, 7, 9, 8, 5);
+  assert.strictEqual(score1, score2);
+});
+
+test('Algorithm 4.7: calculateQualityScore penalizes complexity', () => {
+  const low = detector.calculateQualityScore(8, 8, 8, 8, 2);
+  const high = detector.calculateQualityScore(8, 8, 8, 8, 9);
+  assert(low > high);
+});
+
+test('Algorithm 4.8: estimateRiskLevel returns valid levels', () => {
+  const risk1 = detector.estimateRiskLevel(3, 9, 5);
+  const risk2 = detector.estimateRiskLevel(8, 4, 2);
+  const risk3 = detector.estimateRiskLevel(5, 5, 5);
+  assert(['low', 'medium', 'high'].includes(risk1));
+  assert(['low', 'medium', 'high'].includes(risk2));
+  assert(['low', 'medium', 'high'].includes(risk3));
+});
+
+test('Algorithm 4.9: scoreOpportunities from patterns', () => {
+  const patterns = {
+    patterns: [
+      {
+        id: 'p1',
+        estimatedSavings: 100,
+        usageCount: 5,
+        size: 20,
+        language: 'javascript',
+        files: ['a.md', 'b.md'],
+      },
+    ],
+  };
+  const result = detector.scoreOpportunities(patterns, null);
+  assert(Array.isArray(result.opportunities));
+  assert(result.opportunities.length > 0);
+  assert(result.opportunities[0].rank === 1);
+});
+
+test('Algorithm 4.10: scoreOpportunities from pain points', () => {
+  const painPoints = {
+    painPoints: [
+      {
+        pain: 'manual processes',
+        severity: 80,
+        frequency: 5,
+        suggestedSolution: '/automation-engine',
+        affectedNotes: ['a.md'],
+      },
+    ],
+  };
+  const result = detector.scoreOpportunities(null, painPoints);
+  assert(result.opportunities.length > 0);
+});
+
+test('Algorithm 4.11: scoreOpportunities ranks by score', () => {
+  const patterns = {
+    patterns: [
+      {
+        id: 'p1',
+        estimatedSavings: 10,
+        usageCount: 2,
+        size: 5,
+        language: 'js',
+        files: ['a.md'],
+      },
+      {
+        id: 'p2',
+        estimatedSavings: 100,
+        usageCount: 5,
+        size: 20,
+        language: 'js',
+        files: ['a.md', 'b.md', 'c.md'],
+      },
+    ],
+  };
+  const result = detector.scoreOpportunities(patterns, null);
+  assert(result.opportunities[0].score >= result.opportunities[1].score);
+});
+
+test('Algorithm 4.12: scoreOpportunities limits to top 20', () => {
+  const patterns = {
+    patterns: Array.from({ length: 30 }, (_, i) => ({
+      id: `p${i}`,
+      estimatedSavings: (i + 1) * 10,
+      usageCount: i + 1,
+      size: 10,
+      language: 'js',
+      files: ['a.md'],
+    })),
+  };
+  const result = detector.scoreOpportunities(patterns, null);
+  assert(result.opportunities.length <= 20);
+});
+
+test('Algorithm 4.13: scoreOpportunities includes risk assessment', () => {
+  const patterns = {
+    patterns: [
+      {
+        id: 'p1',
+        estimatedSavings: 50,
+        usageCount: 5,
+        size: 10,
+        language: 'js',
+        files: ['a.md'],
+      },
+    ],
+  };
+  const result = detector.scoreOpportunities(patterns, null);
+  assert(['low', 'medium', 'high'].includes(result.opportunities[0].riskLevel));
+});
+
+test('Algorithm 4.14: scoreOpportunities includes ROI estimation', () => {
+  const patterns = {
+    patterns: [
+      {
+        id: 'p1',
+        estimatedSavings: 100,
+        usageCount: 5,
+        size: 15,
+        language: 'js',
+        files: ['a.md'],
+      },
+    ],
+  };
+  const result = detector.scoreOpportunities(patterns, null);
+  assert(typeof result.opportunities[0].estimatedROI === 'string');
+});
+
+test('Algorithm 4.15: scoreOpportunities recommendation logic', () => {
+  const goodPatterns = {
+    patterns: [
+      {
+        id: 'p1',
+        estimatedSavings: 500,
+        usageCount: 10,
+        size: 10,
+        language: 'js',
+        files: ['a.md', 'b.md', 'c.md'],
+      },
+    ],
+  };
+  const result = detector.scoreOpportunities(goodPatterns, null);
+  assert(['IMMEDIATE', 'PLANNED'].includes(result.recommendation));
+});
+
+// ============ Integration: Algorithms 3-4 ============
+
+test('Integration 3-4.1: Full pipeline from notes to ranked opportunities', () => {
+  const vault = [
+    {
+      file: 'api.md',
+      title: 'API Patterns',
+      body: 'Retry Pattern ```javascript\nasync function withRetry(fn, maxAttempts=3) { for(let i=0; i<maxAttempts; i++) { try { return await fn(); } catch(e) { if(i === maxAttempts-1) throw e; } } }\n``` Manual retry logic is tedious.',
+    },
+    {
+      file: 'integrations.md',
+      title: 'Third-party APIs',
+      body: 'Using retry: ```javascript\nasync function withRetry(fn, maxAttempts=3) { for(let i=0; i<maxAttempts; i++) { try { return await fn(); } catch(e) { if(i === maxAttempts-1) throw e; } } }\n```',
+    },
+  ];
+  const patterns = detector.extractCodePatterns(vault);
+  const pains = detector.detectPainPoints(vault);
+  const opportunities = detector.scoreOpportunities(patterns, pains);
+  assert(patterns.patterns.length > 0);
+  assert(pains.painPoints.length > 0);
+  assert(opportunities.opportunities.length > 0);
+});
+
+test('Integration 3-4.2: Patterns with high reusability rank highly', () => {
+  const vault = Array.from({ length: 5 }, (_, i) => ({
+    file: `note${i}.md`,
+    body: '```js\nconst x = 1;\nconst y = 2;\nconst z = 3;\n```',
+  }));
+  const patterns = detector.extractCodePatterns(vault);
+  const opportunities = detector.scoreOpportunities(patterns, null);
+  if (opportunities.opportunities.length > 0) {
+    assert(opportunities.opportunities[0].reusability >= 5);
+  }
+});
+
+test('Integration 3-4.3: Scores reflect pattern maturity', () => {
+  const vault = [
+    { file: 'a.md', body: '```js\nlet x=1;\n```' },
+    { file: 'b.md', body: '```js\nlet x=1;\n```' },
+    { file: 'c.md', body: '```js\nlet x=1;\n```' },
+  ];
+  const patterns = detector.extractCodePatterns(vault);
+  const opps = detector.scoreOpportunities(patterns, null);
+  if (opps.opportunities.length > 0) {
+    assert(opps.opportunities[0].maturity > 0);
+  }
+});
+
+test('Integration 3-4.4: JSON serialization of opportunities', () => {
+  const patterns = {
+    patterns: [
+      {
+        id: 'p1',
+        estimatedSavings: 50,
+        usageCount: 3,
+        size: 10,
+        language: 'js',
+        files: ['a.md'],
+      },
+    ],
+  };
+  const opps = detector.scoreOpportunities(patterns, null);
+  const json = JSON.stringify(opps);
+  const parsed = JSON.parse(json);
+  assert(parsed.opportunities.length > 0);
+  assert(parsed.opportunities[0].score);
+});
