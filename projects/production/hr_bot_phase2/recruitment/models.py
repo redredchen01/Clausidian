@@ -78,11 +78,6 @@ class JobPosting(Base):
     applications = relationship('Application', back_populates='job_posting', cascade='all, delete-orphan')
     offers = relationship('Offer', back_populates='job_posting')
 
-    __table_args__ = (
-        Index('ix_job_postings_status_posted', 'status', 'posted_at'),
-        Index('ix_job_postings_department', 'department'),
-    )
-
     def __repr__(self):
         return f"<JobPosting(id={self.id}, title={self.title}, status={self.status})>"
 
@@ -117,11 +112,6 @@ class Candidate(Base):
     # Relationships
     applications = relationship('Application', back_populates='candidate', cascade='all, delete-orphan')
     offers = relationship('Offer', back_populates='candidate')
-
-    __table_args__ = (
-        Index('ix_candidates_email', 'email'),
-        Index('ix_candidates_is_active', 'is_active'),
-    )
 
     def __repr__(self):
         return f"<Candidate(id={self.id}, name={self.full_name}, score={self.overall_score})>"
@@ -169,8 +159,6 @@ class Application(Base):
 
     __table_args__ = (
         UniqueConstraint('candidate_id', 'job_posting_id', name='uq_candidate_job'),
-        Index('ix_applications_status', 'status'),
-        Index('ix_applications_final_score', 'final_score'),
     )
 
     def __repr__(self):
@@ -216,11 +204,6 @@ class Offer(Base):
     # Relationships
     candidate = relationship('Candidate', back_populates='offers')
     job_posting = relationship('JobPosting', back_populates='offers')
-
-    __table_args__ = (
-        Index('ix_offers_status', 'status'),
-        Index('ix_offers_expires_at', 'expires_at'),
-    )
 
     def __repr__(self):
         return f"<Offer(id={self.id}, candidate_id={self.candidate_id}, status={self.status})>"
