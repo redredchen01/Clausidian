@@ -12,7 +12,10 @@
 
 ## Pending
 
-<!-- Queue is now empty -->
+- [x] 2026-03-31 | P1 | /linear-slack-reporter-skill | 自動查詢 Linear bug，格式化為 Slack 表格，一鍵發送通知 | built: 2026-03-31
+- [x] 2026-03-31 | P1 | /dspy-optimizer | DSPy 自動 prompt 優化 — Obsidian tag 匹配精度 + A/B 測試框架 | built: 2026-03-31
+- [x] 2026-03-31 | P1 | /agent-tracer | 輕量級 Agent 追蹤系統：append-only JSONL + 周報聚合 | built: 2026-03-31
+- [x] 2026-03-31 | P1 | /dashboard-value-logger | 自動記錄 dashboard 使用情況（會話數/時長/功能熱度）| built: 2026-03-31
 
 ## Built
 
@@ -34,3 +37,7 @@
 - [x] 2026-03-30 | P2 | /launchd-health | 列出 24 個 LaunchAgent 狀態+失敗告警 | built: 2026-03-30
 - [x] 2026-03-31 | P1 | /linear-slack-reporter | 自動查詢 Linear bug、整理成表格、發 Slack 通知 | built: 2026-03-31
 
+
+- [x] 2026-03-31 | P1 | /t1-status-snapshot | Live T1 project status with execution readiness matrix | built: 2026-03-31
+- [x] 2026-03-31 | P1 | /version-bump-auto | Auto-detect semver, update CHANGELOG, tag git | built: 2026-03-31
+- [x] 2026-03-31 | P1 | /reference-digest | Collect top resources by tag, generate digest | built: 2026-03-31
