@@ -1,0 +1,5 @@
+{
+  "tests/test_graphql.py::test_fetch_basic_query": true,
+  "tests/test_graphql.py::test_fetch_cursor_pagination": true,
+  "tests/test_graphql.py::test_fetch_single_page_no_pagination": true
+}
