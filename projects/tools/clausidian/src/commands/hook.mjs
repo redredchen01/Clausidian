@@ -95,6 +95,9 @@ export function sessionStop(vaultRoot, options = {}) {
     // A4: Tag conclusions and resolved issues
     updated = tagConclusions(updated);
     vault.write('journal', `${date}.md`, updated);
+    // v3.5: Emit session-stop event
+    vault.eventBus.emit('session:stop', { date, reason, action: 'appended' });
+    vault.eventHistory.append('session:stop', { date, reason, action: 'appended' });
     notify('Obsidian Agent', `Session logged to ${date}`);
     console.log(JSON.stringify({ status: 'appended', date }));
   } else {
@@ -113,6 +116,9 @@ export function sessionStop(vaultRoot, options = {}) {
 
     vault.write('journal', `${date}.md`, content);
     idx.updateDirIndex('journal', date, summary);
+    // v3.5: Emit session-stop event
+    vault.eventBus.emit('session:stop', { date, reason, action: 'created' });
+    vault.eventHistory.append('session:stop', { date, reason, action: 'created' });
     notify('Obsidian Agent', `Journal created for ${date}`);
     console.log(JSON.stringify({ status: 'created', date }));
   }
@@ -167,6 +173,10 @@ export function dailyBackfill(vaultRoot, { date, scanRoot, force } = {}) {
   idx.updateDirIndex('journal', d, summary);
   idx.sync();
 
+  // v3.5: Emit daily-backfill event
+  vault.eventBus.emit('journal:backfill', { date: d, commits: commits.length });
+  vault.eventHistory.append('journal:backfill', { date: d, commits: commits.length });
+
   notify('Obsidian Agent', `Backfill: journal/${d}.md (${commits.length} commits)`);
   console.log(JSON.stringify({ status: 'created', date: d, commits: commits.length }));
 }
@@ -179,6 +189,10 @@ export function noteCreated(vaultRoot, payload = {}) {
   const noteName = payload.note || 'unknown';
 
   try {
+    // v3.5: Emit note:created event
+    vault.eventBus.emit('note:created', { note: noteName });
+    vault.eventHistory.append('note:created', { note: noteName });
+
     // Scan all notes to find related ones
     const allNotes = vault.scanNotes({ includeBody: true });
     const newNote = allNotes.find(n => n.file === noteName);
@@ -225,6 +239,10 @@ export function noteUpdated(vaultRoot, payload = {}) {
   const changes = payload.changes || {};
 
   try {
+    // v3.5: Emit note:updated event
+    vault.eventBus.emit('note:updated', { note: noteName, changes });
+    vault.eventHistory.append('note:updated', { note: noteName, changes });
+
     // Only re-index if tags or body changed
     if (changes.tags || changes.body) {
       const result = idx.rebuildGraph();
@@ -249,6 +267,10 @@ export function noteDeleted(vaultRoot, payload = {}) {
   const noteName = payload.note || 'unknown';
 
   try {
+    // v3.5: Emit note:deleted event
+    vault.eventBus.emit('note:deleted', { note: noteName });
+    vault.eventHistory.append('note:deleted', { note: noteName });
+
     // Rebuild graph to remove deleted note references
     idx.rebuildGraph();
     console.log(JSON.stringify({ status: 'deleted', event: 'note-deleted', note: noteName, graphRebuilt: true }));
@@ -259,8 +281,12 @@ export function noteDeleted(vaultRoot, payload = {}) {
 
 export function indexRebuilt(vaultRoot, payload = {}) {
   try {
+    const vault = new Vault(vaultRoot);
+    // v3.5: Emit index:rebuilt event
+    vault.eventBus.emit('index:rebuilt', { timestamp: payload.timestamp || new Date().toISOString() });
+    vault.eventHistory.append('index:rebuilt', { timestamp: payload.timestamp || new Date().toISOString() });
+
     // Optional: notify Telegram or other services
-    // For now, just log the event
     console.log(JSON.stringify({ status: 'rebuilt', event: 'index-rebuilt', timestamp: payload.timestamp || new Date().toISOString() }));
   } catch (err) {
     console.error(`[index-rebuilt error] ${err.message}`);

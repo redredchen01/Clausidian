@@ -916,6 +916,68 @@ const COMMANDS = [
       return launchd(root, pos[0], flags);
     },
   },
+
+  // ── v3.5 Event System ──
+  {
+    name: 'events',
+    description: 'View and query vault events',
+    usage: 'events <list|query|stats>',
+    subcommands: {
+      list: {
+        mcpName: 'events_list',
+        description: 'List recent vault events',
+        mcpSchema: {
+          count: { type: 'integer', description: 'Number of recent events to show (default: 20)' },
+        },
+        async run(root, flags) {
+          const { eventsList } = await import('./commands/events.mjs');
+          return eventsList(root, { count: flags.count ? parseInt(flags.count) : 20 });
+        },
+      },
+      query: {
+        mcpName: 'events_query',
+        description: 'Query events by type or time range',
+        mcpSchema: {
+          event_type: { type: 'string', description: 'Event type pattern (e.g., note:* or note:created)' },
+          start_time: { type: 'string', description: 'ISO 8601 start time' },
+          end_time: { type: 'string', description: 'ISO 8601 end time' },
+        },
+        async run(root, flags) {
+          const { eventsQuery } = await import('./commands/events.mjs');
+          return eventsQuery(root, {
+            eventType: flags.event_type,
+            startTime: flags.start_time,
+            endTime: flags.end_time,
+          });
+        },
+      },
+      stats: {
+        mcpName: 'events_stats',
+        description: 'Show event statistics',
+        mcpSchema: {},
+        async run(root) {
+          const { eventsStats } = await import('./commands/events.mjs');
+          return eventsStats(root);
+        },
+      },
+    },
+  },
+  {
+    name: 'subscribe',
+    description: 'Subscribe to vault events (streaming)',
+    usage: 'subscribe <pattern>',
+    mcpSchema: {
+      pattern: { type: 'string', description: 'Event pattern (e.g., note:*, index:*)' },
+      count: { type: 'integer', description: 'Max events to receive before closing' },
+    },
+    mcpRequired: ['pattern'],
+    async run(root, flags, pos) {
+      const { subscribe } = await import('./commands/subscribe.mjs');
+      const pattern = flags.pattern || pos[0];
+      if (!pattern) throw new Error('Usage: clausidian subscribe <pattern>');
+      return subscribe(root, pattern, { count: flags.count ? parseInt(flags.count) : undefined });
+    },
+  },
 ];
 
 // ── Lookup helpers ──────────────────────────────────────

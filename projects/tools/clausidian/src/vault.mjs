@@ -1,22 +1,50 @@
 /**
  * Vault — core operations for reading/writing Obsidian notes
+ *
+ * Initiative B Integration:
+ * - B2.1: VaultIndexer for incremental indexing
+ * - B2.2: VaultQueryCache for smart caching with TTL
+ * - B2.3: ParallelQueryExecutor for multi-pattern search
  */
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, openSync, readSync, closeSync } from 'fs';
 import { resolve, join, dirname } from 'path';
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'crypto';
 import { SimilarityEngine } from './similarity-engine.mjs';
 import { updateFrontmatter } from './frontmatter-helper.mjs';
+import { VaultIndexer } from './vault-indexer.mjs';
+import { VaultQueryCache } from './vault-query-cache.mjs';
+import { ParallelQueryExecutor } from './parallel-query-executor.mjs';
+import EventBus from './events/event-bus.mjs';
+import EventHistory from './events/event-history.mjs';
 
 const DEFAULT_DIRS = ['areas', 'projects', 'resources', 'journal', 'ideas'];
 
 export class Vault {
-  constructor(root, { dirs, vaultName = null, searchCache = null } = {}) {
+  constructor(root, { dirs, vaultName = null, searchCache = null, enableParallel = true } = {}) {
     this.root = resolve(root);
-    this.vaultName = vaultName;
+    this.vaultName = vaultName || 'default';
     this.dirs = dirs || this._detectDirs() || DEFAULT_DIRS;
     this._notesCache = null;
     this._notesCacheWithBody = null;
     this.searchCache = searchCache;
+
+    // v3.5 Event System
+    this.eventBus = new EventBus(this);
+    this.eventHistory = new EventHistory(this);
+
+    // Initiative B Integration
+    this.indexer = null;               // B2.1: Lazy initialized
+    this.queryCache = null;            // B2.2: Lazy initialized
+    this.parallelExecutor = null;      // B2.3: Lazy initialized
+    this.enableParallel = enableParallel;
+
+    // Metrics tracking for search operations
+    this.searchMetrics = {
+      queries: 0,
+      cacheHits: 0,
+      parallelUsed: 0
+    };
   }
 
   _detectDirs() {
@@ -33,6 +61,10 @@ export class Vault {
   invalidateCache() {
     this._notesCache = null;
     this._notesCacheWithBody = null;
+    // Also invalidate B2.2 query cache on vault changes
+    if (this.queryCache) {
+      this.queryCache.clearCache();
+    }
   }
 
   // ── Path helpers ─────────────────────────────────────
@@ -75,8 +107,20 @@ export class Vault {
     const p = this.path(...args);
     const dir = dirname(p);
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+    const isNew = !existsSync(p);
     writeFileSync(p, content);
     this.invalidateCache();
+
+    // Emit event (v3.5)
+    if (isNew) {
+      const filename = args[args.length - 1].replace('.md', '');
+      this.eventBus.emit('note:created', { note: filename, dir: args[0] });
+      this.eventHistory.append('note:created', { note: filename, dir: args[0] });
+    } else {
+      const filename = args[args.length - 1].replace('.md', '');
+      this.eventBus.emit('note:updated', { note: filename, dir: args[0] });
+      this.eventHistory.append('note:updated', { note: filename, dir: args[0] });
+    }
   }
 
   // ── Frontmatter parsing ──────────────────────────────
@@ -169,6 +213,56 @@ export class Vault {
     return new Set(result.stdout.trim().split('\n').filter(Boolean));
   }
 
+  // ── Initiative B: Indexer initialization (B2.1) ──────
+
+  _initializeIndexer() {
+    if (this.indexer) return;
+    this.indexer = new VaultIndexer();
+  }
+
+  // ── Initiative B: Query cache initialization (B2.2) ──
+
+  _initializeQueryCache() {
+    if (this.queryCache) return;
+    this.queryCache = new VaultQueryCache();
+  }
+
+  // ── Initiative B: Parallel executor initialization (B2.3) ──
+
+  _initializeParallelExecutor() {
+    if (this.parallelExecutor) return;
+
+    // Ensure dependencies are initialized first
+    if (!this.indexer) this._initializeIndexer();
+    if (!this.queryCache) this._initializeQueryCache();
+
+    // Build index data for executor
+    const indexData = this._buildIndexForExecutor();
+
+    this.parallelExecutor = new ParallelQueryExecutor(indexData, {
+      maxConcurrent: 10,
+      defaultTimeout: 5000,
+      workerCount: 4
+    });
+
+    // Wire cache into executor
+    this.parallelExecutor.setCache(this.queryCache);
+  }
+
+  _buildIndexForExecutor() {
+    const notes = this.scanNotes({ includeBody: true });
+    return {
+      files: notes.reduce((acc, note) => {
+        acc[note.file] = {
+          content: note.body || '',
+          tags: note.tags || [],
+          modified: note.updated
+        };
+        return acc;
+      }, {})
+    };
+  }
+
   // ── Search notes by keyword (relevance-scored) ─────
 
   search(keyword, { type, tag, status, regex = false } = {}) {
@@ -233,6 +327,76 @@ export class Vault {
     }
 
     return sorted;
+  }
+
+  // ── Initiative B: Parallel search (B2.3 executor) ────
+
+  /**
+   * Search multiple patterns in parallel
+   * Falls back to sequential search if parallel is disabled
+   * @param {Array<string>} patterns - Array of search patterns
+   * @param {Object} options - Search options (timeout, etc.)
+   * @returns {Promise<Array>} Combined results from all patterns
+   */
+  async searchParallel(patterns, options = {}) {
+    if (!this.enableParallel || patterns.length === 0) {
+      // Fallback: sequential search
+      return patterns.flatMap(p => this.search(p, options));
+    }
+
+    // Initialize executor if needed
+    this._initializeParallelExecutor();
+
+    const result = await this.parallelExecutor.executeParallel(
+      patterns,
+      { timeout: options.timeout || 5000 }
+    );
+
+    // Track metrics
+    this.searchMetrics.queries++;
+    if (result.source === 'cache') {
+      this.searchMetrics.cacheHits++;
+    }
+    this.searchMetrics.parallelUsed++;
+
+    return result.results;
+  }
+
+  // ── Initiative B: Metrics export ───────────────────
+
+  /**
+   * Get aggregated search metrics from all B modules
+   * @returns {Object} Metrics including query counts, cache stats, executor stats
+   */
+  getSearchMetrics() {
+    return {
+      // Vault-level metrics
+      totalQueries: this.searchMetrics.queries,
+      cacheHits: this.searchMetrics.cacheHits,
+      parallelUsed: this.searchMetrics.parallelUsed,
+      cacheHitRate: this.searchMetrics.queries > 0
+        ? (this.searchMetrics.cacheHits / this.searchMetrics.queries * 100).toFixed(2) + '%'
+        : '0%',
+
+      // B2.1 Indexer metrics
+      indexerMetrics: this.indexer ? this.indexer.getIncrementalStats() : null,
+
+      // B2.2 Query cache metrics
+      cacheMetrics: this.queryCache ? this.queryCache.getCacheStats() : null,
+
+      // B2.3 Executor metrics
+      executorMetrics: this.parallelExecutor ? this.parallelExecutor.getMetrics() : null
+    };
+  }
+
+  /**
+   * Reset all search metrics to zero
+   */
+  resetSearchMetrics() {
+    this.searchMetrics = { queries: 0, cacheHits: 0, parallelUsed: 0 };
+    if (this.indexer) this.indexer.resetCache();
+    if (this.queryCache) this.queryCache.resetStats();
+    if (this.parallelExecutor) this.parallelExecutor.resetMetrics();
   }
 
   // ── Find backlinks (notes that link TO a given note) ─

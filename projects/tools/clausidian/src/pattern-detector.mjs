@@ -330,6 +330,118 @@ export class PatternDetector {
     }
     return '/automation-engine';
   }
+
+  // === Algorithms 3-4: code pattern extraction & quality scoring ===
+
+  extractCodeBlocks(note) {
+    const blocks = [];
+    const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
+    let match;
+    while ((match = codeBlockRegex.exec(note.body || '')) !== null) {
+      const language = match[1] || 'unknown';
+      const code = match[2].trim();
+      blocks.push({language, code, size: code.split('\n').length, hasComments: /\/\/|\/\*|#/.test(code), hasAsync: /async|await|Promise/.test(code), hasError: /try|catch|throw|error/i.test(code), hasRetry: /retry|attempt|retries/i.test(code), complexity: this.estimateCodeComplexity(code)});
+    }
+    return blocks;
+  }
+
+  estimateCodeComplexity(code) {
+    let score = 0;
+    const lines = code.split('\n').length;
+    score += Math.min(10, Math.floor(lines / 5));
+    score += (code.match(/if|else|switch|case/g) || []).length;
+    score += (code.match(/for|while|reduce|map|filter/g) || []).length * 0.5;
+    return Math.min(10, score);
+  }
+
+  generalizeCode(code) {
+    let g = code.replace(/(https?:\/\/[^\s'"]+)/g, '?url?').replace(/\b(\d+)\b(?!=)/g, '?num?').replace(/'[^']*'/g, '?string?').replace(/"[^"]*"/g, '?string?');
+    const vars = new Set();
+    const vp = /\b([a-zA-Z_$][a-zA-Z0-9_$]{2,})\b/g;
+    let vm;
+    while ((vm = vp.exec(code)) !== null) vars.add(vm[1]);
+    const kw = new Set(['function', 'async', 'await', 'return', 'if', 'else', 'for', 'while', 'const', 'let', 'var', 'class', 'new', 'this', 'try', 'catch']);
+    let vc = 0;
+    for (const v of vars) {
+      if (!kw.has(v)) g = g.replace(new RegExp(`\\b${v}\\b`, 'g'), vc < 3 ? `?${v}?` : `?var${vc}?`);
+      vc++;
+    }
+    return g;
+  }
+
+  codePatternSimilarity(code1, code2) {
+    const n1 = code1.replace(/\s+/g, ' ').trim(), n2 = code2.replace(/\s+/g, ' ').trim();
+    if (n1 === n2) return 1.0;
+    const t1 = n1.split(/\s+/), t2 = n2.split(/\s+/);
+    let m = 0;
+    for (let i = 0; i < Math.min(t1.length, t2.length); i++) if (t1[i] === t2[i]) m++;
+    return m / Math.max(t1.length, t2.length);
+  }
+
+  extractCodePatterns(notes) {
+    const patterns = [], pm = {};
+    for (const n of notes) {
+      for (const b of this.extractCodeBlocks(n)) {
+        let bm = null, bs = 0.7;
+        for (const pid of Object.keys(pm)) {
+          const s = this.codePatternSimilarity(b.code, pm[pid].code);
+          if (s > bs) { bs = s; bm = pid; }
+        }
+        if (bm) {
+          pm[bm].usageCount++;
+          pm[bm].files.push(n.file);
+          pm[bm].variants.push({code: b.code, file: n.file, similarity: bs});
+        } else {
+          const pid = `pattern_${Object.keys(pm).length + 1}`;
+          pm[pid] = {id: pid, language: b.language, code: b.code, usageCount: 1, files: [n.file], size: b.size, complexity: b.complexity, variants: [{code: b.code, file: n.file, similarity: 1.0}], features: {hasComments: b.hasComments, hasAsync: b.hasAsync, hasError: b.hasError, hasRetry: b.hasRetry}};
+        }
+      }
+    }
+    const pa = [];
+    for (const p of Object.values(pm)) {
+      const avs = p.variants.reduce((s, v) => s + v.similarity, 0) / p.variants.length;
+      p.reusability = (p.usageCount * avs) / (1 + p.complexity / 5);
+      p.estimatedSavings = p.usageCount * p.size;
+      pa.push(p);
+    }
+    pa.sort((a, b) => b.reusability - a.reusability);
+    const tp = pa.slice(0, 15);
+    for (const p of tp) p.generalized = this.generalizeCode(p.code);
+    return {patterns: tp, totalPatterns: Object.keys(pm).length, totalSavings: pa.reduce((s, p) => s + p.estimatedSavings, 0)};
+  }
+
+  scoreImpact(s) { return Math.min(10, Math.floor(s / 50)); }
+  scoreCompleteness(d) { return Math.min(10, Math.floor(d / 100)); }
+  scoreMaturity(u) { return Math.min(10, Math.floor(u * 1.5)); }
+  scoreReusability(u) { return Math.min(10, Math.floor(u * 2)); }
+  scoreComplexity(l) { return Math.min(10, Math.floor(l / 5)); }
+  calculateQualityScore(i, c, m, r, x) { return Math.round((i * c * m * r) / x * 10) / 10; }
+  estimateRiskLevel(x, m, u) { return m >= 8 && x <= 5 ? 'low' : m >= 5 && x <= 7 ? 'medium' : 'high'; }
+
+  scoreOpportunities(patterns, painPoints) {
+    const opps = [];
+    if (patterns) {
+      for (const p of patterns.patterns || []) {
+        const i = this.scoreImpact(p.estimatedSavings);
+        const m = this.scoreMaturity(p.usageCount);
+        const r = this.scoreReusability(p.usageCount);
+        const x = this.scoreComplexity(p.size);
+        const score = this.calculateQualityScore(i, 6, m, r, x);
+        opps.push({rank: 0, skill: `/pattern-${p.id}`, source: 'code_patterns', score, impact: i, completeness: 6, maturity: m, reusability: r, complexity: x, riskLevel: this.estimateRiskLevel(x, m, p.usageCount), estimatedROI: `${Math.round((p.estimatedSavings / 60) * 52)}h saved/year`, details: {language: p.language, usageCount: p.usageCount, size: p.size, files: p.files}});
+      }
+    }
+    if (painPoints) {
+      for (const pain of painPoints.painPoints || []) {
+        const i = Math.min(10, pain.severity / 10);
+        const m = Math.min(10, pain.frequency / 2);
+        const score = this.calculateQualityScore(i, 5, m, 7, 6);
+        opps.push({rank: 0, skill: pain.suggestedSolution, source: 'pain_points', score, impact: i, completeness: 5, maturity: m, reusability: 7, complexity: 6, riskLevel: this.estimateRiskLevel(6, m, pain.frequency), estimatedROI: pain.estimatedROI, details: {pain: pain.pain, severity: pain.severity, frequency: pain.frequency, affectedNotes: pain.affectedNotes}});
+      }
+    }
+    opps.sort((a, b) => b.score - a.score);
+    for (let i = 0; i < opps.length; i++) opps[i].rank = i + 1;
+    return {opportunities: opps.slice(0, 20), totalScored: opps.length, recommendation: opps.length > 0 && opps[0].score > 7 ? 'IMMEDIATE' : 'PLANNED'};
+  }
 }
 
 export default PatternDetector;
