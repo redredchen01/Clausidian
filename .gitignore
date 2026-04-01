@@ -1,14 +1,10 @@
 # Dependencies
 node_modules/
-__pycache__/
-*.egg-info/
-dist/
-build/
+package-lock.json
 
 # Environment
 .env
-.env.local
-*.pyc
+.env*.local
 
 # OS
 .DS_Store
@@ -17,54 +13,25 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 
 # Logs
 *.log
 *.log.*
 logs/
-log/
 
-# Database
-postgres_data/
-*.db
-*.sqlite
-*.sqlite3
+# Test artifacts
+coverage/
+.nyc_output/
+.test-cache/
 
 # Temporary
 *.tmp
-.pytest_cache/
-__pycache__/
-
-# Local (not tracked)
-/Archived/
-/.claude/
-/obsidian/
-NS_0327
-/projects/production/gwx/
-/projects/production/claude_code_telegram_bot/
-.zshrc-wrap
-scripts/login-agents.sh
-.session-wrap-trigger.json
+.tmp/
+tmp/
 
 # Local development
 .agents/
-.claude/
-.codex/
 .venv/
-
-# Test artifacts
-tmp/
-coverage/
-.nyc_output/
-.pytest_cache/
-
-# Dependencies
-node_modules/
-
-# Generated & temporary
-*.env.backup*
-.env.local
-*.log
-*.tgz
-dump.db
-*.db
