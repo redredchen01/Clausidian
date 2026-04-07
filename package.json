@@ -1,6 +1,6 @@
 {
   "name": "clausidian",
-  "version": "3.6.0",
+  "version": "3.7.0",
   "description": "Claude Code's Obsidian integration — AI agent toolkit for vault management, journal, notes, search, index sync, and more",
   "type": "module",
   "bin": {
