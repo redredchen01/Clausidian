@@ -230,16 +230,25 @@ export class SimilarityEngine {
    * @returns {Array<{id, title, score}>} Top k semantically similar notes
    */
   semanticSearch(queryText, k = 10) {
-    const notes = this.vault.list();
-    if (!notes || notes.length === 0) {
+    const scannedNotes = this.vault.scanNotes({ includeBody: true });
+    if (!scannedNotes || scannedNotes.length === 0) {
       return [];
     }
 
-    // Build or retrieve cached embedding store
-    if (!this.embedStore || this.embedStoreVersion !== this.vault.version()) {
+    // Transform vault notes to embedding store format (id, title, summary, body)
+    const notes = scannedNotes.map(n => ({
+      id: n.file,
+      title: n.title || '',
+      summary: n.summary || '',
+      body: n.body || '',
+    }));
+
+    // Generate version hash from notes content for cache invalidation
+    const version = notes.map(n => `${n.id}:${(n.body || '').length}:${n.title}`).join('|');
+    if (this.embedStoreVersion !== version) {
       this.embedStore = new EmbeddingStore({ maxResults: k, minScore: 0.1 });
       this.embedStore.build(notes);
-      this.embedStoreVersion = this.vault.version();
+      this.embedStoreVersion = version;
     }
 
     return this.embedStore.search(queryText, k);

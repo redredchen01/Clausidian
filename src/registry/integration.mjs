@@ -7,8 +7,8 @@ export default [
   // ── Memory System (legacy + enhanced) ──
   {
     name: 'memory',
-    description: 'Dynamic vault-memory management (sync, graph, session, lifecycle)',
-    usage: 'memory <sync|push|status|full-sync|graph|session|lifecycle|context>',
+    description: 'Dynamic vault-memory management (sync, graph, session, lifecycle, semantic search)',
+    usage: 'memory <sync|push|status|full-sync|graph|session|lifecycle|context|semantic>',
     subcommands: {
       sync: {
         mcpName: 'memory_sync',
@@ -109,6 +109,23 @@ export default [
         async run(root, flags, pos) {
           const { contextForTopic } = await import('../commands/memory.mjs');
           return contextForTopic(root, flags.topic || pos[0], { depth: flags.depth, maxResults: flags.max_results });
+        },
+      },
+      semantic: {
+        mcpName: 'memory_semantic_search',
+        description: 'Semantic similarity search — find notes by meaning using TF-IDF vectors',
+        mcpSchema: {
+          query: { type: 'string', description: 'Search query text' },
+          k: { type: 'number', description: 'Max results (default: 10)' },
+        },
+        mcpRequired: ['query'],
+        async run(root, flags, pos) {
+          const { memorySemanticSearch } = await import('../commands/memory.mjs');
+          const query = flags.query || pos[0];
+          if (!query) throw new Error('Query text is required');
+          const result = memorySemanticSearch(root, query, { k: flags.k || 10 });
+          console.log(JSON.stringify(result, null, 2));
+          return result;
         },
       },
     },

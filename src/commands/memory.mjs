@@ -9,6 +9,7 @@ import { Vault } from '../vault.mjs';
 import { MemoryBridge } from '../memory-bridge.mjs';
 import { MemoryGraph } from '../memory-graph.mjs';
 import { SessionMemory } from '../session-memory.mjs';
+import { SimilarityEngine } from '../similarity-engine.mjs';
 
 // ── Legacy API (backward compatible) ──────────────────
 
@@ -325,4 +326,32 @@ export function memoryLifecycle(vaultRoot, action, options = {}) {
 
   console.log(JSON.stringify(result, null, 2));
   return result;
+}
+
+/**
+ * Semantic similarity search — find notes by meaning
+ * Uses TF-IDF vector embeddings and k-NN search
+ */
+export function memorySemanticSearch(vaultRoot, query, options = {}) {
+  if (!query || query.trim().length === 0) {
+    throw new Error('Query text is required');
+  }
+
+  const vault = new Vault(vaultRoot);
+  const engine = new SimilarityEngine(vault, {
+    maxResults: options.k || 10,
+    minScore: options.minScore || 0.1,
+  });
+
+  const results = engine.semanticSearch(query, options.k || 10);
+
+  return {
+    query,
+    results: results.map(r => ({
+      id: r.id,
+      title: r.title,
+      similarity: r.score,
+    })),
+    count: results.length,
+  };
 }
