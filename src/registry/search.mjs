@@ -44,18 +44,6 @@ export default [
     },
   },,
   {
-    name: 'recent',
-    description: 'Show recently updated notes',
-    usage: 'recent [days]',
-    mcpSchema: { days: { type: 'number', description: 'Number of days (default: 7)' } },
-    async run(root, flags, pos) {
-      const { recent } = await import('../commands/recent.mjs');
-      return recent(root, {
-        days: flags.days ? parseInt(flags.days) : pos[0] ? parseInt(pos[0]) : 7,
-      });
-    },
-  },,
-  {
     name: 'backlinks',
     description: 'Show notes that link to a given note',
     usage: 'backlinks <note>',
@@ -66,14 +54,4 @@ export default [
       return backlinks(root, flags.note || pos[0]);
     },
   },,
-  {
-    name: 'orphans',
-    description: 'Find notes with no inbound links',
-    usage: 'orphans',
-    mcpSchema: {},
-    async run(root) {
-      const { orphans } = await import('../commands/orphans.mjs');
-      return orphans(root);
-    },
-  },
 ];

@@ -81,15 +81,4 @@ export default [
       return deleteNote(root, flags.note || pos[0]);
     },
   },,
-  {
-    name: 'archive',
-    description: 'Set note status to archived',
-    usage: 'archive <note>',
-    mcpSchema: { note: { type: 'string', description: 'Note filename' } },
-    mcpRequired: ['note'],
-    async run(root, flags, pos) {
-      const { archive } = await import('../commands/archive.mjs');
-      return archive(root, flags.note || pos[0]);
-    },
-  },
 ];

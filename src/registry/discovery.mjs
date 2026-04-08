@@ -34,22 +34,6 @@ export default [
     },
   },,
   {
-    name: 'stale',
-    description: 'Find notes inactive for N days',
-    usage: 'stale [--threshold N] [--auto-archive]',
-    mcpSchema: {
-      threshold: { type: 'number', description: 'Days threshold (default: 30)' },
-      auto_archive: { type: 'boolean', description: 'Archive stale notes' },
-    },
-    async run(root, flags) {
-      const { stale } = await import('../commands/stale.mjs');
-      return stale(root, {
-        threshold: flags.threshold ? parseInt(flags.threshold) : undefined,
-        autoArchive: flags['auto-archive'] === true || flags.auto_archive === true,
-      });
-    },
-  },,
-  {
     name: 'count',
     description: 'Word/line/note count statistics',
     usage: 'count',
@@ -75,56 +59,4 @@ export default [
       });
     },
   },,
-  {
-    name: 'changelog',
-    description: 'Generate vault changelog from recent activity',
-    usage: 'changelog [output]',
-    mcpSchema: { days: { type: 'number', description: 'Days (default: 7)' } },
-    async run(root, flags, pos) {
-      const { changelog } = await import('../commands/changelog.mjs');
-      return changelog(root, { days: flags.days ? parseInt(flags.days) : undefined, output: pos[0] });
-    },
-  },,
-  {
-    name: 'neighbors',
-    description: 'Show connected notes within N hops',
-    usage: 'neighbors <note>',
-    mcpSchema: {
-      note: { type: 'string' },
-      depth: { type: 'number', description: 'Max hops (default: 2)' },
-    },
-    mcpRequired: ['note'],
-    async run(root, flags, pos) {
-      const { neighbors } = await import('../commands/neighbors.mjs');
-      return neighbors(root, flags.note || pos[0], {
-        depth: flags.depth ? parseInt(flags.depth) : undefined,
-      });
-    },
-  },,
-  {
-    name: 'random',
-    description: 'Pick random note(s) for serendipitous review',
-    usage: 'random [count]',
-    mcpSchema: {
-      count: { type: 'number', description: 'How many (default: 1)' },
-      type: { type: 'string' }, status: { type: 'string' },
-    },
-    async run(root, flags, pos) {
-      const { random } = await import('../commands/random.mjs');
-      return random(root, {
-        count: flags.count ? parseInt(flags.count) : pos[0] ? parseInt(pos[0]) : undefined,
-        type: flags.type, status: flags.status,
-      });
-    },
-  },,
-  {
-    name: 'focus',
-    description: 'Suggest what to work on next',
-    usage: 'focus',
-    mcpSchema: {},
-    async run(root) {
-      const { focus } = await import('../commands/focus.mjs');
-      return focus(root);
-    },
-  },
 ];

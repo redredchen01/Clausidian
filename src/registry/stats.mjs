@@ -16,16 +16,6 @@ export default [
     },
   },,
   {
-    name: 'graph',
-    description: 'Generate Mermaid knowledge graph',
-    usage: 'graph',
-    mcpSchema: { type: { type: 'string', description: 'Filter by note type' } },
-    async run(root, flags) {
-      const { graph } = await import('../commands/graph.mjs');
-      return graph(root, { type: flags.type });
-    },
-  },,
-  {
     name: 'health',
     description: 'Vault health scoring',
     usage: 'health',

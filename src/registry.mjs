@@ -12,10 +12,10 @@ const groups = await Promise.all([
   import('./registry/search.mjs'),
   import('./registry/update.mjs'),
   import('./registry/structure.mjs'),
-  import('./registry/batch.mjs'),
-  import('./registry/io.mjs'),
+  
+  
   import('./registry/smart.mjs'),
-  import('./registry/timeline.mjs'),
+  
   import('./registry/pin.mjs'),
   import('./registry/stats.mjs'),
   import('./registry/discovery.mjs'),
